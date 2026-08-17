@@ -26,6 +26,7 @@ This is a community-maintained fork of OpenEmu for M-series Macs. The app runs o
 - Sony PSP (PPSSPP), Dreamcast (Flycast) , and Nintendo DS (DeSmuME) have all recently been added and seem to stable for most users and hardware.
 - Automatic Backup Folder for backing up battery saves and BIOS files
 - Cheats now save and persist across game sessions
+- Support for Screen rotation for Shoot 'em Up games.
 
 ---
 
@@ -64,6 +65,7 @@ Quick summary: 30+ systems work today, including NES, SNES, Game Boy, GBA, N64, 
 The original OpenEmu is still an amazing piece of Mac software. [stuartcarnie](https://github.com/stuartcarnie) brought Metal rendering to the app in 2019. [MaddTheSane](https://github.com/MaddTheSane) ported the emulation cores to ARM64 starting in 2021. [cyco](https://github.com/cyco), [clobber](https://github.com/clobber), [J-rg](https://github.com/J-rg), and the rest of the OpenEmu team built the application, the plugin architecture, and the library experience over more than a decade. That work is the foundation everything here stands on.
 
 The original project went quiet around 2024 after the last release. By that time, the original team had already done significant work on the ARM64 cores. The ARM64 core work was real and substantial, but it was never assembled into a release — the last official binary (December 2023) was stated as Intel-only. [bazley82](https://github.com/bazley82) published a downloadable ARM64 build in early 2026, pulling together the ARM64-capable core submodules the original team had prepared into a single repo and release. This fork continued from there: RetroAchievements shipped across 9+ cores; a Libretro Bridge was built to load RetroArch cores directly inside OpenEmu; ScreenScraper cover art was integrated; Dreamcast was migrated from Reicast to Flycast; save persistence, system detection, and the core update pipeline were all fixed; and the app was hardened for macOS 26 (Tahoe).
+Now we managed to implement NEO GEO using the core Final Burn Neo and the first functional implementation of Playstation 2 (ARMSX2), but still experimental and support for Screen rotation for Shoot 'em Up games.
 
 **Lineage:**
 - [OpenEmu/OpenEmu](https://github.com/OpenEmu/OpenEmu) — the original project

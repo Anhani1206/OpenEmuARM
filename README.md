@@ -19,13 +19,8 @@ This is a community-maintained fork of OpenEmu for M-series Macs. The app runs o
 > **Download:** Get the latest signed DMG from the **[Releases](https://github.com/nickybmon/OpenEmu-Silicon/releases)** page. The app is notarized — no Gatekeeper workaround needed.
 
 ### Recent Updates
-- RetroAchievements verified with official hardcore mode support across Phase 1 Systems, [see wiki for more details](https://github.com/nickybmon/OpenEmu-Silicon/wiki/RetroAchievements)
-- Improved Gamecube performance via Dolphin and Wii is officially working, though still a bit experimental.
+
 - Sony Playstation 2 (ARMSX2) implemented experimentally.
-- Arcade is officially working via MAME, though remains experimental and requires additional testing.
-- Sony PSP (PPSSPP), Dreamcast (Flycast) , and Nintendo DS (DeSmuME) have all recently been added and seem to stable for most users and hardware.
-- Automatic Backup Folder for backing up battery saves and BIOS files
-- Cheats now save and persist across game sessions
 - Support for Screen rotation for Shoot 'em Up games.
 - Game display preferences - Per-game shader and integer-scaling persistence
 

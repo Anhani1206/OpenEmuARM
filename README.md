@@ -27,6 +27,7 @@ This is a community-maintained fork of OpenEmu for M-series Macs. The app runs o
 - Automatic Backup Folder for backing up battery saves and BIOS files
 - Cheats now save and persist across game sessions
 - Support for Screen rotation for Shoot 'em Up games.
+- Game display preferences - Per-game shader and integer-scaling persistence
 
 ---
 

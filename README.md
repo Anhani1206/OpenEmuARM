@@ -21,6 +21,7 @@ This is a community-maintained fork of OpenEmu for M-series Macs. The app runs o
 ### Recent Updates
 - RetroAchievements verified with official hardcore mode support across Phase 1 Systems, [see wiki for more details](https://github.com/nickybmon/OpenEmu-Silicon/wiki/RetroAchievements)
 - Improved Gamecube performance via Dolphin and Wii is officially working, though still a bit experimental.
+- Sony Playstation 2 (ARMSX2) implemented experimentally.
 - Arcade is officially working via MAME, though remains experimental and requires additional testing.
 - Sony PSP (PPSSPP), Dreamcast (Flycast) , and Nintendo DS (DeSmuME) have all recently been added and seem to stable for most users and hardware.
 - Automatic Backup Folder for backing up battery saves and BIOS files
@@ -32,12 +33,6 @@ This is a community-maintained fork of OpenEmu for M-series Macs. The app runs o
 
 Get the latest build from the **[Releases](https://github.com/nickybmon/OpenEmu-Silicon/releases)** page.
 
-### Install via Homebrew
-
-```bash
-brew tap nickybmon/OpenEmu-Silicon https://github.com/nickybmon/OpenEmu-Silicon
-brew install --cask openemu-silicon
-```
 
 ---
 

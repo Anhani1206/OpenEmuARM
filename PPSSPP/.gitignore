@@ -1,0 +1,25 @@
+# Vulkan headers — not needed (NO_VULKAN is set for macOS)
+PPSSPP-Core/ppsspp/ext/vulkan/
+
+# OpenXR headers — not needed for macOS
+PPSSPP-Core/ppsspp/ext/openxr/
+
+# Android assets / platform-specific directories not needed for macOS build
+PPSSPP-Core/ppsspp/android/
+PPSSPP-Core/ppsspp/UWP/
+PPSSPP-Core/ppsspp/Windows/
+PPSSPP-Core/ppsspp/Qt/
+PPSSPP-Core/ppsspp/libretro/
+PPSSPP-Core/ppsspp/dx9sdk/
+
+# pspautotests — test ROMs, not needed for build
+PPSSPP-Core/ppsspp/pspautotests/
+
+# Git metadata from flattened submodules
+PPSSPP-Core/ppsspp/ext/armips/.git
+PPSSPP-Core/ppsspp/ext/glslang/.git
+PPSSPP-Core/ppsspp/ext/SPIRV-Cross/.git
+PPSSPP-Core/ppsspp/ext/zstd/.git
+PPSSPP-Core/ppsspp/ext/rapidjson/.git
+PPSSPP-Core/ppsspp/ext/miniupnp/.git
+PPSSPP-Core/ppsspp/ext/armips/ext/filesystem/.git

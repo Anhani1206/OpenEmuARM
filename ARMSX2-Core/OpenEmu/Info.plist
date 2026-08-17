@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>ARMSX2</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.openemu.ARMSX2</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>ARMSX2</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>NSPrincipalClass</key>
+	<string>OEGameCoreController</string>
+	<key>OEGameCoreClass</key>
+	<string>ARMSX2GameCore</string>
+	<key>OEGameCoreOptions</key>
+	<dict>
+		<key>openemu.system.ps2</key>
+		<dict>
+			<key>OEGameCoreHasGlitches</key>
+			<true/>
+			<key>OEGameCoreSupportsCheatCode</key>
+			<false/>
+			<key>OEGameCoreSupportsMultipleDiscs</key>
+			<true/>
+			<key>OERequiredFiles</key>
+			<array>
+				<dict>
+					<key>Description</key>
+					<string>PlayStation 2 SCPH-10000 (v1.0 Japan) BIOS</string>
+					<key>MD5</key>
+					<string>acf4730ceb38ac9d8c7d8e21f2614600</string>
+					<key>Name</key>
+					<string>scph10000.bin</string>
+					<key>Size</key>
+					<integer>4194304</integer>
+				</dict>
+				<dict>
+					<key>Description</key>
+					<string>PlayStation 2 SCPH-39001 (v1.60 USA) BIOS</string>
+					<key>MD5</key>
+					<string>d5ce2c7d119f563ce04bc04dbc3a323e</string>
+					<key>Name</key>
+					<string>scph39001.bin</string>
+					<key>Size</key>
+					<integer>4194304</integer>
+				</dict>
+				<dict>
+					<key>Description</key>
+					<string>PlayStation 2 SCPH-70004 (v2.0 Europe) BIOS</string>
+					<key>MD5</key>
+					<string>dc752f160044f2ed5fc1f4964db2a095</string>
+					<key>Name</key>
+					<string>scph70004.bin</string>
+					<key>Size</key>
+					<integer>4194304</integer>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>OEGameCorePlayerCount</key>
+	<string>2</string>
+	<key>OEProjectURL</key>
+	<string>https://github.com/ARMSX2/ARMSX2</string>
+	<key>OESystemIdentifiers</key>
+	<array>
+		<string>openemu.system.ps2</string>
+	</array>
+	<key>SUEnableAutomaticChecks</key>
+	<false/>
+</dict>
+</plist>

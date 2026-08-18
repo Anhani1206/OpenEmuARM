@@ -66,7 +66,7 @@ Now we managed to implement NEO GEO using the core Final Burn Neo and the first 
 **Lineage:**
 - [OpenEmu/OpenEmu](https://github.com/OpenEmu/OpenEmu) — the original project
 - [bazley82/OpenEmuARM64](https://github.com/bazley82/OpenEmuARM64) — ARM64 build, built on the original team's core work and what I started building upon
-- [@nickybmon](https://github.com/nickybmon) and others.
+- [@nickybmon](https://github.com/nickybmon) By OpenEmu-Silicon and others.
 
 ---
 

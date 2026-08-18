@@ -8,6 +8,11 @@
   <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/Anhani1206/OpenEmuARM/blob/21d31e40a35a31ddf473406fd51a81a8153898aa/Screenshot%202026-08-18%20at%2011.33.31.png" />
 </p>
 
+<p align="center">
+  <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/Anhani1206/OpenEmuARM/blob/8da6cdb457cd0dca565543c4f2d407498a850eeb/Screenshot%202026-08-18%20at%2015.42.16.png" />
+</p>
+
+
 ---
 
 ## Current Status

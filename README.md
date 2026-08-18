@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/user-attachments/assets/3797ba95-3e8c-49f6-9d3d-ab1cca6e70b9" />
+  <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/Anhani1206/OpenEmuARM/blob/21d31e40a35a31ddf473406fd51a81a8153898aa/Screenshot%202026-08-18%20at%2011.33.31.png" />
 </p>
 
 ---

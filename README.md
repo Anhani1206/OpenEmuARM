@@ -21,7 +21,7 @@
 
 This is a community-maintained fork of OpenEmu for M-series Macs. The app runs on macOS 11.0+ and has been tested on macOS Sequoia and macOS 26 (Tahoe).
 
-> **Download:** Get the latest signed DMG from the **[Releases](https://github.com/nickybmon/OpenEmu-Silicon/releases)** page. The app is notarized — no Gatekeeper workaround needed.
+> **Download:** Get the latest signed DMG from the **[Releases](https://github.com/)** page. The app is notarized — no Gatekeeper workaround needed.
 
 ### Recent Updates
 

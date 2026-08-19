@@ -33,7 +33,7 @@ This is a community-maintained fork of OpenEmu for M-series Macs. The app runs o
 
 ## Download
 
-Get the latest build from the **[Releases](https://github.com/nickybmon/OpenEmu-Silicon/releases)** page.
+Get the latest build from the **[Releases](https://github.com/)** page.
 
 
 ---

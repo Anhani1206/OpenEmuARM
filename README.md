@@ -25,7 +25,7 @@ This is a community-maintained fork of OpenEmu for M-series Macs. The app runs o
 
 ### Recent Updates
 
-- Sony Playstation 2 (ARMSX2) implemented experimentally.
+- Sony Playstation 2 (ARMSX2 Core) implemented experimentally.
 - Support for Screen rotation for Shoot 'em Up games.
 - Game display preferences - Per-game shader and integer-scaling persistence
 

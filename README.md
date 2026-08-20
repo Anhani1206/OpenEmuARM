@@ -9,10 +9,6 @@
 </p>
 
 <p align="center">
-  <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/Anhani1206/OpenEmuARM/blob/90857910c1de6b5707e3bdb16409cbeb4419bd11/Screenshot%202026-08-18%20at%2015.42.16.png" />
-</p>
-
-<p align="center">
   <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/Anhani1206/OpenEmuARM/blob/540858c62f8c0471a01924830d9efcdb086996e8/Screenshot%202026-08-20%20at%2014.20.33.png" />
 </p>
 

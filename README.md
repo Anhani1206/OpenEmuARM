@@ -12,29 +12,19 @@
   <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/Anhani1206/OpenEmuARM/blob/8da6cdb457cd0dca565543c4f2d407498a850eeb/Screenshot%202026-08-18%20at%2015.42.16.png" />
 </p>
 
-
 ---
 
 ## Current Status
 
 **Actively maintained. Runs natively on Apple Silicon (no Rosetta required).**
 
-This is a community-maintained fork of OpenEmu for M-series Macs. The app runs on macOS 11.0+ and has been tested on macOS Sequoia and macOS 26 (Tahoe).
-
-> **Download:** Get the latest signed DMG from the **[Releases](https://github.com/)** page. The app is notarized — no Gatekeeper workaround needed.
+This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The app runs on macOS 11.0+ and has been tested on macOS Sequoia and macOS 26 (Tahoe).
 
 ### Recent Updates
 
 - Sony Playstation 2 (ARMSX2 Core) implemented experimentally.
 - Support for Screen rotation for Shoot 'em Up games.
 - Game display preferences - Per-game shader and integer-scaling persistence
-
----
-
-## Download
-
-Get the latest build from the **[Releases](https://github.com/)** page.
-
 
 ---
 

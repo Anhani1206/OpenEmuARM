@@ -23,9 +23,9 @@ This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The ap
 ### Recent Updates
 
 - Sony Playstation 2 (ARMSX2 Core) implemented experimentally.
-- Support for screen rotation for Shoot 'em Up games (experimental).
-- Game display preferences - Per-game shader and integer-scaling persistence
-- Implemented the option to show the FPS during games
+- Support for screen rotation for Shoot 'em Up games.
+- Game display preferences - Per-game shader and integer-scaling persistence.
+- Implemented the option to show the FPS during games, screen position and color.
 
 ---
 

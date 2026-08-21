@@ -19,11 +19,12 @@
 
 **Actively maintained. Runs natively on Apple Silicon (no Rosetta required).**
 
-This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The app runs on macOS 11.0+ and has been tested on macOS Sequoia and macOS 26 (Tahoe).
+This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The app runs on macOS 11.0+ and has been tested on macOS Sequoia and macOS 26 (Tahoe) and current beta version of macOS 27 (Golden Gate).
 
 ### Recent Updates
 
 - Sony Playstation 2 (ARMSX2 Core) implemented experimentally.
+- Neo Geo (Using the FinalBurn Neo core).
 - Support for screen rotation for Shoot 'em Up games.
 - Game display preferences - Per-game shader and integer-scaling persistence.
 - Implemented the option to show the FPS during games, screen position and color.
@@ -49,7 +50,7 @@ Quick summary: 30+ systems work today, including NES, SNES, Game Boy, GBA, N64, 
 ## Requirements
 
 - macOS 11.0 (Big Sur) or later
-- Apple Silicon Mac (M1 / M2 / M3 / M4)
+- Apple Silicon Mac (M1 / M2 / M3 / M4 / M5)
 
 ---
 

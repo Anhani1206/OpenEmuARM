@@ -606,7 +606,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
         // Per-system rollup for the systems most commonly affected.
         let systemsOfInterest = [
             "openemu.system.psx", "openemu.system.snes", "openemu.system.psp",
-            "openemu.system.gba", "openemu.system.c64",  "openemu.system.arcade",
+            "openemu.system.gba", "openemu.system.arcade",
             "openemu.system.n64", "openemu.system.dc",   "openemu.system.saturn",
             "openemu.system.nds", "openemu.system.gc",   "openemu.system.wii",
             "openemu.system.ps2",
@@ -631,6 +631,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
         }
         let allOESystems = OESystemPlugin.allPlugins
             .compactMap { $0.systemIdentifier }
+            .filter { !OEDBSystem.isHiddenSystemIdentifier($0) }
             .sorted()
         out += "\n--- RA systemid coverage (per OE system) ---\n"
         for oeID in allOESystems {
@@ -678,6 +679,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     fileprivate func loadPlugins(with library: OELibraryDatabase) {
         // Register all system controllers with the bindings controller.
         for plugin in OESystemPlugin.allPlugins {
+            guard !OEDBSystem.isHiddenSystemIdentifier(plugin.systemIdentifier) else { continue }
             if let controller = plugin.controller {
                 OEBindingsController.register(controller)
             }
@@ -686,6 +688,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
         
         let context = library.mainThreadContext
         for plugin in OESystemPlugin.allPlugins {
+            guard !OEDBSystem.isHiddenSystemIdentifier(plugin.systemIdentifier) else { continue }
             if plugin.controller != nil {
                 let system = OEDBSystem.system(for: plugin, in: context)
                 // Only auto-enable on first encounter (enabled == nil).

@@ -32,6 +32,30 @@ extension Notification.Name {
 
 @objc
 final class OEDBSystem: OEDBItem {
+
+    /// Systems intentionally not exposed by this build. Their bundled assets
+    /// remain in place so the Xcode project and installed cores stay intact.
+    private static let hiddenSystemIdentifiers: Set<String> = [
+        "openemu.system.pokemini",
+        "openemu.system.c64",
+    ]
+
+    class func isHiddenSystemIdentifier(_ identifier: String) -> Bool {
+        hiddenSystemIdentifiers.contains(identifier)
+    }
+
+    private class func isHiddenSystem(_ system: OEDBSystem) -> Bool {
+        if isHiddenSystemIdentifier(system.systemIdentifier) {
+            return true
+        }
+
+        // Older libraries can retain a legacy identifier for PokeMini. The
+        // localized name is the reliable fallback for those database entries.
+        let name = system.lastLocalizedName.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+        return name.contains("pokemon mini") ||
+               name.contains("poke mini") ||
+               name.contains("commodore 64")
+    }
     
     private static let ErrorDomain = "OEDBSystemErrorDomain"
     private enum ErrorCode: Int {
@@ -101,6 +125,7 @@ final class OEDBSystem: OEDBItem {
     class func allSystems(in context: NSManagedObjectContext) -> [OEDBSystem] {
         let sortDescriptors = [NSSortDescriptor(key: "lastLocalizedName", ascending: true)]
         return context.allObjects(ofType: Self.self, sortedBy: sortDescriptors)
+            .filter { !isHiddenSystem($0) }
     }
     
     class func allSystemIdentifiers(in context: NSManagedObjectContext) -> [String] {
@@ -111,6 +136,7 @@ final class OEDBSystem: OEDBItem {
         let predicate = NSPredicate(format: "enabled = YES")
         let sortDescriptors = [NSSortDescriptor(key: "lastLocalizedName", ascending: true)]
         return context.allObjects(ofType: Self.self, matching: predicate, sortedBy: sortDescriptors)
+            .filter { !isHiddenSystem($0) }
     }
     
     class func systemsForFile(with fileURL: URL, in context: NSManagedObjectContext) -> [OEDBSystem] {
@@ -128,6 +154,7 @@ final class OEDBSystem: OEDBItem {
         let fileExtension = file.fileExtension
         
         for systemPlugin in OESystemPlugin.allPlugins {
+            guard !isHiddenSystemIdentifier(systemPlugin.systemIdentifier) else { continue }
             guard let controller = systemPlugin.controller,
                   controller.canHandleFileExtension(fileExtension)
             else { continue }

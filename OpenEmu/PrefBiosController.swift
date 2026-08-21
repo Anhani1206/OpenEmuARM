@@ -97,6 +97,7 @@ final class PrefBiosController: NSViewController {
         var items: [AnyHashable] = []
 
         for core in OECorePlugin.allPlugins {
+            guard !isHiddenSystemCore(core) else { continue }
             guard !core.requiredFiles.isEmpty,
                   let entries = core.requiredFiles as? [[String: Any]] else { continue }
 
@@ -126,6 +127,21 @@ final class PrefBiosController: NSViewController {
 
         self.items = items
         tableView.reloadData()
+    }
+
+    /// Some older installed core bundles do not report their system identifier
+    /// consistently. Match their stable bundle/display names as a fallback so
+    /// hidden systems cannot reappear in System Files.
+    private func isHiddenSystemCore(_ core: OECorePlugin) -> Bool {
+        if core.systemIdentifiers.contains(where: OEDBSystem.isHiddenSystemIdentifier) {
+            return true
+        }
+
+        let identity = "\(core.bundleIdentifier) \(core.displayName)".lowercased()
+        return identity.contains("pokemini") ||
+               identity.contains("pokemon mini") ||
+               identity.contains("commodore 64") ||
+               identity.contains("vice c64")
     }
     
     @objc private func deleteBIOSFile(_ sender: Any?) {

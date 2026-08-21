@@ -74,6 +74,10 @@ public typealias OEContextID = UInt32
     /// stopped).
     @objc optional func gameCoreDidTerminate()
 
+    /// Reports the emulation frame rate measured by the helper process.
+    /// Hosts may use this to display a diagnostic FPS overlay.
+    @objc optional func gameCoreDidUpdateFramesPerSecond(_ framesPerSecond: Double)
+
     /// Invoked by the helper process when an achievement is earned.
     ///
     /// Called on whatever thread the XPC message arrives on; implementations

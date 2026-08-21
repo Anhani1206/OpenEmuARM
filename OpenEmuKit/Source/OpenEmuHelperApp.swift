@@ -111,6 +111,8 @@ extension OSLog {
     var previous    = CFTimeInterval()
     var frameRate   = CFTimeInterval()
     var lastLog     = CFTimeInterval()
+    private var framesSinceLastFPSReport = 0
+    private var lastFPSReportTime = CFAbsoluteTimeGetCurrent()
     
     @objc public override init() {
         super.init()
@@ -845,6 +847,8 @@ extension OSLog {
         
         guard isExecuting || _effectsMode == .displayAlways
         else { return }
+
+        reportFramesPerSecond()
         
         guard _inflightSemaphore.wait(timeout: .now()) == .success
         else {
@@ -913,6 +917,19 @@ extension OSLog {
             
             finalCB.commit()
         }
+    }
+
+    private func reportFramesPerSecond() {
+        framesSinceLastFPSReport += 1
+
+        let now = CFAbsoluteTimeGetCurrent()
+        let elapsed = now - lastFPSReportTime
+        guard elapsed >= 0.5 else { return }
+
+        let framesPerSecond = Double(framesSinceLastFPSReport) / elapsed
+        framesSinceLastFPSReport = 0
+        lastFPSReportTime = now
+        gameCoreOwner?.gameCoreDidUpdateFramesPerSecond?(framesPerSecond)
     }
 }
 

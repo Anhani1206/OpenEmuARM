@@ -2458,6 +2458,10 @@ extension OEGameDocument {
     }
     
     func updateBounds(_ newBounds: CGRect) {
+        // AppKit reports very small temporary bounds while the game window is
+        // being created. Do not let a core initialize its render surface with
+        // an invalid 1-pixel dimension.
+        guard newBounds.width >= 16, newBounds.height >= 16 else { return }
         gameCoreManager?.setOutputBounds(newBounds)
     }
 }
@@ -2588,6 +2592,10 @@ extension OEGameDocument: OESystemBindingsObserver {
     
     func setRemoteContextID(_ contextID: OEContextID) {
         gameViewController.setRemoteContextID(contextID)
+    }
+
+    func gameCoreDidUpdateFramesPerSecond(_ framesPerSecond: Double) {
+        gameViewController.updateFramesPerSecond(framesPerSecond)
     }
     
     func gameCoreDidTerminate() {

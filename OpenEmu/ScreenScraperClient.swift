@@ -76,7 +76,7 @@ final class ScreenScraperClient {
     /// Calls ssuserInfos.php — lightweight, does not burn game-lookup quota.
     /// Returns true on 2xx, false on 403, throws on network error.
     func verifyCredentials(username: String, password: String) async throws -> Bool {
-        var components = URLComponents(string: "https://www.screenscraper.fr/api2/ssuserInfos.php")!
+        var components = URLComponents(string: "https://api.screenscraper.fr/api2/ssuserInfos.php")!
         components.queryItems = [
             URLQueryItem(name: "devid",       value: ScreenScraperClient.devID),
             URLQueryItem(name: "devpassword", value: ScreenScraperClient.devPassword),
@@ -95,7 +95,7 @@ final class ScreenScraperClient {
 
     // ScreenScraper numeric system IDs keyed by OpenEmu system identifier.
     //
-    // Verified against https://www.screenscraper.fr/api2/systemesListe.php (May 2026).
+    // Verified against https://api.screenscraper.fr/api2/systemesListe.php (May 2026).
     // Each entry's SS ID was confirmed by name match; previously several were wrong
     // and silently sent lookups to the wrong databases (c64 → Amiga, sg1000 → Xbox,
     // wii → nonexistent ID 38, sv → nonexistent ID 24).
@@ -162,7 +162,6 @@ final class ScreenScraperClient {
 
         // Computer / MSX
         "openemu.system.msx":         113,
-        "openemu.system.c64":          66,   // Commodore 64 (was 64 — that's Amiga)
 
         // Arcade
         "openemu.system.arcade":       75,
@@ -262,7 +261,7 @@ final class ScreenScraperClient {
 
     private func performFetch(md5: String?, romName: String?, fileSize: Int?, systemID: Int, debugMode: Bool) -> Result<ScreenScraperResult?, ScreenScraperFetchError> {
 
-        var components = URLComponents(string: "https://www.screenscraper.fr/api2/jeuInfos.php")!
+        var components = URLComponents(string: "https://api.screenscraper.fr/api2/jeuInfos.php")!
         var queryItems: [URLQueryItem] = [
             URLQueryItem(name: "softname",  value: "OpenEmu-Silicon"),
             URLQueryItem(name: "output",    value: "json"),

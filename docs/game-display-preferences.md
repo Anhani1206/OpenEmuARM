@@ -1,22 +1,14 @@
-# Preferências de exibição por jogo
+# Game Display Preferences
 
-O OpenEmu guarda as últimas preferências de exibição para cada ROM, usando o
-identificador MD5 dela e o identificador do sistema. Assim, jogos diferentes do
-mesmo console podem usar configurações diferentes sem se afetarem.
+## FPS Overlay
 
-## O que é guardado
+The in-game controls menu contains **FPS Overlay**.
 
-- shader ou preset de shader selecionado;
-- escala inteira da janela;
-- escala escolhida em tela cheia.
+- **Show FPS** displays the emulation frame rate measured by the helper process.
+- **Configure FPS Overlay…** lets the player select the text color (white, yellow, green, or red) and position (each corner).
 
-As preferências são gravadas assim que o shader ou a escala é alterado e são
-restauradas na próxima abertura do mesmo jogo. Caso um jogo ainda não tenha
-preferências próprias, o OpenEmu usa as preferências existentes do sistema
-como valor inicial.
+The settings are stored in the user's preferences and apply to future game sessions. The measurement is reported twice per second to keep the label responsive without adding work to every UI frame.
 
-## Manutenção
+## Screen Rotation
 
-As chaves ficam em `UserDefaults` e incluem sistema + MD5 da ROM. Não use o
-nome do arquivo como chave: ele pode mudar quando a ROM é renomeada, enquanto
-o MD5 mantém a configuração associada ao mesmo conteúdo.
+The rotation control turns the game display clockwise in 90-degree steps. Rotation is stored for each game and system. A centered wrapper layer performs the visual rotation while the game renderer remains unrotated inside it, keeping games with different aspect ratios aligned and uncropped.

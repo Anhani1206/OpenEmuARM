@@ -56,6 +56,8 @@ final class GameViewController: NSViewController {
     private var retroAchievementsEventToastView: OERetroAchievementsEventToastView!
     private var retroAchievementsIndicatorStackView: OERetroAchievementsIndicatorStackView!
     private var retroAchievementsNoticeView: OERetroAchievementsNoticeView!
+    private var framesPerSecondLabel: NSTextField!
+    private var framesPerSecondPositionConstraints: [NSLayoutConstraint] = []
     private let networkMonitor = NWPathMonitor()
     private let networkMonitorQueue = DispatchQueue(label: "org.openemu.ra-network-monitor")
     private var isNetworkOffline = false
@@ -73,6 +75,38 @@ final class GameViewController: NSViewController {
     private var shaderWindowController: ShaderParametersWindowController!
     
     private var token: NSObjectProtocol?
+
+    private static let showsFramesPerSecondKey = "OEGameShowFPS"
+    private static let framesPerSecondColorKey = "OEGameFPSOverlayColor"
+    private static let framesPerSecondPositionKey = "OEGameFPSOverlayPosition"
+
+    enum FramesPerSecondColor: String, CaseIterable {
+        case white, yellow, green, red
+
+        var title: String { rawValue.capitalized }
+
+        var nsColor: NSColor {
+            switch self {
+            case .white: .white
+            case .yellow: .yellow
+            case .green: .systemGreen
+            case .red: .systemRed
+            }
+        }
+    }
+
+    enum FramesPerSecondPosition: String, CaseIterable {
+        case topRight, topLeft, bottomRight, bottomLeft
+
+        var title: String {
+            switch self {
+            case .topRight: NSLocalizedString("Top Right", comment: "FPS overlay position")
+            case .topLeft: NSLocalizedString("Top Left", comment: "FPS overlay position")
+            case .bottomRight: NSLocalizedString("Bottom Right", comment: "FPS overlay position")
+            case .bottomLeft: NSLocalizedString("Bottom Left", comment: "FPS overlay position")
+            }
+        }
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -98,6 +132,15 @@ final class GameViewController: NSViewController {
         gameView.delegate = self
         scaledView.contentView = gameView
         scaledView.setContentViewSizeFill(animated: false)
+
+        framesPerSecondLabel = NSTextField(labelWithString: "")
+        framesPerSecondLabel.translatesAutoresizingMaskIntoConstraints = false
+        framesPerSecondLabel.font = .monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
+        framesPerSecondLabel.shadow = NSShadow()
+        framesPerSecondLabel.shadow?.shadowColor = NSColor.black.withAlphaComponent(0.8)
+        framesPerSecondLabel.shadow?.shadowBlurRadius = 2
+        view.addSubview(framesPerSecondLabel)
+        updateFramesPerSecondOverlayAppearance()
 
         screenRotationQuarterTurns = UserDefaults.standard.integer(forKey: screenRotationDefaultsKey) % 4
         updateScreenRotation()
@@ -272,7 +315,7 @@ final class GameViewController: NSViewController {
     }
     
     override func viewDidLayout() {
-        document.updateBounds(gameView.bounds)
+        document.updateBounds(gameView.outputBounds)
     }
     
     // MARK: - Controlling Emulation
@@ -336,6 +379,66 @@ final class GameViewController: NSViewController {
     
     func configureShader(_ sender: Any?) {
         shaderWindowController.showWindow(sender)
+    }
+
+    @objc func toggleFramesPerSecond(_ sender: Any?) {
+        UserDefaults.standard.set(!showsFramesPerSecond, forKey: Self.showsFramesPerSecondKey)
+        updateFramesPerSecondOverlayAppearance()
+    }
+
+    @objc func selectFramesPerSecondColor(_ sender: NSMenuItem) {
+        guard let color = FramesPerSecondColor(rawValue: sender.representedObject as? String ?? "") else { return }
+        UserDefaults.standard.set(color.rawValue, forKey: Self.framesPerSecondColorKey)
+        updateFramesPerSecondOverlayAppearance()
+    }
+
+    @objc func selectFramesPerSecondPosition(_ sender: NSMenuItem) {
+        guard let position = FramesPerSecondPosition(rawValue: sender.representedObject as? String ?? "") else { return }
+        UserDefaults.standard.set(position.rawValue, forKey: Self.framesPerSecondPositionKey)
+        updateFramesPerSecondOverlayAppearance()
+    }
+
+    func updateFramesPerSecond(_ framesPerSecond: Double) {
+        DispatchQueue.main.async { [weak self] in
+            self?.framesPerSecondLabel.stringValue = String(format: "%.1f FPS", framesPerSecond)
+        }
+    }
+
+    var showsFramesPerSecond: Bool {
+        UserDefaults.standard.bool(forKey: Self.showsFramesPerSecondKey)
+    }
+
+    var framesPerSecondColor: FramesPerSecondColor {
+        FramesPerSecondColor(rawValue: UserDefaults.standard.string(forKey: Self.framesPerSecondColorKey) ?? "") ?? .white
+    }
+
+    var framesPerSecondPosition: FramesPerSecondPosition {
+        FramesPerSecondPosition(rawValue: UserDefaults.standard.string(forKey: Self.framesPerSecondPositionKey) ?? "") ?? .topRight
+    }
+
+    private func updateFramesPerSecondOverlayAppearance() {
+        framesPerSecondLabel.isHidden = !showsFramesPerSecond
+        framesPerSecondLabel.textColor = framesPerSecondColor.nsColor
+
+        NSLayoutConstraint.deactivate(framesPerSecondPositionConstraints)
+        let horizontal: NSLayoutConstraint
+        let vertical: NSLayoutConstraint
+        switch framesPerSecondPosition {
+        case .topRight:
+            horizontal = framesPerSecondLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            vertical = framesPerSecondLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 12)
+        case .topLeft:
+            horizontal = framesPerSecondLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
+            vertical = framesPerSecondLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 12)
+        case .bottomRight:
+            horizontal = framesPerSecondLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            vertical = framesPerSecondLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16)
+        case .bottomLeft:
+            horizontal = framesPerSecondLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
+            vertical = framesPerSecondLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16)
+        }
+        framesPerSecondPositionConstraints = [horizontal, vertical]
+        NSLayoutConstraint.activate(framesPerSecondPositionConstraints)
     }
     
     // MARK: - OEGameCoreOwner Methods

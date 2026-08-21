@@ -41,6 +41,7 @@ public class OEGameLayerView: NSView, CALayerDelegate {
     
     public weak var delegate: OEGameViewDelegate?
     
+    private var rotationWrapperLayer: CALayer?
     private var remoteLayer: CALayerHost?
     private var trackingArea: NSTrackingArea?
     private(set) var aspectCorrectedScreenSize = CGSize.zero
@@ -88,14 +89,18 @@ public class OEGameLayerView: NSView, CALayerDelegate {
 
     public override func updateLayer() {
         super.updateLayer()
-        delegate?.gameView(self, updateBounds: bounds)
+        delegate?.gameView(self, updateBounds: outputBounds)
     }
     
     func updateTopLayer(_ layer: CALayer, with remoteContextID: OEContextID) {
         if remoteLayer == nil {
+            let wrapperLayer = CALayer()
+            wrapperLayer.masksToBounds = false
+            layer.addSublayer(wrapperLayer)
+            rotationWrapperLayer = wrapperLayer
+
             remoteLayer = CALayerHost()
-            
-            layer.addSublayer(remoteLayer!)
+            wrapperLayer.addSublayer(remoteLayer!)
         }
         
         remoteLayer!.contextId = remoteContextID
@@ -116,10 +121,11 @@ public class OEGameLayerView: NSView, CALayerDelegate {
     @objc public func setContentRotationQuarterTurns(_ quarterTurns: Int) {
         contentRotationQuarterTurns = ((quarterTurns % 4) + 4) % 4
         updateRemoteLayerGeometry()
+        updateLayer()
     }
 
     private func updateRemoteLayerGeometry() {
-        guard let layer, let remoteLayer else { return }
+        guard let layer, let rotationWrapperLayer, let remoteLayer else { return }
 
         let isPortrait = contentRotationQuarterTurns.isMultiple(of: 2) == false
         let layerSize = layer.bounds.size
@@ -129,21 +135,13 @@ public class OEGameLayerView: NSView, CALayerDelegate {
 
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        remoteLayer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        remoteLayer.bounds = CGRect(origin: .zero, size: remoteSize)
-        remoteLayer.position = CGPoint(x: layer.bounds.midX, y: layer.bounds.midY)
-        remoteLayer.setAffineTransform(CGAffineTransform(
+        rotationWrapperLayer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        rotationWrapperLayer.bounds = CGRect(origin: .zero, size: remoteSize)
+        rotationWrapperLayer.position = CGPoint(x: layer.bounds.midX, y: layer.bounds.midY)
+        rotationWrapperLayer.setAffineTransform(CGAffineTransform(
             rotationAngle: CGFloat(contentRotationQuarterTurns) * .pi / 2
         ))
-
-        // `CALayerHost` may retain a shifted coordinate origin from its remote
-        // context. Measure the transformed frame and compensate for that shift
-        // so the visible game frame is centered in the host view.
-        let frame = remoteLayer.frame
-        remoteLayer.position = CGPoint(
-            x: remoteLayer.position.x + layer.bounds.midX - frame.midX,
-            y: remoteLayer.position.y + layer.bounds.midY - frame.midY
-        )
+        remoteLayer.frame = rotationWrapperLayer.bounds
         CATransaction.commit()
     }
     
@@ -155,6 +153,12 @@ public class OEGameLayerView: NSView, CALayerDelegate {
                 updateTopLayer(layer, with: remoteContextID)
             }
         }
+    }
+
+    /// Size of the untransformed surface in which the helper renders. It is
+    /// the same as this view when unrotated and swaps width/height at 90°.
+    public var outputBounds: CGRect {
+        remoteLayer?.bounds ?? bounds
     }
     
     // MARK: - NSResponder

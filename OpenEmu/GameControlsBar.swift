@@ -393,6 +393,11 @@ final class GameControlsBar: NSWindow {
         item.title = NSLocalizedString("Select Shader", comment: "")
         item.submenu = shadersMenu
         menu.addItem(item)
+
+        item = NSMenuItem()
+        item.title = NSLocalizedString("FPS Overlay", comment: "FPS overlay menu title")
+        item.submenu = framesPerSecondMenu
+        menu.addItem(item)
         
         // integral scaling
         item = NSMenuItem()
@@ -619,6 +624,45 @@ final class GameControlsBar: NSWindow {
             }
         }
         
+        return menu
+    }
+
+    var framesPerSecondMenu: NSMenu {
+        let menu = NSMenu()
+
+        let showItem = NSMenuItem(title: NSLocalizedString("Show FPS", comment: "FPS overlay toggle"), action: #selector(GameViewController.toggleFramesPerSecond(_:)), keyEquivalent: "")
+        showItem.state = gameViewController.showsFramesPerSecond ? .on : .off
+        menu.addItem(showItem)
+
+        let configureMenu = NSMenu()
+        let colorMenu = NSMenu(title: NSLocalizedString("Text Color", comment: "FPS overlay color menu"))
+        for color in GameViewController.FramesPerSecondColor.allCases {
+            let item = NSMenuItem(title: NSLocalizedString(color.title, comment: "FPS overlay text color"), action: #selector(GameViewController.selectFramesPerSecondColor(_:)), keyEquivalent: "")
+            item.representedObject = color.rawValue
+            item.state = color == gameViewController.framesPerSecondColor ? .on : .off
+            colorMenu.addItem(item)
+        }
+
+        let colorItem = NSMenuItem(title: NSLocalizedString("Text Color", comment: "FPS overlay color menu"), action: nil, keyEquivalent: "")
+        colorItem.submenu = colorMenu
+        configureMenu.addItem(colorItem)
+
+        let positionMenu = NSMenu(title: NSLocalizedString("Position", comment: "FPS overlay position menu"))
+        for position in GameViewController.FramesPerSecondPosition.allCases {
+            let item = NSMenuItem(title: position.title, action: #selector(GameViewController.selectFramesPerSecondPosition(_:)), keyEquivalent: "")
+            item.representedObject = position.rawValue
+            item.state = position == gameViewController.framesPerSecondPosition ? .on : .off
+            positionMenu.addItem(item)
+        }
+
+        let positionItem = NSMenuItem(title: NSLocalizedString("Position", comment: "FPS overlay position menu"), action: nil, keyEquivalent: "")
+        positionItem.submenu = positionMenu
+        configureMenu.addItem(positionItem)
+
+        let configureItem = NSMenuItem(title: NSLocalizedString("Configure FPS Overlay…", comment: "FPS overlay configuration menu"), action: nil, keyEquivalent: "")
+        configureItem.submenu = configureMenu
+        menu.addItem(configureItem)
+
         return menu
     }
     

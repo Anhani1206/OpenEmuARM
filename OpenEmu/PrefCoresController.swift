@@ -216,6 +216,7 @@ final class PrefCoresController: NSViewController {
         var map: [String: (name: String, cores: [CoreDownload])] = [:]
         for core in CoreUpdater.shared.coreList {
             for sysID in core.systemIdentifiers {
+                guard !OEDBSystem.isHiddenSystemIdentifier(sysID) else { continue }
                 // The dedicated Neo Geo library ships with one tested core.
                 // Other arcade cores remain available from the Arcade entry.
                 if sysID == "openemu.system.neogeo", core.bundleIdentifier != "org.openemu.FBNeo" {
@@ -251,7 +252,7 @@ final class PrefCoresController: NSViewController {
         // Group all RA cores for the same sysID into one row.
         var extraMap: [String: [RetroArchCore]] = [:]
         for raCore in allRetroArch {
-            for sysID in raCore.systemIDs where !entries.contains(where: { $0.systemIdentifier == sysID }) {
+            for sysID in raCore.systemIDs where !OEDBSystem.isHiddenSystemIdentifier(sysID) && !entries.contains(where: { $0.systemIdentifier == sysID }) {
                 extraMap[sysID, default: []].append(raCore)
             }
         }
@@ -649,10 +650,7 @@ extension PrefCoresController {
         "odyssey2":              ["openemu.system.odyssey2"],
         "supervision":           ["openemu.system.sv"],
         "vectrex":               ["openemu.system.vectrex"],
-        // Commodore / home computers
-        "commodore_c64":         ["openemu.system.c64"],
-        "commodore_c64sc":       ["openemu.system.c64"],    // VICE x64sc
-        "commodore_64":          ["openemu.system.c64"],    // alternate spelling used by some cores
+        // Home computers
         "msx":                   ["openemu.system.msx"],
         // TODO: "amiga" / "commodore_amiga" — no SystemPlugin for Amiga in OE;
         // leaving unmapped (PUAE, Amiberry) until that plugin lands so the

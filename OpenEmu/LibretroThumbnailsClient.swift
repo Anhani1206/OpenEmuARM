@@ -49,7 +49,6 @@ final class LibretroThumbnailsClient {
         "openemu.system.jaguar":       "Atari - Jaguar",
         "openemu.system.ws":           "Bandai - WonderSwan",
         "openemu.system.colecovision": "Coleco - ColecoVision",
-        "openemu.system.c64":          "Commodore - 64",
         "openemu.system.vectrex":      "GCE - Vectrex",
         "openemu.system.intellivision":"Mattel - Intellivision",
         "openemu.system.msx":          "Microsoft - MSX",

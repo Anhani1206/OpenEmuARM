@@ -28,6 +28,15 @@
 
 @implementation OEPS2SystemController
 
+- (NSImage *)controllerImage
+{
+    NSImage *image = [super controllerImage];
+    if(image != nil)
+        image.size = NSMakeSize(500, 500);
+
+    return image;
+}
+
 - (OEFileSupport)canHandleFile:(__kindof OEFile *)file
 {
     if (!([file isKindOfClass:[OEDiscDescriptor class]] || [file.fileExtension caseInsensitiveCompare:@"iso"] == NSOrderedSame))

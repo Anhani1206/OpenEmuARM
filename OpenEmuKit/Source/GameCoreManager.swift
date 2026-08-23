@@ -116,7 +116,30 @@ extension GameCoreManager: OEGameCoreHelper {
     public func setCheat(_ cheatCode: String, withType type: String, enabled: Bool) {
         gameCoreHelper?.setCheat(cheatCode, withType: type, enabled: enabled)
     }
-    
+
+    public func readableMemoryRegions(completionHandler block: @escaping ([[String: Any]]) -> Void) {
+        gameCoreHelper?.readableMemoryRegions { dictionaries in
+            DispatchQueue.main.async {
+                block(dictionaries)
+            }
+        }
+    }
+
+    public func readableMemoryRegionDescriptors(completionHandler block: @escaping ([OEMemoryRegionDescriptor]) -> Void) {
+        readableMemoryRegions { dictionaries in
+            let regions = dictionaries.compactMap { dictionary -> OEMemoryRegionDescriptor? in
+                guard let name = dictionary["name"] as? String,
+                      let address = dictionary["address"] as? UInt32,
+                      let addressBytes = dictionary["addressBytes"] as? UInt8,
+                      let data = dictionary["data"] as? Data
+                else { return nil }
+                let minDataBytes = dictionary["minDataBytes"] as? UInt8 ?? 1
+                return OEMemoryRegionDescriptor(name: name, address: address, addressBytes: addressBytes, minDataBytes: minDataBytes, data: data)
+            }
+            block(regions)
+        }
+    }
+
     public func setDisc(_ discNumber: UInt) {
         gameCoreHelper?.setDisc(discNumber)
     }

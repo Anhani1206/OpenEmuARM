@@ -36,6 +36,27 @@ extension Notification.Name {
 
 /// Detects and imports BIOS files.
 enum BIOSFile {
+
+    private static let armsx2BIOSFilenames: Set<String> = [
+        "scph10000.bin",
+        "scph39001.bin",
+        "scph70004.bin",
+    ]
+
+    /// The native FBNeo bundle does not declare this requirement itself. Keep
+    /// the metadata in the host so System Files can request the BIOS and the
+    /// game launcher can validate it before starting a Neo Geo title.
+    static let fbNeoBIOSRequiredFile: [String: Any] = [
+        "Name": "neogeo.zip",
+        "Description": "Neo Geo BIOS (FBNeo)",
+        "Optional": false,
+        "AllowAnyChecksum": true,
+        "RelativePath": "fbneo/neogeo.zip",
+    ]
+
+    static var nativeFBNeoIsInstalled: Bool {
+        OECorePlugin.corePlugin(bundleIdentifier: "org.openemu.FBNeo") != nil
+    }
     
     static let biosFolderURL = URL.oeApplicationSupportDirectory
                                 .appendingPathComponent("BIOS", isDirectory: true)
@@ -65,6 +86,31 @@ enum BIOSFile {
                 try fileManager.copyItem(at: sourceURL, to: destinationURL)
             } catch {
                 DLog("Could not synchronize Neo Geo BIOS to \(destinationURL.path): \(error)")
+            }
+        }
+    }
+
+    /// ARMSX2 searches for firmware in its own PCSX2-compatible system
+    /// directory. Keep any BIOS accepted through System Files available there
+    /// as well, so a clean installation behaves like an existing one.
+    static func synchronizeARMSX2BIOS() {
+        let fileManager = FileManager.default
+        let destinationDirectory = URL.oeApplicationSupportDirectory
+            .appendingPathComponent("ARMSX2/system/pcsx2/bios", isDirectory: true)
+
+        for filename in armsx2BIOSFilenames {
+            let sourceURL = biosFolderURL.appendingPathComponent(filename, isDirectory: false)
+            guard fileManager.fileExists(atPath: sourceURL.path) else { continue }
+
+            let destinationURL = destinationDirectory.appendingPathComponent(filename, isDirectory: false)
+            do {
+                try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
+                if fileManager.fileExists(atPath: destinationURL.path) {
+                    try fileManager.removeItem(at: destinationURL)
+                }
+                try fileManager.copyItem(at: sourceURL, to: destinationURL)
+            } catch {
+                DLog("Could not synchronize ARMSX2 BIOS to \(destinationURL.path): \(error)")
             }
         }
     }
@@ -206,7 +252,12 @@ enum BIOSFile {
         let fileManager = FileManager.default
         
         // Copy known BIOS/system files to BIOS folder.
-        for validFile in OECorePlugin.requiredFiles {
+        var requiredFiles = OECorePlugin.requiredFiles
+        if nativeFBNeoIsInstalled {
+            requiredFiles.append(fbNeoBIOSRequiredFile)
+        }
+
+        for validFile in requiredFiles {
             
             let biosSystemFilename = validFile["Name"] as! String
             let acceptsAnyChecksum = (validFile["AllowAnyChecksum"] as? Bool) == true
@@ -233,6 +284,9 @@ enum BIOSFile {
                     try fileManager.copyItem(at: url, to: destinationURL)
                     if relativePath == "fbneo/neogeo.zip" {
                         synchronizeFBNeoBIOS()
+                    }
+                    if armsx2BIOSFilenames.contains(biosSystemFilename.lowercased()) {
+                        synchronizeARMSX2BIOS()
                     }
                 } catch {
                     DLog("Could not copy BIOS file \(url) to \(destinationURL)")

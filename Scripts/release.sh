@@ -146,6 +146,31 @@ xcodebuild archive \
 [ -d "$ARCHIVE_PATH" ] || die "Archive not found at expected path: $ARCHIVE_PATH"
 echo "Archive: $ARCHIVE_PATH"
 
+# ARMSX2 is built outside the main OpenEmu scheme. Stage it explicitly and
+# make its Homebrew dependencies portable before the notarization pipeline.
+step "Bundling portable PlayStation 2 core"
+
+APP_IN_ARCHIVE="$ARCHIVE_PATH/Products/Applications/OpenEmu.app"
+ARMSX2_DESTINATION="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/ARMSX2.oecoreplugin"
+PS2_SYSTEM_PLUGIN="$APP_IN_ARCHIVE/Contents/PlugIns/Systems/PlayStation 2.oesystemplugin"
+
+[ -d "$APP_IN_ARCHIVE" ] || die "OpenEmu.app not found inside archive."
+[ -d "$PS2_SYSTEM_PLUGIN" ] || die "PlayStation 2 system plugin is missing from archive."
+
+CONFIGURATION=Release "$SCRIPT_DIR/build-armsx2-libretro-arm64.sh"
+ARMSX2_SOURCE="${DERIVED_DATA:-/tmp/OpenEmu-Shared-DD}/Build/Products/Release/ARMSX2.oecoreplugin"
+[ -d "$ARMSX2_SOURCE" ] || die "ARMSX2 Release core was not produced."
+
+rm -rf "$ARMSX2_DESTINATION"
+mkdir -p "$(dirname "$ARMSX2_DESTINATION")"
+ditto "$ARMSX2_SOURCE" "$ARMSX2_DESTINATION"
+"$SCRIPT_DIR/bundle-armsx2-dependencies.sh" "$ARMSX2_DESTINATION"
+
+if otool -L "$ARMSX2_DESTINATION/Contents/Resources/armsx2_libretro.dylib" | grep -q '/opt/homebrew'; then
+  die "ARMSX2 still references Homebrew after bundling."
+fi
+echo "OK: portable ARMSX2 core staged in archive"
+
 # ── 1.5. Verify and upload dSYMs to Sentry ────────────────────────────────────
 step "Verifying and uploading dSYMs to Sentry (symbolicated crash reports)"
 

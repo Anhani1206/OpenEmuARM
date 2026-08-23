@@ -26,6 +26,7 @@
 
 #import "GenPlusGameCore.h"
 #import <OpenEmuBase/OERingBuffer.h>
+#import <OpenEmuBase/OEMemoryRegionDescriptor.h>
 #import "OESMSSystemResponderClient.h"
 #import "OEGGSystemResponderClient.h"
 #import "OESG1000SystemResponderClient.h"
@@ -2137,6 +2138,17 @@ void ROMCheatUpdate(void)
         /* next ROM patch */
         cnt--;
     }
+}
+
+- (NSArray<OEMemoryRegionDescriptor *> *)readableMemoryRegions
+{
+    if (cart.romsize == 0) return @[];
+    if ((system_hw & SYSTEM_PBC) == SYSTEM_MD) {
+        NSData *data = [NSData dataWithBytes:work_ram length:0x10000];
+        return @[[OEMemoryRegionDescriptor descriptorWithName:@"Work RAM" address:0xFF0000 addressBytes:3 minDataBytes:2 data:data]];
+    }
+    NSData *data = [NSData dataWithBytes:work_ram length:0x2000];
+    return @[[OEMemoryRegionDescriptor descriptorWithName:@"RAM" address:0xC000 addressBytes:2 data:data]];
 }
 
 @end

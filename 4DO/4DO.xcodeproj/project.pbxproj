@@ -504,6 +504,10 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/core/lib/\"",
@@ -518,6 +522,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/libfreedo\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-I.",
 					"-DPROFILE_PERFORMANCE",
@@ -526,11 +531,7 @@
 					"$(OTHER_CFLAGS)",
 					"-g",
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILT_PRODUCTS_DIR)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.4DO";
+				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.4DO;
 				PRODUCT_NAME = 4DO;
 				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)/core/\" \"$(PROJECT_DIR)/libcue/\"/** \"$(PROJECT_DIR)/libfreedo/\"";
 				WRAPPER_EXTENSION = oecoreplugin;
@@ -542,6 +543,10 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/core/lib/\"",
@@ -556,6 +561,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/libfreedo\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-I.",
 					"-DPROFILE_PERFORMANCE",
@@ -564,11 +570,7 @@
 					"$(OTHER_CFLAGS)",
 					"-g",
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILT_PRODUCTS_DIR)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.4DO";
+				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.4DO;
 				PRODUCT_NAME = 4DO;
 				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)/core/\" \"$(PROJECT_DIR)/libcue/\"/** \"$(PROJECT_DIR)/libfreedo/\"";
 				WRAPPER_EXTENSION = oecoreplugin;
@@ -667,6 +669,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -682,6 +685,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

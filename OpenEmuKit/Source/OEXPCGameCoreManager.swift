@@ -95,6 +95,12 @@ import OpenEmuKitPrivate
                             argumentIndex: 0,
                             ofReply: false)
 
+            let memoryRegionClasses: NSSet = [NSDictionary.self, NSArray.self, NSString.self, NSNumber.self, NSData.self]
+            intf.setClasses(memoryRegionClasses as! Set<AnyHashable>,
+                            for: #selector(OEGameCoreHelper.readableMemoryRegions(completionHandler:)),
+                            argumentIndex: 0,
+                            ofReply: true)
+
             cn.remoteObjectInterface = intf
             cn.resume()
 

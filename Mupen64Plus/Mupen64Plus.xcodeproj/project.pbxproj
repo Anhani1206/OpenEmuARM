@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -56,7 +56,6 @@
 		3E82BC4D1F507B940081AF7B /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E82BC431F507B940081AF7B /* RSP_LoadMatrix.cpp */; };
 		3E82BC561F507C380081AF7B /* ColorBufferReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E82BC551F507C380081AF7B /* ColorBufferReader.cpp */; };
 		551FEDF525B6232500B9030D /* new_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8784175025994FEF002ED39D /* new_dynarec.c */; };
-		551FEEB025B64D9000B9030D /* linkage.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 551FEEAF25B64D9000B9030D /* linkage.o */; };
 		8723F7001F74A36E003E572A /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8723F6FF1F74A36E003E572A /* CRC_OPT.cpp */; };
 		8723F7341F74A4D7003E572A /* F3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8723F7061F74A49E003E572A /* F3D.cpp */; };
 		8723F7351F74A4D7003E572A /* F3DAM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8723F7081F74A49E003E572A /* F3DAM.cpp */; };
@@ -167,6 +166,7 @@
 		878416E425994FAD002ED39D /* clock_ctime_plus_delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 878416B325994F1B002ED39D /* clock_ctime_plus_delta.c */; };
 		878416EE25994FBA002ED39D /* dummy_video_capture.c in Sources */ = {isa = PBXBuildFile; fileRef = 878416C325994F1B002ED39D /* dummy_video_capture.c */; };
 		878416F825994FC7002ED39D /* file_storage.c in Sources */ = {isa = PBXBuildFile; fileRef = 878416C425994F1B002ED39D /* file_storage.c */; };
+		8784175F25994FEF002ED39D /* linkage_arm64.S in Sources */ = {isa = PBXBuildFile; fileRef = 8784175E25994FEF002ED39D /* linkage_arm64.S */; };
 		8784179325995103002ED39D /* af_rtc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8784177E25994FEF002ED39D /* af_rtc.c */; };
 		8784179D25995108002ED39D /* cart_rom.c in Sources */ = {isa = PBXBuildFile; fileRef = 8784177D25994FEF002ED39D /* cart_rom.c */; };
 		878417A72599510D002ED39D /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 8784177B25994FEF002ED39D /* cart.c */; };
@@ -296,7 +296,6 @@
 		EE2BBC41225AD5050007BF6F /* GraphicBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2BBC38225AD5040007BF6F /* GraphicBuffer.cpp */; };
 		EE2BBC46225AD5380007BF6F /* iob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2BBC45225AD5370007BF6F /* iob.cpp */; };
 		EE2BBC48225AD6520007BF6F /* MemoryStatus_mupenplus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2BBC47225AD6510007BF6F /* MemoryStatus_mupenplus.cpp */; };
-                8784175F25994FEF002ED39D /* linkage_arm64.S in Sources */ = {isa = PBXBuildFile; fileRef = 8784175E25994FEF002ED39D /* linkage_arm64.S */; };
 		OE0M64P0BUILDFILE000000001 /* rcheevos_build.c in Sources */ = {isa = PBXBuildFile; fileRef = OE0M64P0FILEREF000000001 /* rcheevos_build.c */; settings = {COMPILER_FLAGS = "-DRC_NO_THREADS=1 -DRC_CLIENT_SUPPORTS_HASH=1 -Dmd5_init=rc_md5_init -Dmd5_append=rc_md5_append -Dmd5_finish=rc_md5_finish"; }; };
 		OE0M64P0BUILDFILE000000002 /* OERetroAchievementsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = OE0M64P0FILEREF000000002 /* OERetroAchievementsTransport.m */; };
 /* End PBXBuildFile section */
@@ -931,7 +930,6 @@
 		8784175B25994FEF002ED39D /* arm_cpu_features.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = arm_cpu_features.c; sourceTree = "<group>"; };
 		8784175D25994FEF002ED39D /* assem_arm64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = assem_arm64.h; sourceTree = "<group>"; };
 		8784175E25994FEF002ED39D /* linkage_arm64.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = linkage_arm64.S; sourceTree = "<group>"; };
-		FCB24781096647F2B503592C12C8D2DD /* assem_arm64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = assem_arm64.c; sourceTree = "<group>"; };
 		8784176025994FEF002ED39D /* cp1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cp1.c; sourceTree = "<group>"; };
 		8784176125994FEF002ED39D /* interrupt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = interrupt.h; sourceTree = "<group>"; };
 		8784176225994FEF002ED39D /* tlb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tlb.c; sourceTree = "<group>"; };
@@ -1157,6 +1155,7 @@
 		EE2BBC44225AD5370007BF6F /* MemoryStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemoryStatus.h; path = ../../../Mupen64plus/GLideN64/src/MemoryStatus.h; sourceTree = "<group>"; };
 		EE2BBC45225AD5370007BF6F /* iob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = iob.cpp; path = ../../../Mupen64plus/GLideN64/src/iob.cpp; sourceTree = "<group>"; };
 		EE2BBC47225AD6510007BF6F /* MemoryStatus_mupenplus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MemoryStatus_mupenplus.cpp; path = ../../../../Mupen64plus/GLideN64/src/mupenplus/MemoryStatus_mupenplus.cpp; sourceTree = "<group>"; };
+		FCB24781096647F2B503592C12C8D2DD /* assem_arm64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = assem_arm64.c; sourceTree = "<group>"; };
 		OE0M64P0FILEREF000000001 /* rcheevos_build.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rcheevos_build.c; path = ../Vendor/rcheevos/rcheevos_build.c; sourceTree = SOURCE_ROOT; };
 		OE0M64P0FILEREF000000002 /* OERetroAchievementsTransport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsTransport.m; path = ../OpenEmuKit/Source/OERetroAchievementsTransport.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -1222,6 +1221,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				7733FECB30376AFB005F6159 /* Recovered References */,
 			);
 			name = Mupen64Plus;
 			sourceTree = "<group>";
@@ -1536,6 +1536,15 @@
 				55E0604525B377BC00521CB0 /* SSE2NEON.h */,
 			);
 			path = sse2neon;
+			sourceTree = "<group>";
+		};
+		7733FECB30376AFB005F6159 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				OE0M64P0FILEREF000000001 /* rcheevos_build.c */,
+				OE0M64P0FILEREF000000002 /* OERetroAchievementsTransport.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		8723F7011F74A3A3003E572A /* xxHash */ = {
@@ -3229,7 +3238,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-                                8784175F25994FEF002ED39D /* linkage_arm64.S in Sources */,
+				8784175F25994FEF002ED39D /* linkage_arm64.S in Sources */,
 				8784165025993CA3002ED39D /* callbacks.c in Sources */,
 				8784164F25993CA3002ED39D /* common.c in Sources */,
 				8784164D25993CA3002ED39D /* config.c in Sources */,
@@ -3416,6 +3425,7 @@
 					"\"$(SRCROOT)\"",
 					/sw/lib,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DIN_OPENEMU",
 					"-DM64P_PARALLEL",
@@ -3441,6 +3451,7 @@
 		1DEB913C08733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
@@ -3480,6 +3491,7 @@
 					"\"$(SRCROOT)\"",
 					/sw/lib,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DIN_OPENEMU",
 					"-DM64P_PARALLEL",
@@ -3494,7 +3506,6 @@
 					"$(OTHER_CFLAGS)",
 					"-fvisibility-inlines-hidden",
 				);
-				ARCHS = arm64;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Mupen64Plus;
 				SKIP_INSTALL = YES;
@@ -3622,6 +3633,7 @@
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_bundle;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
@@ -3644,6 +3656,7 @@
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_bundle;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
@@ -3682,6 +3695,7 @@
 					"\"$(SRCROOT)/png\"",
 				);
 				MACH_O_TYPE = mh_bundle;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DMUPENPLUSAPI",
 					"-DOS_MAC_OS_X",
@@ -3729,6 +3743,7 @@
 					"\"$(SRCROOT)/png\"",
 				);
 				MACH_O_TYPE = mh_bundle;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DMUPENPLUSAPI",
 					"-DOS_MAC_OS_X",
@@ -3776,6 +3791,7 @@
 					"$(PROJECT_DIR)/angrylion-rdp-plus/src",
 				);
 				MACH_O_TYPE = mh_bundle;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DMUPENPLUSAPI=On",
 					"-DNDEBUG",
@@ -3820,6 +3836,7 @@
 					"$(PROJECT_DIR)/angrylion-rdp-plus/src",
 				);
 				MACH_O_TYPE = mh_bundle;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DMUPENPLUSAPI=On",
 					"-DNDEBUG",
@@ -3882,6 +3899,7 @@
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_bundle;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-fno-strict-aliasing",
 					"-DGCC",
@@ -3930,6 +3948,7 @@
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_bundle;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-fno-strict-aliasing",
 					"-DGCC",

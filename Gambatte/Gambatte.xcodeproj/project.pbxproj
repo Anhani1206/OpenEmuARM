@@ -231,7 +231,6 @@
 		OE0GAMB0FILEREF000000001 /* rcheevos_build.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rcheevos_build.c; path = ../Vendor/rcheevos/rcheevos_build.c; sourceTree = SOURCE_ROOT; };
 		OE0GAMB0FILEREF000000002 /* OERetroAchievementsTransport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsTransport.m; path = ../OpenEmuKit/Source/OERetroAchievementsTransport.m; sourceTree = SOURCE_ROOT; };
 		OE0GAMB0FILEREF000000003 /* OERetroAchievementsBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsBridge.m; path = ../OpenEmuKit/Source/OERetroAchievementsBridge.m; sourceTree = SOURCE_ROOT; };
-		OE0GAMB0FILEREF000000004 /* OERetroAchievementsBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OERetroAchievementsBridge.h; path = ../OpenEmuKit/Source/OERetroAchievementsBridge.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,6 +279,7 @@
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
+				7733FECC30376AFB005F6159 /* Recovered References */,
 			);
 			name = Gambatte;
 			sourceTree = "<group>";
@@ -321,6 +321,16 @@
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7733FECC30376AFB005F6159 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				OE0GAMB0FILEREF000000001 /* rcheevos_build.c */,
+				OE0GAMB0FILEREF000000002 /* OERetroAchievementsTransport.m */,
+				OE0GAMB0FILEREF000000003 /* OERetroAchievementsBridge.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		9499B5421AB242B200276D21 /* src */ = {
@@ -670,6 +680,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Gambatte;
@@ -694,6 +705,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Gambatte;
@@ -728,6 +740,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};
@@ -738,6 +751,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};

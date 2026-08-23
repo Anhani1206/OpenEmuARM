@@ -41,7 +41,17 @@ final class OEDBSystem: OEDBItem {
     ]
 
     class func isHiddenSystemIdentifier(_ identifier: String) -> Bool {
-        hiddenSystemIdentifiers.contains(identifier)
+        if hiddenSystemIdentifiers.contains(identifier) {
+            return true
+        }
+
+        // Old PokeMini cores used both `pokemini` and `pokemonmini` in their
+        // identifiers. Treat either spelling as hidden so an installed legacy
+        // bundle cannot restore it in Preferences → Cores.
+        let normalized = identifier.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+        return normalized.contains("pokemini") ||
+               normalized.contains("pokemonmini") ||
+               normalized.hasSuffix(".c64")
     }
 
     private class func isHiddenSystem(_ system: OEDBSystem) -> Bool {

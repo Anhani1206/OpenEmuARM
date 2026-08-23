@@ -40,6 +40,7 @@
 
 #import <OpenEmuBase/OEGameCoreController.h>
 #import <OpenEmuBase/OERingBuffer.h>
+#import <OpenEmuBase/OEMemoryRegionDescriptor.h>
 #import "OEGBASystemResponderClient.h"
 #import <OpenGL/gl.h>
 
@@ -421,5 +422,22 @@ const int GBAMap[] = {
 	[cheatSets setObject:[NSValue valueWithPointer:cheatSet] forKey:codeId];
 	mCheatAddSet(cheats, cheatSet);
 }
-@end
 
+- (NSArray<OEMemoryRegionDescriptor *> *)readableMemoryRegions
+{
+	const struct mCoreMemoryBlock *blocks = NULL;
+	size_t count = core->listMemoryBlocks(core, &blocks);
+	NSMutableArray *regions = [NSMutableArray arrayWithCapacity:count];
+	for (size_t i = 0; i < count; i++) {
+		if (strcmp(blocks[i].shortName, "IWRAM") != 0 && strcmp(blocks[i].shortName, "EWRAM") != 0) continue;
+		size_t size = 0;
+		void *memory = core->getMemoryBlock(core, blocks[i].id, &size);
+		if (memory && size > 0) {
+			NSData *data = [NSData dataWithBytes:memory length:size];
+			NSString *name = [NSString stringWithUTF8String:blocks[i].shortName];
+			[regions addObject:[OEMemoryRegionDescriptor descriptorWithName:name address:blocks[i].start addressBytes:4 data:data]];
+		}
+	}
+	return regions;
+}
+@end

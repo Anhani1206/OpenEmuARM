@@ -2213,6 +2213,7 @@
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "blueMSX-Info.plist";
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DNO_EMBEDDED_SAMPLES",
 					"-DNO_FILE_HISTORY",
@@ -2238,6 +2239,7 @@
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "blueMSX-Info.plist";
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DNO_EMBEDDED_SAMPLES",
 					"-DNO_FILE_HISTORY",

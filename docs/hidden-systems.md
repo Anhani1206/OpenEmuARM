@@ -5,3 +5,8 @@ PokeMini (`openemu.system.pokemini`) and Commodore 64 (`openemu.system.c64`) are
 They do not appear in Library, Controls, Cores, System Files, or file-import choices. The underlying bundled assets are kept in the repository so existing Xcode project references remain valid and the application can build safely.
 
 The System Files filter also checks the installed core's bundle identifier and display name. This covers older local core bundles that report incomplete system identifiers.
+
+Legacy PokeMini bundles sometimes use `openemu.system.pokemonmini` instead of
+`openemu.system.pokemini`. Both forms are filtered in Preferences → Cores, so
+an old core installed in Application Support cannot restore PokeMini to the
+interface.

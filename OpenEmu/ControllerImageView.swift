@@ -62,6 +62,7 @@ final class ControllerImageView: NSView {
         }
     }
     var imageMask: NSImage?
+    var centersImageVertically = false
     
     /// associates keys with NSPoint encapsulated in NSValue
     var keyPositions: [String : NSValue]?
@@ -119,7 +120,8 @@ final class ControllerImageView: NSView {
         
         var targetRect = NSRect()
         targetRect.size = image.size
-        targetRect.origin = NSPoint(x: (frame.size.width-image.size.width)/2, y: 0)
+        let originY = centersImageVertically ? (frame.size.height - image.size.height) / 2 : 0
+        targetRect.origin = NSPoint(x: (frame.size.width-image.size.width)/2, y: originY)
         
         image.draw(in: targetRect, from: .zero, operation: .copy, fraction: 1, respectFlipped: false, hints: [.interpolation: NSNumber(value: NSImageInterpolation.none.rawValue)])
         

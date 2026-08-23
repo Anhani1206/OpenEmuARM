@@ -247,6 +247,8 @@
 		5AFD06BD2058893B00DFE765 /* GameScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AFD06BC2058893B00DFE765 /* GameScannerViewController.swift */; };
 		652650A1DBD8666E615946FC /* Supervision.oesystemplugin in Copy System Plugins to App Plugins */ = {isa = PBXBuildFile; fileRef = 837964E11A6149C000A8DE5C /* Supervision.oesystemplugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6DAB96D7C11047B4AA72206A /* Controller-Mappings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 68416A57049F48B997026285 /* Controller-Mappings.plist */; };
+		7733FED43038F526005F6159 /* CheatSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7733FED23038F526005F6159 /* CheatSearchViewController.swift */; };
+		7733FED63038F531005F6159 /* CheatSearchWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7733FED53038F531005F6159 /* CheatSearchWindowController.swift */; };
 		779469BB302F3405006A35D6 /* PlayStation 2.oesystemplugin in Copy System Plugins to App Plugins */ = {isa = PBXBuildFile; fileRef = 3DB744BA1BD8BA9E00C23E74 /* PlayStation 2.oesystemplugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		779469C6302F4901006A35D6 /* NeoGeo.oesystemplugin in Copy System Plugins to App Plugins */ = {isa = PBXBuildFile; fileRef = 779469C0302F48A0006A35D6 /* NeoGeo.oesystemplugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		779469CC302F4F7F006A35D6 /* Controller-Preferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 779469CB302F4F7F006A35D6 /* Controller-Preferences.plist */; };
@@ -1368,6 +1370,8 @@
 		7699EC921D6303EB005BC437 /* ca */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7699EC931D6303EC005BC437 /* ca */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7699EC941D6303EC005BC437 /* ca */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ControlLabels.strings; sourceTree = "<group>"; };
+		7733FED23038F526005F6159 /* CheatSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatSearchViewController.swift; sourceTree = "<group>"; };
+		7733FED53038F531005F6159 /* CheatSearchWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatSearchWindowController.swift; sourceTree = "<group>"; };
 		779469C0302F48A0006A35D6 /* NeoGeo.oesystemplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NeoGeo.oesystemplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		779469CA302F4E2B006A35D6 /* NeoGeo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NeoGeo-Bridging-Header.h"; sourceTree = "<group>"; };
 		779469CB302F4F7F006A35D6 /* Controller-Preferences.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Controller-Preferences.plist"; sourceTree = "<group>"; };
@@ -2837,6 +2841,8 @@
 				4B3C48037AA6D35C519F7C78 /* LibretroBridge */,
 				7719B95D302DF5720040DDD8 /* Recovered References */,
 				779469CA302F4E2B006A35D6 /* NeoGeo-Bridging-Header.h */,
+				7733FED23038F526005F6159 /* CheatSearchViewController.swift */,
+				7733FED53038F531005F6159 /* CheatSearchWindowController.swift */,
 			);
 			indentWidth = 4;
 			name = OpenEmu;
@@ -6497,6 +6503,7 @@
 				83DBA2271906A250000815B9 /* 1.1 to 1.2.xcmappingmodel in Sources */,
 				8F419A3C25B6C81600A7F0BE /* PrefDebugController.swift in Sources */,
 				5A6C157C1DC96C3700839986 /* OEMediaViewController+TouchBar.swift in Sources */,
+				7733FED43038F526005F6159 /* CheatSearchViewController.swift in Sources */,
 				5AC349331D89EB7B0089B26F /* GameIntegralScalingDelegate.swift in Sources */,
 				8FE5DC0C270DF56500878DFF /* LibraryMigrator.swift in Sources */,
 				779469D8302F5585006A35D6 /* OENeoGeoSystemController.swift in Sources */,
@@ -6531,6 +6538,7 @@
 				83AB259917A6A432009C80BC /* ControlsSectionTitleView.swift in Sources */,
 				C67DBF4317DBE859006AF087 /* NSDocument+OEAdditions.m in Sources */,
 				8CBD3AA217D23AA80022399B /* OEGridGameCell.m in Sources */,
+				7733FED63038F531005F6159 /* CheatSearchWindowController.swift in Sources */,
 				5A9606D41C0A63740089B494 /* NSMutableDictionary+Pop.swift in Sources */,
 				12EDAEC64C70D710AF8B8065 /* OEGoogleDriveConfig.swift in Sources */,
 				DFDDE95A9D47B0C0B525780A /* OESaveSyncManager.swift in Sources */,

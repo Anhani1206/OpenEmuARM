@@ -60,7 +60,7 @@
 #define RETRO_ENVIRONMENT_SET_ROTATION 1
 #endif
 
-NSString * const OELibretroBridgeVersion = @"4";
+NSString * const OELibretroBridgeVersion = @"5";
 
 
 @interface OELibretroCoreTranslator () <OELibretroInputReceiver>
@@ -440,6 +440,11 @@ static OELibretroSystemPolicy OELibretroSystemPolicyForSystemID(NSString *system
     size_t (*_retro_serialize_size)(void);
     bool (*_retro_serialize)(void *data, size_t size);
     bool (*_retro_unserialize)(const void *data, size_t size);
+
+    // The frontend owns persistence of a libretro core's battery-backed RAM.
+    void   *(*_retro_get_memory_data)(unsigned id);
+    size_t  (*_retro_get_memory_size)(unsigned id);
+    NSURL  *_batterySaveFileURL;
     
     struct retro_system_av_info _avInfo;
     struct retro_hw_render_callback _hw_callback;
@@ -1366,6 +1371,12 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
 
     self.coreBundle = [[self owner] bundle];
 
+    // -init runs before the helper assigns owner. Refresh the save location
+    // once owner is available so it points at the current game's core folder.
+    self.savesPath = [self batterySavesDirectoryPath];
+    free(_savesPathCStr);
+    _savesPathCStr = self.savesPath ? strdup([self.savesPath UTF8String]) : NULL;
+
     // Fallback: if owner didn't provide a bundle, scan all loaded bundles
     // for one that declares OELibretroCoreTranslator as its game core class.
     if (!self.coreBundle) {
@@ -1453,6 +1464,10 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
     RESOLVE(retro_serialize_size);
     RESOLVE(retro_serialize);
     RESOLVE(retro_unserialize);
+
+    // Optional battery RAM access; supported by most libretro cores.
+    RESOLVE(retro_get_memory_data);
+    RESOLVE(retro_get_memory_size);
     
     // Safety check for absolute minimum required to function
     if (!_retro_init || !_retro_run || !_retro_load_game) {
@@ -1526,6 +1541,23 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
         }
         return NO;
     }
+
+    // Restore the persisted battery-backed RAM after the core has created its
+    // save buffer. Use the same filename convention as native OpenEmu cores.
+    if (self.savesPath && _retro_get_memory_data && _retro_get_memory_size) {
+        NSString *baseName = [[path lastPathComponent] stringByDeletingPathExtension];
+        NSURL *directory = [NSURL fileURLWithPath:self.savesPath];
+        [[NSFileManager defaultManager] createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:nil error:nil];
+        _batterySaveFileURL = [directory URLByAppendingPathComponent:[baseName stringByAppendingPathExtension:@"sav"]];
+
+        void *buffer = _retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+        size_t size = _retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
+        NSData *savedData = [NSData dataWithContentsOfURL:_batterySaveFileURL];
+        if (buffer && size > 0 && savedData) {
+            memcpy(buffer, savedData.bytes, MIN(size, savedData.length));
+            NSLog(@"[OELibretro] Restored battery save (%zu bytes) from %@", (size_t)savedData.length, _batterySaveFileURL);
+        }
+    }
     
     // Core is loaded — resolve serialization state size now.
     // Spec: cores may only know their true state size after loading content.
@@ -1559,6 +1591,19 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
 
 - (void)stopEmulation {
     [super stopEmulation];
+
+    // Save before retro_unload_game/retro_deinit invalidate the core buffer.
+    if (_coreHandle && _batterySaveFileURL && _retro_get_memory_data && _retro_get_memory_size) {
+        void *buffer = _retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+        size_t size = _retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
+        if (buffer && size > 0) {
+            NSData *savedData = [NSData dataWithBytes:buffer length:size];
+            NSError *writeError = nil;
+            if (![savedData writeToURL:_batterySaveFileURL options:NSDataWritingAtomic error:&writeError]) {
+                NSLog(@"[OELibretro] Error writing battery save file: %@", writeError);
+            }
+        }
+    }
     // Nil _current BEFORE dlclose so any callbacks that fire during shutdown
     // see nil and return early (prevents use-after-free in C callbacks).
     _current = nil;
@@ -1568,6 +1613,7 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
         dlclose(_coreHandle);
         _coreHandle = NULL;
     }
+    _batterySaveFileURL = nil;
 }
 
 - (void)executeFrame {

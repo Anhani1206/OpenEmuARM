@@ -77,8 +77,8 @@
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		94D9257314CA9879008F697D /* BSNESGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 826FE0F41014D8930023A8E9 /* BSNESGameCore.mm */; };
 		C6D120EC1711307900E868A8 /* OpenEmuBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6D120EB1711307900E868A8 /* OpenEmuBase.framework */; };
-                CC00000123B985A800F0B36E /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = 0167A44C23B9843600F0B36E /* debugger.c */; };
-                CC00000223B985A800F0B36E /* sm83_disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = 0167A45B23B9843600F0B36E /* sm83_disassembler.c */; };
+		CC00000123B985A800F0B36E /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = 0167A44C23B9843600F0B36E /* debugger.c */; };
+		CC00000223B985A800F0B36E /* sm83_disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = 0167A45B23B9843600F0B36E /* sm83_disassembler.c */; };
 		OE0BSNS0BUILDFILE000000001 /* rcheevos_build.c in Sources */ = {isa = PBXBuildFile; fileRef = OE0BSNS0FILEREF000000001 /* rcheevos_build.c */; settings = {COMPILER_FLAGS = "-DRC_NO_THREADS=1 -DRC_CLIENT_SUPPORTS_HASH=1"; }; };
 		OE0BSNS0BUILDFILE000000002 /* OERetroAchievementsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = OE0BSNS0FILEREF000000002 /* OERetroAchievementsTransport.m */; };
 /* End PBXBuildFile section */
@@ -2202,6 +2202,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				7733FED030376AFB005F6159 /* Recovered References */,
 			);
 			indentWidth = 4;
 			name = BSNES;
@@ -2268,6 +2269,15 @@
 				8D5B49B6048680CD000E48DA /* BSNES.oecoreplugin */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7733FED030376AFB005F6159 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				OE0BSNS0FILEREF000000001 /* rcheevos_build.c */,
+				OE0BSNS0FILEREF000000002 /* OERetroAchievementsTransport.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2367,8 +2377,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-                                CC00000123B985A800F0B36E /* debugger.c in Sources */,
-                                CC00000223B985A800F0B36E /* sm83_disassembler.c in Sources */,
+				CC00000123B985A800F0B36E /* debugger.c in Sources */,
+				CC00000223B985A800F0B36E /* sm83_disassembler.c in Sources */,
 				0167A56223B985A800F0B36E /* mbc.c in Sources */,
 				0167A56D23B985E600F0B36E /* lzma.cpp in Sources */,
 				0167A54A23B984DA00F0B36E /* dsp.cpp in Sources */,
@@ -2454,11 +2464,9 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 115;
-				OTHER_CFLAGS = (
-					"-DGB_INTERNAL",
-					// "-DDISABLE_DEBUGGER",
-				);
+				OTHER_CFLAGS = "-DGB_INTERNAL";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = BSNES;
 				SKIP_INSTALL = YES;
@@ -2486,11 +2494,9 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 115;
-				OTHER_CFLAGS = (
-					"-DGB_INTERNAL",
-					// "-DDISABLE_DEBUGGER",
-				);
+				OTHER_CFLAGS = "-DGB_INTERNAL";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = BSNES;
 				SKIP_INSTALL = YES;
@@ -2621,6 +2627,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};
@@ -2632,6 +2639,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};

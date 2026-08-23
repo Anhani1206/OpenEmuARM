@@ -433,6 +433,12 @@ final class GameControlsBar: NSWindow {
         if hardcoreOn { item.isEnabled = false }
         menu.addItem(item)
 
+        if gameViewController.supportsCheatSearch {
+            let searchItem = NSMenuItem(title: NSLocalizedString("Cheat Search…", comment: ""), action: #selector(OEGameDocument.openCheatSearch(_:)), keyEquivalent: "")
+            if hardcoreOn { searchItem.isEnabled = false }
+            menu.addItem(searchItem)
+        }
+
         let cheats = gameViewController.document.cheats
         if !cheats.isEmpty {
             menu.addItem(.separator())
@@ -478,6 +484,9 @@ final class GameControlsBar: NSWindow {
         var corePlugins = OECorePlugin.corePlugins(forSystemIdentifier: systemIdentifier)
         if systemIdentifier == "openemu.system.neogeo" {
             corePlugins.removeAll { $0.bundleIdentifier != "org.openemu.FBNeo" }
+        }
+        if systemIdentifier == "openemu.system.3do" {
+            corePlugins.removeAll { $0.bundleIdentifier == "org.openemu.Opera" }
         }
         guard corePlugins.count > 1
         else { return nil }

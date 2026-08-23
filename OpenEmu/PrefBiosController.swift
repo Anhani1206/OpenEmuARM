@@ -95,11 +95,19 @@ final class PrefBiosController: NSViewController {
     
     private func reloadData() {
         var items: [AnyHashable] = []
+        let hasDeclaredFBNeoBIOS = OECorePlugin.allPlugins.contains { core in
+            core.requiredFiles.contains { file in
+                (file["RelativePath"] as? String) == "fbneo/neogeo.zip"
+            }
+        }
 
         for core in OECorePlugin.allPlugins {
             guard !isHiddenSystemCore(core) else { continue }
-            guard !core.requiredFiles.isEmpty,
-                  let entries = core.requiredFiles as? [[String: Any]] else { continue }
+            var entries = core.requiredFiles
+            if core.bundleIdentifier == "org.openemu.FBNeo", !hasDeclaredFBNeoBIOS {
+                entries.append(BIOSFile.fbNeoBIOSRequiredFile)
+            }
+            guard !entries.isEmpty else { continue }
 
             // Group entries by filename — multiple entries for the same filename are alternate hashes.
             var groups: [String: BIOSFileGroup] = [:]

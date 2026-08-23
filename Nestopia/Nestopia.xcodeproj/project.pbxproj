@@ -1042,7 +1042,6 @@
 		OE0NEST0FILEREF000000001 /* rcheevos_build.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rcheevos_build.c; path = ../Vendor/rcheevos/rcheevos_build.c; sourceTree = SOURCE_ROOT; };
 		OE0NEST0FILEREF000000002 /* OERetroAchievementsTransport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsTransport.m; path = ../OpenEmuKit/Source/OERetroAchievementsTransport.m; sourceTree = SOURCE_ROOT; };
 		OE0NEST0FILEREF000000003 /* OERetroAchievementsBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsBridge.m; path = ../OpenEmuKit/Source/OERetroAchievementsBridge.m; sourceTree = SOURCE_ROOT; };
-		OE0NEST0FILEREF000000004 /* OERetroAchievementsBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OERetroAchievementsBridge.h; path = ../OpenEmuKit/Source/OERetroAchievementsBridge.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1068,6 +1067,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				7733FECF30376AFB005F6159 /* Recovered References */,
 			);
 			name = Nestopia;
 			sourceTree = "<group>";
@@ -1141,6 +1141,16 @@
 			children = (
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		7733FECF30376AFB005F6159 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				OE0NEST0FILEREF000000001 /* rcheevos_build.c */,
+				OE0NEST0FILEREF000000002 /* OERetroAchievementsTransport.m */,
+				OE0NEST0FILEREF000000003 /* OERetroAchievementsBridge.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		827897680E70CFAF00C01C82 /* Core */ = {
@@ -2301,6 +2311,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Nestopia;
 				SKIP_INSTALL = YES;
@@ -2329,6 +2340,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Nestopia;
 				SKIP_INSTALL = YES;
@@ -2413,6 +2425,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};
@@ -2424,6 +2437,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};

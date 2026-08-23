@@ -160,9 +160,17 @@ final class PrefCoresController: NSViewController {
         warning.isHidden = true
         self.warningBanner = warning
 
+        let checkUpdatesButton = NSButton(
+            title: NSLocalizedString("Check for Updates", comment: "Cores preferences button"),
+            target: self,
+            action: #selector(checkForUpdatesClicked(_:))
+        )
+        checkUpdatesButton.bezelStyle = .rounded
+        checkUpdatesButton.toolTip = NSLocalizedString("Check all cores for available updates", comment: "Cores preferences button tooltip")
+
         // NSStackView collapses hidden views to zero height automatically,
         // so the table fills the full space when no collision banner is shown.
-        let stack = NSStackView(views: [warning, scroll])
+        let stack = NSStackView(views: [warning, checkUpdatesButton, scroll])
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.distribution = .fill
@@ -295,6 +303,11 @@ final class PrefCoresController: NSViewController {
     }
 
     // MARK: - Actions
+
+    @objc private func checkForUpdatesClicked(_ sender: NSButton) {
+        CoreUpdater.shared.checkForNewCores()
+        CoreUpdater.shared.checkForUpdates()
+    }
 
     @objc private func actionMenuSelected(_ sender: NSMenuItem) {
         guard let info = sender.representedObject as? (row: Int, kind: ActionKind) else { return }

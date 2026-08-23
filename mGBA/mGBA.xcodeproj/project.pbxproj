@@ -279,7 +279,6 @@
 		OE0MGBA0FILEREF000000001 /* rcheevos_build.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rcheevos_build.c; path = ../Vendor/rcheevos/rcheevos_build.c; sourceTree = SOURCE_ROOT; };
 		OE0MGBA0FILEREF000000002 /* OERetroAchievementsTransport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsTransport.m; path = ../OpenEmuKit/Source/OERetroAchievementsTransport.m; sourceTree = SOURCE_ROOT; };
 		OE0MGBA0FILEREF000000003 /* OERetroAchievementsBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsBridge.m; path = ../OpenEmuKit/Source/OERetroAchievementsBridge.m; sourceTree = SOURCE_ROOT; };
-		OE0MGBA0FILEREF000000004 /* OERetroAchievementsBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OERetroAchievementsBridge.h; path = ../OpenEmuKit/Source/OERetroAchievementsBridge.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -303,6 +302,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				7733FED130376AFB005F6159 /* Recovered References */,
 			);
 			name = VisualBoyAdvance;
 			sourceTree = "<group>";
@@ -360,6 +360,16 @@
 				8D5B49B6048680CD000E48DA /* mGBA.oecoreplugin */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7733FED130376AFB005F6159 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				OE0MGBA0FILEREF000000001 /* rcheevos_build.c */,
+				OE0MGBA0FILEREF000000002 /* OERetroAchievementsTransport.m */,
+				OE0MGBA0FILEREF000000003 /* OERetroAchievementsBridge.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		8701D2AB1D19D4A900E8A7D8 /* src */ = {
@@ -872,6 +882,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DM_CORE_GBA",
 					"-DDISABLE_THREADING",
@@ -911,6 +922,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-DM_CORE_GBA",
 					"-DDISABLE_THREADING",
@@ -1029,6 +1041,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};
@@ -1038,6 +1051,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};

@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>OEBundledCoreRefreshRevision</key>
+	<string>20260822.2</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -34,6 +36,8 @@
 			<integer>0</integer>
 			<key>OEGameCoreSupportsCheatCode</key>
 			<true/>
+			<key>OEGameCoreSupportsCheatSearch</key>
+			<true/>
 			<key>OEGameCoreSupportsDisplayModeChange</key>
 			<true/>
 			<key>OEGameCoreSupportsRetroAchievements</key>
@@ -50,6 +54,8 @@
 			<key>OEGameCoreRewindInterval</key>
 			<integer>0</integer>
 			<key>OEGameCoreSupportsCheatCode</key>
+			<true/>
+			<key>OEGameCoreSupportsCheatSearch</key>
 			<true/>
 			<key>OEGameCoreSupportsRetroAchievements</key>
 			<true/>
@@ -97,10 +103,27 @@
 			<integer>0</integer>
 			<key>OEGameCoreSupportsCheatCode</key>
 			<true/>
+			<key>OEGameCoreSupportsCheatSearch</key>
+			<true/>
 			<key>OEGameCoreSupportsRetroAchievements</key>
 			<true/>
 			<key>OEGameCoreSupportsRewinding</key>
 			<true/>
+			<key>OERequiredFiles</key>
+			<array>
+				<dict>
+					<key>Description</key>
+					<string>Sonic &amp; Knuckles (Lock-on) UPMEM Chip</string>
+					<key>MD5</key>
+					<string>b4e76e416b887f4e7413ba76fa735f16</string>
+					<key>Name</key>
+					<string>Sonic &amp; Knuckles (World) (Lock-on).bin</string>
+					<key>Size</key>
+					<integer>262144</integer>
+					<key>Optional</key>
+					<true/>
+				</dict>
+			</array>
 		</dict>
 		<key>openemu.system.sg1000</key>
 		<dict>
@@ -109,6 +132,8 @@
 			<key>OEGameCoreRewindInterval</key>
 			<integer>0</integer>
 			<key>OEGameCoreSupportsCheatCode</key>
+			<true/>
+			<key>OEGameCoreSupportsCheatSearch</key>
 			<true/>
 			<key>OEGameCoreSupportsRetroAchievements</key>
 			<true/>
@@ -122,6 +147,8 @@
 			<key>OEGameCoreRewindInterval</key>
 			<integer>0</integer>
 			<key>OEGameCoreSupportsCheatCode</key>
+			<true/>
+			<key>OEGameCoreSupportsCheatSearch</key>
 			<true/>
 			<key>OEGameCoreSupportsRetroAchievements</key>
 			<true/>

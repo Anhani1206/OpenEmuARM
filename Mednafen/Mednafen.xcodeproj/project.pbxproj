@@ -1749,7 +1749,6 @@
 		OE0MDFN0FILEREF000000001 /* rcheevos_build.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rcheevos_build.c; path = ../Vendor/rcheevos/rcheevos_build.c; sourceTree = SOURCE_ROOT; };
 		OE0MDFN0FILEREF000000002 /* OERetroAchievementsTransport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsTransport.m; path = ../OpenEmuKit/Source/OERetroAchievementsTransport.m; sourceTree = SOURCE_ROOT; };
 		OE0MDFN0FILEREF000000003 /* OERetroAchievementsBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsBridge.m; path = ../OpenEmuKit/Source/OERetroAchievementsBridge.m; sourceTree = SOURCE_ROOT; };
-		OE0MDFN0FILEREF000000004 /* OERetroAchievementsBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OERetroAchievementsBridge.h; path = ../OpenEmuKit/Source/OERetroAchievementsBridge.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1779,6 +1778,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				7733FEC830376AFB005F6159 /* Recovered References */,
 			);
 			name = Mednafen;
 			sourceTree = "<group>";
@@ -1866,6 +1866,16 @@
 			children = (
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		7733FEC830376AFB005F6159 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				OE0MDFN0FILEREF000000001 /* rcheevos_build.c */,
+				OE0MDFN0FILEREF000000002 /* OERetroAchievementsTransport.m */,
+				OE0MDFN0FILEREF000000003 /* OERetroAchievementsBridge.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		8715A8EE1D6E41B7003ADE26 /* cheat_formats */ = {
@@ -4766,6 +4776,7 @@
 					"$(SRCROOT)/libsndfile",
 					"$(PROJECT_DIR)/libsndfile",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-fwrapv",
 					"-DHAVE_MKDIR",
@@ -4838,6 +4849,7 @@
 					"$(SRCROOT)/libsndfile",
 					"$(PROJECT_DIR)/libsndfile",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-fwrapv",
 					"-DHAVE_MKDIR",
@@ -4978,6 +4990,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};
@@ -4988,6 +5001,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};

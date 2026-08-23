@@ -41,15 +41,23 @@ extension OEDBRom: CachedLastPlayedInfoItem {}
 @objcMembers
 class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     
-    static let websiteAddress = "https://github.com/nickybmon/OpenEmu-Silicon"
-    static let userGuideAddress = "https://github.com/nickybmon/OpenEmu-Silicon/wiki"
-    static let releaseNotesAddress = "https://github.com/nickybmon/OpenEmu-Silicon/releases"
-    static let feedbackAddress = "https://github.com/nickybmon/OpenEmu-Silicon/issues/new/choose"
-    static let bugReportAddress = "https://github.com/nickybmon/OpenEmu-Silicon/issues/new"
+    static let websiteAddress = "https://github.com/anhani/OpenEmuARM"
+    static let userGuideAddress = "https://github.com/anhani/OpenEmuARM/wiki"
+    static let releaseNotesAddress = "https://github.com/anhani/OpenEmuARM/releases"
+    static let feedbackAddress = "https://github.com/anhani/OpenEmuARM/issues/new/choose"
+    static let bugReportAddress = "https://github.com/anhani/OpenEmuARM/issues/new"
     private static let playStation2SystemAvailabilityMigrationKey = "playStation2SystemAvailabilityMigration"
     private static let neoGeoSystemAvailabilityMigrationKey = "neoGeoSystemAvailabilityMigration"
+    private static let neoGeoSystemAvailabilityMigrationV2Key = "neoGeoSystemAvailabilityMigrationV2"
+    private static let playStationSystemAvailabilityMigrationKey = "playStationSystemAvailabilityMigration"
     private static let wiiSystemAvailabilityMigrationKey = "wiiSystemAvailabilityMigration"
     private static let wiiRVZSystemMigrationKey = "wiiRVZSystemMigration"
+    private static let bundledCoreRefreshRevision = "20260823.1"
+    private static let bundledCoreRefreshBundleNames = [
+        "Stella", "CrabEmu", "FCEU", "Gambatte", "GenesisPlus", "Nestopia",
+        "SNES9x", "mGBA", "Mednafen", "Mupen64Plus", "BSNES", "DeSmuME",
+        "FBNeo", "ARMSX2"
+    ]
 
     @IBOutlet weak var fileMenu: NSMenu!
     @IBOutlet weak var helpMenu: NSMenu!
@@ -170,10 +178,13 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
             RAHardcoreEnabledKey: true,
         ])
         
-        // Don't let an old setting override automatically checking for app updates.
-        if let automaticChecksEnabled = UserDefaults.standard.object(forKey: "SUEnableAutomaticChecks") as? Bool, automaticChecksEnabled == false {
-            UserDefaults.standard.removeObject(forKey: "SUEnableAutomaticChecks")
-        }
+        // App updates are paused until a stable public update channel is ready.
+        // Keep the menu item in the interface so it can be re-enabled later.
+        UserDefaults.standard.set(false, forKey: "SUEnableAutomaticChecks")
+
+        // Bundled portable cores must be refreshed before OECorePlugin is
+        // registered, otherwise stale Application Support copies take priority.
+        refreshBundledCoresIfNeeded()
 
         // Trigger Objective-C +initialize methods in these classes.
         _ = OEControllerDescription.self
@@ -181,6 +192,8 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
         OECorePlugin.registerClass()
         OESystemPlugin.registerClass()
         BIOSFile.synchronizeFBNeoBIOS()
+        BIOSFile.synchronizeARMSX2BIOS()
+        synchronizeARMSX2MetalResources()
         
         // Reset preferences for default cores when migrating to 2.0.3. This is an attempt at cleanup after 9d5d696d07fe651f44f16f8bf8b98c87d90fe53f and d36e9ad4b7097f21ffbbe32d9cea3b72a390bc0f and for getting as many users as possible onto mGBA.
         OEVersionMigrationController.default.addMigratorTarget(self, selector: #selector(migrationRemoveCoreDefaults), forVersion: "2.0.3")
@@ -189,7 +202,126 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    /// ARMSX2 loads Metal shader libraries from its persistent system folder,
+    /// rather than directly from the core bundle. Seed or refresh those files
+    /// at launch so a newly distributed app can start PS2 games on its first
+    /// run, without relying on files from a previous developer installation.
+    private func synchronizeARMSX2MetalResources() {
+        guard let core = OECorePlugin.corePlugin(bundleIdentifier: "org.openemu.ARMSX2") else { return }
+
+        let fileManager = FileManager.default
+        let sourceDirectory = core.url
+            .appendingPathComponent("Contents/Resources/resources", isDirectory: true)
+        let destinationDirectory = URL.oeApplicationSupportDirectory
+            .appendingPathComponent("ARMSX2/system/pcsx2/resources", isDirectory: true)
+        let resourceNames = ["default.metallib", "Metal22.metallib", "Metal23.metallib"]
+
+        guard fileManager.fileExists(atPath: sourceDirectory.path) else { return }
+
+        do {
+            try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
+
+            for name in resourceNames {
+                let source = sourceDirectory.appendingPathComponent(name, isDirectory: false)
+                let destination = destinationDirectory.appendingPathComponent(name, isDirectory: false)
+                guard fileManager.fileExists(atPath: source.path) else { continue }
+
+                if fileManager.fileExists(atPath: destination.path) {
+                    if fileManager.contentsEqual(atPath: source.path, andPath: destination.path) {
+                        continue
+                    }
+                    try fileManager.removeItem(at: destination)
+                }
+
+                try fileManager.copyItem(at: source, to: destination)
+            }
+
+            // GameIndex.yaml is next to the core's resources directory, but
+            // PCSX2 looks for it in the persistent resources folder.
+            let gameIndexSource = core.url
+                .appendingPathComponent("Contents/Resources/GameIndex.yaml", isDirectory: false)
+            let gameIndexDestination = destinationDirectory
+                .appendingPathComponent("GameIndex.yaml", isDirectory: false)
+            if fileManager.fileExists(atPath: gameIndexSource.path),
+               !fileManager.fileExists(atPath: gameIndexDestination.path) {
+                try fileManager.copyItem(at: gameIndexSource, to: gameIndexDestination)
+            }
+        } catch {
+            DLog("Could not synchronize ARMSX2 Metal resources: \(error)")
+        }
+    }
+
+    /// Updates the portable-release cores before discovery, so an older
+    /// Application Support copy cannot hide the version shipped in the app.
+    /// FBNeo and ARMSX2 are copied from their previously validated bundles;
+    /// they are not rebuilt or otherwise modified by this migration.
+    private func refreshBundledCoresIfNeeded() {
+        guard let builtInPluginsURL = Bundle.main.builtInPlugInsURL else { return }
+
+        let fileManager = FileManager.default
+        let sourceDirectory = builtInPluginsURL.appendingPathComponent("Cores", isDirectory: true)
+        let destinationDirectory = URL.oeApplicationSupportDirectory
+            .appendingPathComponent("Cores", isDirectory: true)
+
+        guard fileManager.fileExists(atPath: sourceDirectory.path) else { return }
+
+        do {
+            try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
+
+            for name in Self.bundledCoreRefreshBundleNames {
+                let source = sourceDirectory.appendingPathComponent("\(name).oecoreplugin", isDirectory: true)
+                let sourcePlist = source.appendingPathComponent("Contents/Info.plist", isDirectory: false)
+                let destination = destinationDirectory.appendingPathComponent("\(name).oecoreplugin", isDirectory: true)
+                let destinationPlist = destination.appendingPathComponent("Contents/Info.plist", isDirectory: false)
+
+                guard
+                    let sourceData = try? Data(contentsOf: sourcePlist),
+                    let sourceInfo = try? PropertyListSerialization.propertyList(from: sourceData, format: nil) as? [String: Any],
+                    sourceInfo["OEBundledCoreRefreshRevision"] as? String == Self.bundledCoreRefreshRevision
+                else { continue }
+
+                let installedRevision: String?
+                if let destinationData = try? Data(contentsOf: destinationPlist),
+                   let destinationInfo = try? PropertyListSerialization.propertyList(from: destinationData, format: nil) as? [String: Any]
+                {
+                    installedRevision = destinationInfo["OEBundledCoreRefreshRevision"] as? String
+                } else {
+                    installedRevision = nil
+                }
+
+                guard installedRevision != Self.bundledCoreRefreshRevision else { continue }
+
+                let staged = destinationDirectory.appendingPathComponent(".\(name)-bundled-core-refresh.oecoreplugin", isDirectory: true)
+                if fileManager.fileExists(atPath: staged.path) {
+                    try fileManager.removeItem(at: staged)
+                }
+
+                try fileManager.copyItem(at: source, to: staged)
+
+                let signingTask = Process()
+                signingTask.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
+                signingTask.arguments = ["--force", "--deep", "--sign", "-", staged.path]
+                try signingTask.run()
+                signingTask.waitUntilExit()
+
+                guard signingTask.terminationStatus == 0 else {
+                    try? fileManager.removeItem(at: staged)
+                    DLog("Could not sign refreshed bundled core: \(name)")
+                    continue
+                }
+
+                if fileManager.fileExists(atPath: destination.path) {
+                    try fileManager.removeItem(at: destination)
+                }
+                try fileManager.moveItem(at: staged, to: destination)
+                DLog("Refreshed bundled core: \(name)")
+            }
+        } catch {
+            DLog("Could not refresh bundled cores: \(error)")
+        }
+    }
+
     deinit {
         NSUserDefaultsController.shared.removeObserver(self, forKeyPath: "values.\(OEAppearance.Application.key)", context: &appearancePrefChangedKVOContext)
     }
@@ -718,6 +850,24 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
             let system = OEDBSystem.system(for: plugin, in: context)
             system.isEnabled = true
             defaults.set(true, forKey: Self.neoGeoSystemAvailabilityMigrationKey)
+        }
+
+        // Reapply the Neo Geo availability migration once for libraries that
+        // recorded its earlier migration before FBNeo was bundled. Also enable
+        // PlayStation once, matching the default availability of the other
+        // supported libraries. Later user changes remain untouched.
+        if !defaults.bool(forKey: Self.neoGeoSystemAvailabilityMigrationV2Key),
+           let plugin = OESystemPlugin.systemPlugin(forIdentifier: "openemu.system.neogeo") {
+            let system = OEDBSystem.system(for: plugin, in: context)
+            system.isEnabled = true
+            defaults.set(true, forKey: Self.neoGeoSystemAvailabilityMigrationV2Key)
+        }
+
+        if !defaults.bool(forKey: Self.playStationSystemAvailabilityMigrationKey),
+           let plugin = OESystemPlugin.systemPlugin(forIdentifier: "openemu.system.psx") {
+            let system = OEDBSystem.system(for: plugin, in: context)
+            system.isEnabled = true
+            defaults.set(true, forKey: Self.playStationSystemAvailabilityMigrationKey)
         }
 
         // Older builds bundled the Wii plugin without its console metadata. Those

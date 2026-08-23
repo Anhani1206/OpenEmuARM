@@ -154,7 +154,6 @@
 		45DCC347335EDA60A562E04E /* flycast/core/deps/xbrz/xbrz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6282E59C05AB86A142551B96 /* flycast/core/deps/xbrz/xbrz.cpp */; };
 		464E446E3F3677C9AA0EEF56 /* flycast/core/hw/naomi/naomi_flashrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C82419B952DE196036F3A707 /* flycast/core/hw/naomi/naomi_flashrom.cpp */; };
 		46A14332C34E6C4ACDE82607 /* OpenEmu/FlycastGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 58CAF6EDD2FC9A4A0D718B0B /* OpenEmu/FlycastGameCore.mm */; };
-		51DB143EB47C431B9651C2F3511BDB7B /* OpenEmu/flycast_platform_stubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE0BF19A98E54E489398F180911453B6 /* OpenEmu/flycast_platform_stubs.cpp */; };
 		4846C5DE96E2AA54FA4E8391 /* Sort.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F85AAFCAB3E26662649BD2 /* Sort.c */; };
 		4AC73BEEAA7285D885926367 /* flycast/core/deps/libzip/lib/zip_error_to_str.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CC4DCFC8F5B2BBAD5C33004 /* flycast/core/deps/libzip/lib/zip_error_to_str.c */; };
 		4B54CAAEFCE97A0414C5DD16 /* flycast/core/deps/libchdr/deps/zstd-1.5.6/lib/common/fse_decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 76A384E7E78BEE3CEAD0E316 /* flycast/core/deps/libchdr/deps/zstd-1.5.6/lib/common/fse_decompress.c */; };
@@ -175,6 +174,7 @@
 		50EAEA1310CAF1970C86AF1D /* flycast/core/deps/libzip/lib/zip_progress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2387FE8E2FBD19BECBE6DA67 /* flycast/core/deps/libzip/lib/zip_progress.c */; };
 		515F28967B163345D4BA7BFD /* zstd_compress_superblock.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CB34E5FCADD5F4A8AB7F65F /* zstd_compress_superblock.c */; };
 		51CEB52863F0BB5B18A1890F /* flycast/core/hw/aica/dsp_x64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81348DF64B7EB6C5875AC089 /* flycast/core/hw/aica/dsp_x64.cpp */; };
+		51DB143EB47C431B9651C2F3511BDB7B /* OpenEmu/flycast_platform_stubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE0BF19A98E54E489398F180911453B6 /* OpenEmu/flycast_platform_stubs.cpp */; };
 		5232C9D31A10FADAD6F2AEB8 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		5248456CF1026238FAC1CD71 /* 7zCrcOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A43FC7CA94EA00130C788B6 /* 7zCrcOpt.c */; };
 		52878999FA757131A065C535 /* flycast/core/deps/picotcp/modules/pico_socket_udp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C3CD3612D62B86BBA3CE568 /* flycast/core/deps/picotcp/modules/pico_socket_udp.c */; };
@@ -689,7 +689,6 @@
 		584372FF193A3E8A5AE4DE9B /* flycast/core/rend/gles/gles.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = flycast/core/rend/gles/gles.cpp; sourceTree = SOURCE_ROOT; };
 		587FBD6A49C74C638312502A /* flycast/core/deps/vixl/aarch64/instructions-aarch64.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "flycast/core/deps/vixl/aarch64/instructions-aarch64.cc"; sourceTree = SOURCE_ROOT; };
 		58CAF6EDD2FC9A4A0D718B0B /* OpenEmu/FlycastGameCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenEmu/FlycastGameCore.mm; sourceTree = SOURCE_ROOT; };
-		FE0BF19A98E54E489398F180911453B6 /* OpenEmu/flycast_platform_stubs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpenEmu/flycast_platform_stubs.cpp; sourceTree = SOURCE_ROOT; };
 		59C5F0AA64461A3A6867D86A /* flycast/core/deps/libzip/lib/zip_fread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = flycast/core/deps/libzip/lib/zip_fread.c; sourceTree = SOURCE_ROOT; };
 		59DAAF5327257C75670DB79F /* flycast/core/rend/gles/postprocess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = flycast/core/rend/gles/postprocess.cpp; sourceTree = SOURCE_ROOT; };
 		5A1D79D25BB2C3C4304B3E02 /* flycast/core/deps/libzip/lib/zip_set_file_compression.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = flycast/core/deps/libzip/lib/zip_set_file_compression.c; sourceTree = SOURCE_ROOT; };
@@ -960,6 +959,7 @@
 		FCDCE7D95BB99B91F1939F3C /* flycast/core/deps/libchdr/src/libchdr_chd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = flycast/core/deps/libchdr/src/libchdr_chd.c; sourceTree = SOURCE_ROOT; };
 		FD6AA4EF6E6BC5112A033A29 /* flycast/core/hw/naomi/m1cartridge.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = flycast/core/hw/naomi/m1cartridge.cpp; sourceTree = SOURCE_ROOT; };
 		FD6BC1ECF675CA48AA889FB1 /* flycast/core/deps/picotcp/modules/pico_fragments.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = flycast/core/deps/picotcp/modules/pico_fragments.c; sourceTree = SOURCE_ROOT; };
+		FE0BF19A98E54E489398F180911453B6 /* OpenEmu/flycast_platform_stubs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpenEmu/flycast_platform_stubs.cpp; sourceTree = SOURCE_ROOT; };
 		FF512D10D2ABFE0FC433BD61 /* flycast/core/archive/rzip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = flycast/core/archive/rzip.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -2118,7 +2118,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/OpenEmu/Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores";
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-Wno-shorten-64-to-32",
@@ -2327,7 +2327,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/OpenEmu/Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores";
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-Wno-shorten-64-to-32",

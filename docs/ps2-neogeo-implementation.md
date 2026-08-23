@@ -63,7 +63,18 @@ O vídeo preto inicial foi resolvido no caminho Metal do ARMSX2:
   confirmou que callbacks assíncronos nesse ponto prejudicam o ritmo de vídeo
   e áudio.
 - `default.metallib`, `Metal22.metallib` e `Metal23.metallib` são atualizados
-  nos recursos persistentes de ARMSX2 antes do boot.
+  nos recursos persistentes de ARMSX2 antes do boot. O aplicativo faz essa
+  sincronização automaticamente na primeira execução, usando os arquivos
+  presentes no bundle do core; uma distribuição nova não depende mais de uma
+  instalação de desenvolvimento anterior.
+- `GameIndex.yaml` também é copiado para os recursos persistentes no primeiro
+  arranque. Sem ele, alguns jogos podem falhar com o alerta genérico de que o
+  emulador não conseguiu carregar a ROM, apesar de o core e a BIOS estarem
+  instalados corretamente.
+- Uma BIOS PS2 importada em **System Files** é sincronizada para
+  `ARMSX2/system/pcsx2/bios`, que é onde o emulador procura o firmware. Isso
+  evita que uma instalação nova tenha a BIOS marcada como disponível no painel,
+  mas falhe ao iniciar o jogo.
 
 No log, uma sessão funcional deve chegar a mensagens equivalentes a:
 
@@ -167,6 +178,41 @@ As ROMs Neo Geo devem permanecer em seu `.zip` original, como no Arcade. Não
 extraia os arquivos: o FBNeo usa os nomes internos do romset para localizar as
 dependências.
 
+### BIOS com o core FBNeo nativo
+
+O bundle nativo `org.openemu.FBNeo` não declara `neogeo.zip` no seu próprio
+`Info.plist`. O aplicativo adiciona essa exigência de compatibilidade quando
+esse core está instalado: **System Files** mostra **Neo Geo BIOS (FBNeo)** e o
+início de um jogo Neo Geo é interrompido de forma clara se o arquivo estiver
+ausente. A BIOS é importada para `BIOS/fbneo/neogeo.zip` e então sincronizada
+para o diretório de sistema usado pelo core nativo.
+
+Essa regra evita que uma distribuição com FBNeo nativo pareça pronta, mas
+falhe depois com uma mensagem pouco clara de ROM set. Não a remova ao alterar
+o fluxo de cores ou de BIOS.
+
+### Distribuição validada
+
+Em 21 de agosto de 2026, foi validada uma distribuição arm64 que contém:
+
+- `FBNeo.oecoreplugin`, usado por Arcade e Neo Geo;
+- `ARMSX2.oecoreplugin`, usado por PlayStation 2;
+- os plugins de sistema Neo Geo e PlayStation 2;
+- a entrada **Neo Geo BIOS (FBNeo)** em **System Files**, fornecida pela
+  compatibilidade acima.
+
+PokeMini e Commodore 64 não fazem parte dessa distribuição. O pacote deve ser
+criado a partir de um Archive novo, pois acrescentar os cores diretamente ao
+arquivo ZIP sem criar um Archive posterior deixa as mudanças do aplicativo de
+fora.
+
+O ZIP de referência local é:
+
+`Distribution/OpenEmu-ARM64-PS2-NeoGeo-BIOS-20260821-172112/OpenEmu-ARM64-PS2-NeoGeo-BIOS.zip`
+
+Ele foi testado com sucesso. A BIOS `neogeo.zip` não é incluída no ZIP: deve
+ser importada pelo utilizador em **Preferences > System Files**.
+
 
 ### Títulos e capas
 
@@ -207,3 +253,48 @@ de madeira da tela de controles quanto a aparência compacta do ícone lateral.
 
 Para os detalhes de instalação do core FBNeo, consulte
 [fbneo-neogeo.md](fbneo-neogeo.md).
+
+## Distribuição portátil do PlayStation 2
+
+O binário `armsx2_libretro.dylib` é compilado com bibliotecas do Homebrew. Uma
+distribuição que mantenha caminhos como `/opt/homebrew/opt/...` só funciona em
+máquinas que também tenham essas bibliotecas instaladas, ainda que a BIOS e a
+ROM do PS2 estejam corretas. O sintoma no OpenEmu é a mensagem genérica de que
+a ROM não pôde ser carregada.
+
+Antes de criar o ZIP final, execute:
+
+```sh
+./Scripts/bundle-armsx2-dependencies.sh \
+  "<OpenEmu.app>/Contents/PlugIns/Cores/ARMSX2.oecoreplugin"
+codesign --force --deep --sign - "<OpenEmu.app>"
+```
+
+O script copia a cadeia de bibliotecas Homebrew para
+`ARMSX2.oecoreplugin/Contents/Frameworks`, altera os caminhos de carregamento
+para essas cópias e assina o core. A assinatura do aplicativo completo é
+reaplicada em seguida.
+
+O fluxo oficial `Scripts/release.sh` executa essa sequência automaticamente
+depois do Archive: compila ARMSX2 em Release, substitui o core no Archive e
+executa `bundle-armsx2-dependencies.sh`. Caso a entrada PlayStation 2 ou o
+core Release esteja ausente, o release falha em vez de publicar um aplicativo
+com PS2 incompleto.
+
+Verificação obrigatória antes de distribuir:
+
+```sh
+otool -L "<OpenEmu.app>/Contents/PlugIns/Cores/ARMSX2.oecoreplugin/Contents/Resources/armsx2_libretro.dylib" \
+  | grep '/opt/homebrew' && exit 1 || true
+codesign --verify --deep --strict --verbose=2 "<OpenEmu.app>"
+```
+
+Em 21 de agosto de 2026, o pacote portátil de referência foi criado em
+`Distribution/OpenEmu-ARM64-Portable-PS2-v2-20260821-204923/`. Ele inclui as
+dependências do PS2, inclusive as dependências `@rpath` transitivas como
+`libsharpyuv.0.dylib`, continua excluindo PokeMini e Commodore 64 e pode ser
+copiado para `/Applications` em outro Mac Apple Silicon sem instalar Homebrew.
+
+No primeiro arranque do PS2 pode surgir um flash rosa muito breve, antes do
+primeiro frame do jogo. Foi validado como transitório e não afeta a execução;
+fica registrado como refinamento visual futuro, não como bloqueio de release.

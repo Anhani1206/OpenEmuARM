@@ -658,7 +658,23 @@ extension OSLog {
             self.gameCore.setCheat(cheatCode, setType: type, setEnabled: enabled)
         }
     }
-    
+
+    public func readableMemoryRegions(completionHandler block: @escaping ([[String: Any]]) -> Void) {
+        gameCore.perform {
+            let regions = self.gameCore.readableMemoryRegions()
+            let dictionaries: [[String: Any]] = regions.map { region in
+                [
+                    "name": region.name,
+                    "address": region.address,
+                    "addressBytes": region.addressBytes,
+                    "minDataBytes": region.minDataBytes,
+                    "data": region.data,
+                ]
+            }
+            block(dictionaries)
+        }
+    }
+
     public func setDisc(_ discNumber: UInt) {
         gameCore.perform {
             self.gameCore.setDisc(discNumber)

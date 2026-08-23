@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>OEBundledCoreRefreshRevision</key>
+	<string>20260822.2</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -119,6 +121,10 @@
 			<key>OEGameCoreRequiresFiles</key>
 			<true/>
 			<key>OEGameCoreSupportsMultipleDiscs</key>
+			<true/>
+			<key>OEGameCoreSupportsCheatCode</key>
+			<true/>
+			<key>OEGameCoreSupportsCheatSearch</key>
 			<true/>
 			<key>OEGameCoreSupportsRetroAchievements</key>
 			<true/>

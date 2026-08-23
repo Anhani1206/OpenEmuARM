@@ -40,6 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)canHandleDevice:(IOHIDDeviceRef)device;
 
+/// True only for a keyboard that is not also a gamepad or joystick.
++ (BOOL)deviceIsKeyboardOnly:(IOHIDDeviceRef)device;
+
 - (instancetype)initWithDeviceDescription:(nullable OEDeviceDescription *)deviceDescription NS_UNAVAILABLE;
 - (instancetype)initWithIOHIDDevice:(IOHIDDeviceRef)aDevice deviceDescription:(nullable OEDeviceDescription *)deviceDescription NS_DESIGNATED_INITIALIZER;
 

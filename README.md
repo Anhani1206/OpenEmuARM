@@ -1,7 +1,7 @@
 # OpenEmuARM — Native Apple Silicon Port
 
 <p align="center">
-  <img width="301" height="91" alt="logo" src="https://github.com/user-attachments/assets/logo.png" />
+  <img width="301" height="91" alt="logo" src="https://github.com/Anhani1206/OpenEmuARM/blob/fdc62606a36fc1c32383c0a3a035601ee2bdc543/docs/images/Logo.png" />
 </p>
 
 <p align="center">

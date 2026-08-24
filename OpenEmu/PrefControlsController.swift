@@ -369,17 +369,7 @@ final class PrefControlsController: NSViewController {
         let imageViewLayer = controllerContainerView.layer
         
         let newControllerView = ControllerImageView(frame: controllerContainerView.bounds)
-        if systemController?.systemIdentifier == "openemu.system.ps2",
-           let image = systemController?.controllerImage.copy() as? NSImage {
-            // The PS2 artwork has the same 1×/2× asset structure as the PS1 artwork,
-            // but its system plug-in reports a smaller logical drawing area. Keep the
-            // controller visual consistent with PlayStation in the Controls preference.
-            image.size = NSSize(width: 1000, height: 1000)
-            newControllerView.image = image
-            newControllerView.centersImageVertically = true
-        } else {
-            newControllerView.image = systemController?.controllerImage
-        }
+        newControllerView.image = systemController?.controllerImage
         newControllerView.imageMask = systemController?.controllerImageMask
         newControllerView.keyPositions = systemController?.controllerKeyPositions
         newControllerView.target = self

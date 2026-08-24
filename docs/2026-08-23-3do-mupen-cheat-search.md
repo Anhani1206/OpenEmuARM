@@ -34,3 +34,31 @@ O ZIP gerado a partir do archive do Xcode foi validado e contém o app com 35 co
 - Opera: ausente
 - Mupen64Plus Cheat Search: habilitado
 - Assinatura: ad-hoc; em outro Mac pode ser necessário usar **Abrir** pelo menu contextual na primeira execução.
+
+## Alteração de 24 de agosto de 2026 — controles do Wii
+
+O controle exibido nas preferências do Wii foi atualizado usando `Wii-controles-apenas-xadrez-removido.png`. A imagem mantém a proporção do asset original, usa os tamanhos 1× e 2× (500×500 e 1000×1000) e preserva transparência real.
+
+Uma cópia dos assets substituídos foi criada em:
+
+`Backups/2026-08-24-wii-controller-image-v3/`
+
+O projeto foi compilado com sucesso após a alteração.
+
+## Archive e ZIP de 24 de agosto de 2026
+
+O Archive foi criado pelo Xcode em:
+
+`/Users/marceloanhani/Library/Developer/Xcode/Archives/2026-08-24/OpenEmu 24-08-2026, 13.40.xcarchive`
+
+O ZIP foi montado a partir desse Archive, com os 35 cores portáteis disponíveis:
+
+- Pacote: `Releases/OpenEmu-Silicon-20260824-archive.zip`
+- Backup: `Backups/2026-08-24-wii-controller-image-v3/OpenEmu-Silicon-20260824-archive.zip`
+- SHA-256: `11a7cf999e132a68d46b3b63522584049466a8f9c57fb9460f469272ad5a8dd9`
+- Tamanho: aproximadamente 224 MB
+- App principal: universal Intel + arm64
+- Cores incluídos: 35
+- Opera: ausente
+
+O teste estrutural do ZIP foi concluído sem erros e a assinatura ad-hoc foi validada no app montado antes da compactação. Em outro Mac, pode ser necessário usar **Abrir** pelo menu contextual na primeira execução.

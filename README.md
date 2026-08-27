@@ -29,6 +29,9 @@ This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The ap
 - Implemented the option to show the FPS during games, screen position and color.
 - Neo Geo AES / MVS games via Geolith Core
 - Implemented the option to download all the Covers Arts or stop the download for each console.
+- Implemented the option to skip the import of a corrupted rom or stop the import completely.
+- Implementing a button to stop the Game Scanner in addition to pausing.
+
 
 ---
 

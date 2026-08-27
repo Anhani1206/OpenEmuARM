@@ -21,7 +21,7 @@
 
 This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The app runs on macOS 12.0+ and has been tested on macOS Sequoia, macOS 26 (Tahoe) and macOS 27 beta 7 (Golden Gate).
 
-### Recent Updates
+### Recent modifications in relation to the original OpenEmu project
 
 - Sony Playstation 2 (ARMSX2 Core) implemented experimentally.
 - Support for screen rotation for Shoot 'em Up games.

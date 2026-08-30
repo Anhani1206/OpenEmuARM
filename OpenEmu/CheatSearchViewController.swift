@@ -944,7 +944,6 @@ final class CheatSearchViewController: NSViewController {
         }
         
         isRebuildingCombo = true
-        let previousSize = availableDataSizes.isEmpty ? 0 : selectedDataSize
         availableDataSizes = newSizes
         
         dataSizeCombo.removeAllItems()

@@ -34,6 +34,7 @@ final class GameScannerViewController: NSViewController {
     
     @IBOutlet var headlineLabel: NSTextField!
     @IBOutlet var togglePauseButton: GameScannerButton!
+    @IBOutlet var stopButton: GameScannerButton!
     @IBOutlet var progressIndicator: NSProgressIndicator!
     @IBOutlet var statusLabel: NSTextField!
     @IBOutlet var fixButton: TextButton!
@@ -46,6 +47,8 @@ final class GameScannerViewController: NSViewController {
     
     private var itemsRequiringAttention = [ImportOperation]()
     private var itemsFailedImport = [ImportOperation]()
+    private var skipAllImportErrors = false
+    private var skipAllDuplicateImports = false
     private var isScanningDirectory = false
     private var isGameScannerVisible = true // The game scanner view is already visible in SidebarController.xib.
     
@@ -73,6 +76,7 @@ final class GameScannerViewController: NSViewController {
         guard let issuesView = issuesView else { return }
         
         setUpActionsMenu()
+        stopButton.isHidden = true
         
         var item: NSMenuItem!
         let menu = NSMenu()
@@ -194,6 +198,7 @@ final class GameScannerViewController: NSViewController {
             
             fixButton.isHidden = true
             togglePauseButton.isHidden = true
+            stopButton.isHidden = true
             statusLabel.stringValue = NSLocalizedString("Downloading Game DB", comment: "")
             
         } else {
@@ -264,6 +269,10 @@ final class GameScannerViewController: NSViewController {
             }
             
             fixButton.isHidden = shouldHideFixButton
+            let importIsActive = importer.status == .running || importer.status == .paused
+            togglePauseButton.isHidden = !importIsActive
+            stopButton.isHidden = !importIsActive
+            stopButton.isEnabled = importIsActive
             statusLabel.stringValue = status
         }
     }
@@ -272,6 +281,69 @@ final class GameScannerViewController: NSViewController {
         applyButton.isEnabled = itemsRequiringAttention.contains { $0.isChecked }
     }
     
+    private func presentImportErrorChoice(for item: ImportOperation) {
+        importer.pause()
+        
+        let alert = OEAlert()
+        alert.messageText = NSLocalizedString("Could not import ROM.", comment: "Import error choice")
+        alert.informativeText = String(format: NSLocalizedString("The file \"%@\" could not be imported.\n\n%@", comment: "Import error choice"), item.url.lastPathComponent, item.error?.localizedDescription ?? NSLocalizedString("The file is invalid or corrupted.", comment: "Import error choice"))
+        alert.defaultButtonTitle = NSLocalizedString("Skip all ROM", comment: "Skip this and future corrupted ROMs")
+        alert.alternateButtonTitle = NSLocalizedString("Skip ROM", comment: "Skip the corrupted ROM and continue importing")
+        alert.otherButtonTitle = NSLocalizedString("Stop Import", comment: "Stop the complete import queue")
+        
+        guard let window = NSApp.windows.first(where: { $0.windowController is MainWindowController }) else {
+            importer.start()
+            return
+        }
+        
+        alert.beginSheetModal(for: window) { [weak self] result in
+            guard let self else { return }
+            if result == .alertThirdButtonReturn {
+                self.importer.cancel()
+                self.itemsRequiringAttention.removeAll()
+                self.hideGameScannerView(animated: true)
+            } else if result == .alertFirstButtonReturn {
+                self.skipAllImportErrors = true
+                self.importer.start()
+            } else {
+                self.importer.start()
+            }
+            self.updateProgress()
+        }
+    }
+    
+    private func presentDuplicateImportChoice(for item: ImportOperation) {
+        importer.pause()
+
+        let alert = OEAlert()
+        alert.messageText = NSLocalizedString("ROM already exists.", comment: "Duplicate ROM import choice")
+        alert.informativeText = String(format: NSLocalizedString("The file \"%@\" is already in the library. What would you like to do?", comment: "Duplicate ROM import choice"), item.url.lastPathComponent)
+        alert.defaultButtonTitle = NSLocalizedString("Replace ROM", comment: "Replace the existing ROM")
+        alert.alternateButtonTitle = NSLocalizedString("Skip all ROM", comment: "Skip this and future duplicate ROMs")
+        alert.otherButtonTitle = NSLocalizedString("Skip ROM", comment: "Skip this duplicate ROM")
+
+        guard let window = NSApp.windows.first(where: { $0.windowController is MainWindowController }) else {
+            importer.start()
+            return
+        }
+
+        alert.beginSheetModal(for: window) { [weak self] result in
+            guard let self else { return }
+            if result == .alertFirstButtonReturn {
+                item.prepareForReplacement()
+                self.itemsFailedImport.removeAll { $0 === item }
+                self.importer.rescheduleOperation(item)
+                self.importer.start()
+            } else if result == .alertSecondButtonReturn {
+                self.skipAllDuplicateImports = true
+                self.importer.start()
+            } else {
+                self.importer.start()
+            }
+            self.updateProgress()
+        }
+    }
+
     func showGameScannerView(animated: Bool = true) {
         layOutSidebarViews(withVisibleGameScanner: true, animated: animated)
     }
@@ -355,6 +427,28 @@ final class GameScannerViewController: NSViewController {
         dismiss(self)
     }
 
+    @IBAction func stopImport(_ sender: Any?) {
+        guard importer.status != .stopped else { return }
+        
+        importer.pause()
+        
+        let alert = OEAlert()
+        alert.messageText = NSLocalizedString("Do you really want to stop the import?", comment: "")
+        alert.informativeText = NSLocalizedString("This will remove all remaining items from the queue. Items that finished importing will be preserved in your library.", comment: "")
+        alert.defaultButtonTitle = NSLocalizedString("Stop Import", comment: "")
+        alert.alternateButtonTitle = NSLocalizedString("Resume", comment: "")
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            importer.cancel()
+            itemsRequiringAttention.removeAll()
+            hideGameScannerView(animated: true)
+        } else {
+            importer.start()
+        }
+        
+        updateProgress()
+    }
+    
     @IBAction func buttonAction(_ sender: Any?) {
         
         if NSEvent.modifierFlags.contains(.option) || importer.status == .stopped && !itemsRequiringAttention.isEmpty {
@@ -503,6 +597,8 @@ extension GameScannerViewController: ROMImporterDelegate {
     
     func romImporterDidCancel(_ importer: ROMImporter) {
         DLog("")
+        skipAllImportErrors = false
+        skipAllDuplicateImports = false
         updateProgress()
     }
     
@@ -514,6 +610,8 @@ extension GameScannerViewController: ROMImporterDelegate {
     func romImporterDidFinish(_ importer: ROMImporter) {
         
         DLog("")
+        skipAllImportErrors = false
+        skipAllDuplicateImports = false
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
             if self.importer.totalNumberOfItems == self.importer.numberOfProcessedItems && !OpenVGDB.shared.isUpdating {
@@ -550,9 +648,21 @@ extension GameScannerViewController: ROMImporterDelegate {
 
                 // Track item that failed import
                 //if item.exitStatus == .errorFatal {
-                if (error as NSError).domain == OEImportErrorDomainFatal || error is OEDiscDescriptorErrors || error is OECUESheetErrors || error is OEDreamcastGDIErrors {
-
+                let nsError = error as NSError
+                let isDuplicateImport = item.romObjectID != nil
+                    || (nsError.domain == OEImportErrorDomainFatal
+                        && (nsError.code == OEImportErrorCode.alreadyInDatabase.rawValue
+                            || nsError.code == OEImportErrorCode.alreadyInDatabaseFileUnreachable.rawValue))
+                if isDuplicateImport {
                     itemsFailedImport.append(item)
+                    if !skipAllDuplicateImports {
+                        presentDuplicateImportChoice(for: item)
+                    }
+                } else if nsError.domain == OEImportErrorDomainFatal || error is OEDiscDescriptorErrors || error is OECUESheetErrors || error is OEDreamcastGDIErrors {
+                    itemsFailedImport.append(item)
+                    if !skipAllImportErrors {
+                        presentImportErrorChoice(for: item)
+                    }
                 }
             }
         }

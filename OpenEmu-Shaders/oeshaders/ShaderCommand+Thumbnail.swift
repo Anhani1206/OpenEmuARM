@@ -103,7 +103,7 @@ extension OEShaders.Shader {
 
             let ss = Screenshot(device: dev)
             guard let outRep = ss.applyFilterChain(fi, to: bufferTexture, commandBuffer: cb) else {
-                FileHandle.standardError.write("Unable to generate image.\n".data(using: .utf8)!)
+                FileHandle.standardError.write(Data("Unable to generate image.\n".utf8))
                 throw ExitCode.failure
             }
             

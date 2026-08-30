@@ -61,6 +61,7 @@ class ShaderPresetModelTests: XCTestCase {
         try! store.save(ShaderPresetData(name: "shader 2", shader: "MAME", parameters: [:], id: "id2"))
         try! store.save(ShaderPresetData(name: "shader 3", shader: "MAME", parameters: [:], id: "id3"))
         try! store.save(ShaderPresetData(name: "shader 4", shader: "Retro", parameters: [:], id: "id4"))
+        // swiftlint:enable force_try
 
         let shaders = ShadersModel(models:
             OEShaderModel(name: "CRT"),

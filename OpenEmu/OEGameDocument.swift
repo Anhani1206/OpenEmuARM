@@ -27,6 +27,7 @@ import IOKit.pwr_mgt
 import OpenEmuBase
 import OpenEmuSystem
 import OpenEmuKit
+import UniformTypeIdentifiers
 import UserNotifications
 
 let OEGameVolumeKey = "volume"
@@ -743,12 +744,13 @@ final class OEGameDocument: NSDocument {
                 // Whenever the RA session state flips, re-push the hardcore enforcement value too —
                 // signing out should drop hardcore enforcement (see #445), signing in should pick
                 // up the user's preference.
+                let weakDocument = self
                 self.raCredentialObserver = NotificationCenter.default.addObserver(
                     forName: .OERACredentialsDidChange,
                     object: nil,
                     queue: .main
-                ) { [weak self] note in
-                    guard let self = self else { return }
+                ) { [weak weakDocument] note in
+                    guard let self = weakDocument else { return }
                     let token    = note.userInfo?[RACredentialsTokenKey]    as? String
                     let username = note.userInfo?[RACredentialsUsernameKey] as? String
                     self.gameCoreManager?.setRetroAchievementsToken(token, username: username)
@@ -764,8 +766,8 @@ final class OEGameDocument: NSDocument {
                     forName: .OERAHardcoreDidChange,
                     object: nil,
                     queue: .main
-                ) { [weak self] note in
-                    guard let self = self else { return }
+                ) { [weak weakDocument] note in
+                    guard let self = weakDocument else { return }
                     let enabled = (note.userInfo?[OEHardcoreEnabledKey] as? Bool) ?? self.isHardcoreModeEnabled
                     self.handleHardcoreToggle(enabled: enabled)
                 }
@@ -876,7 +878,13 @@ final class OEGameDocument: NSDocument {
         let systemIdentifier = system.systemIdentifier
         var validPlugins = OECorePlugin.corePlugins(forSystemIdentifier: systemIdentifier)
         if systemIdentifier == "openemu.system.neogeo" {
-            validPlugins.removeAll { $0.bundleIdentifier != "org.openemu.FBNeo" }
+            let isNeoCartridge = romFileURL?.pathExtension.caseInsensitiveCompare("neo") == .orderedSame
+            validPlugins.removeAll { plugin in
+                if isNeoCartridge {
+                    return !plugin.displayName.localizedCaseInsensitiveContains("geolith")
+                }
+                return plugin.bundleIdentifier != "org.openemu.FBNeo"
+            }
         }
         if systemIdentifier == "openemu.system.3do" {
             validPlugins.removeAll { $0.bundleIdentifier == "org.openemu.Opera" }
@@ -909,9 +917,13 @@ final class OEGameDocument: NSDocument {
         // FBNeo needs neogeo.zip for Neo Geo games, but the native core bundle
         // does not advertise it in its Info.plist. Use the host-side metadata
         // so a missing BIOS is reported before the core starts.
-        if systemPlugin.systemIdentifier == "openemu.system.neogeo",
-           corePlugin.bundleIdentifier == "org.openemu.FBNeo" {
-            return BIOSFile.requiredFilesAvailable(forSystemIdentifier: [BIOSFile.fbNeoBIOSRequiredFile])
+        if systemPlugin.systemIdentifier == "openemu.system.neogeo" {
+            if corePlugin.bundleIdentifier == "org.openemu.FBNeo" {
+                return BIOSFile.requiredFilesAvailable(forSystemIdentifier: [BIOSFile.fbNeoBIOSRequiredFile])
+            }
+            if corePlugin.displayName.localizedCaseInsensitiveContains("geolith") {
+                return BIOSFile.requiredFilesAvailable(forSystemIdentifier: BIOSFile.geolithBIOSRequiredFiles)
+            }
         }
 
         // ARMSX2 declares its PS2 BIOS files but does not opt into the normal
@@ -2083,7 +2095,7 @@ final class OEGameDocument: NSDocument {
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         panel.canCreateDirectories = false
-        panel.allowedFileTypes = validExtensions
+        panel.allowedContentTypes = validExtensions.compactMap { UTType(filenameExtension: $0) }
         
         panel.beginSheetModal(for: gameWindowController!.window!) { result in
             guard

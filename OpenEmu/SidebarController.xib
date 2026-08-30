@@ -169,6 +169,20 @@
                                 <action selector="buttonAction:" target="juh-5x-f5U" id="o8W-6K-ddm"/>
                             </connections>
                         </button>
+                        <button hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LzR-stop-01" customClass="GameScannerButton" customModule="OpenEmu" customModuleProvider="target">
+                            <rect key="frame" x="168" y="22" width="26" height="30"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="26" id="LzR-stop-h01"/>
+                                <constraint firstAttribute="width" constant="26" id="LzR-stop-w01"/>
+                            </constraints>
+                            <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="NSStopProgressFreestandingTemplate" imagePosition="only" alignment="center" enabled="NO" inset="2" id="LzR-stop-c01">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system" size="10"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="stopImport:" target="juh-5x-f5U" id="LzR-stop-a01"/>
+                            </connections>
+                        </button>
                         <progressIndicator wantsLayer="YES" maxValue="100" controlSize="small" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="ecg-qx-RWc">
                             <rect key="frame" x="15" y="31" width="150" height="12"/>
                         </progressIndicator>
@@ -197,11 +211,12 @@
                         <constraint firstItem="ecg-qx-RWc" firstAttribute="leading" secondItem="YLv-AD-2L2" secondAttribute="leading" id="POE-Em-cEg"/>
                         <constraint firstItem="vaP-Xa-Oni" firstAttribute="leading" secondItem="YLv-AD-2L2" secondAttribute="leading" id="PvE-Az-4Ie"/>
                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="KwU-gZ-ksn" secondAttribute="trailing" constant="15" id="TAQ-av-hGc"/>
-                        <constraint firstItem="Nvs-ey-EH6" firstAttribute="centerY" secondItem="ecg-qx-RWc" secondAttribute="centerY" id="U6Q-wt-kA9"/>
+                        <constraint firstItem="Nvs-ey-EH6" firstAttribute="centerY" secondItem="YLv-AD-2L2" secondAttribute="centerY" id="U6Q-wt-kA9"/>
                         <constraint firstItem="KwU-gZ-ksn" firstAttribute="leading" secondItem="YLv-AD-2L2" secondAttribute="leading" id="WQM-AP-yyL"/>
-                        <constraint firstItem="Nvs-ey-EH6" firstAttribute="leading" secondItem="ecg-qx-RWc" secondAttribute="trailing" constant="1" id="eN6-OL-Vbk"/>
+                        <constraint firstItem="Nvs-ey-EH6" firstAttribute="leading" secondItem="YLv-AD-2L2" secondAttribute="trailing" constant="4" id="eN6-OL-Vbk"/>
                         <constraint firstItem="YLv-AD-2L2" firstAttribute="leading" secondItem="GEj-BL-eLK" secondAttribute="leading" constant="15" id="oQ5-q7-WOz"/>
-                        <constraint firstAttribute="trailing" secondItem="Nvs-ey-EH6" secondAttribute="trailing" constant="8" id="v8j-Wh-38p"/>
+                        <constraint firstItem="LzR-stop-01" firstAttribute="centerY" secondItem="Nvs-ey-EH6" secondAttribute="centerY" id="LzR-stop-y01"/>
+                        <constraint firstItem="LzR-stop-01" firstAttribute="leading" secondItem="Nvs-ey-EH6" secondAttribute="trailing" constant="2" id="LzR-stop-l01"/>
                     </constraints>
                 </customView>
             </subviews>
@@ -216,6 +231,7 @@
                 <outlet property="sourceListScrollView" destination="JYU-Tk-u7m" id="2Ur-DI-1oj"/>
                 <outlet property="statusLabel" destination="KwU-gZ-ksn" id="Qmg-oQ-LjA"/>
                 <outlet property="togglePauseButton" destination="Nvs-ey-EH6" id="HUz-DO-0vK"/>
+                <outlet property="stopButton" destination="LzR-stop-01" id="LzR-stop-o01"/>
             </connections>
         </viewController>
     </objects>

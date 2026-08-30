@@ -27,7 +27,7 @@ import Metal
 import MetalKit
 @_implementationOnly import os.log
 
-// swiftlint:disable type_body_length
+// swiftlint:disable:next type_body_length
 public final class FilterChain {
     enum InitError: Error {
         case invalidSamplerState
@@ -168,9 +168,8 @@ public final class FilterChain {
     
     /// Used as a fallback image when a look-up texture cannot be loaded.
     private lazy var checkers: MTLTexture = {
-        // swiftlint:disable identifier_name force_try
-        let T0 = UInt32(0xff000000)
-        let T1 = UInt32(0xffffffff)
+        let T0 = UInt32(0xff000000) // swiftlint:disable:this identifier_name
+        let T1 = UInt32(0xffffffff) // swiftlint:disable:this identifier_name
         var checkerboard = [
             T0, T1, T0, T1, T0, T1, T0, T1,
             T1, T0, T1, T0, T1, T0, T1, T0,
@@ -190,7 +189,7 @@ public final class FilterChain {
                             space: CGColorSpaceCreateDeviceRGB(),
                             bitmapInfo: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue)!
         let img = ctx.makeImage()!
-        return try! loader.newTexture(cgImage: img)
+        return try! loader.newTexture(cgImage: img) // swiftlint:disable:this force_try
     }()
     
 #if os(macOS)
@@ -430,7 +429,7 @@ public final class FilterChain {
     }
     
     /// A list of textures to be cleared before rendering begins.
-    var _clearTextures = [MTLTexture]()
+    var _clearTextures = [MTLTexture]() // swiftlint:disable:this identifier_name
     
     private func clearTexturesWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
         guard !_clearTextures.isEmpty else { return }
@@ -548,14 +547,26 @@ public final class FilterChain {
                     rce.setVertexBytes(prepVertex, length: MemoryLayout<Vertex>.stride * 4, index: BufferIndex.positions.rawValue)
                     rce.setRenderPipelineState(pipelineState)
                     rce.setFragmentSamplerState(samplers[.nearest][.edge], index: SamplerIndex.draw.rawValue)
-                    rce.setViewport(MTLViewport(originX: 0, originY: 0, width: Double(texture.width), height: Double(texture.height), znear: 0, zfar: 1))
+                    rce.setViewport(MTLViewport(
+                        originX: 0,
+                        originY: 0,
+                        width: Double(texture.width),
+                        height: Double(texture.height),
+                        znear: 0,
+                        zfar: 1
+                    ))
                     rce.setFragmentTexture(sourceTexture, index: TextureIndex.color.rawValue)
                     rce.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
                     rce.endEncoding()
                 }
             } else {
                 if let bce = commandBuffer.makeBlitCommandEncoder() {
-                    bce.copy(from: sourceTexture, sourceSlice: 0, sourceLevel: 0, sourceOrigin: orig, sourceSize: size,
+                    bce.copy(
+                        from: sourceTexture,
+                        sourceSlice: 0,
+                        sourceLevel: 0,
+                        sourceOrigin: orig,
+                        sourceSize: size,
                              to: texture, destinationSlice: 0, destinationLevel: 0, destinationOrigin: zero)
                     bce.endEncoding()
                 }
@@ -746,8 +757,6 @@ public final class FilterChain {
             
             sourceSize = passSize // capture source size for next pass
             
-            
-            
             let fmt = self.pass[i].format
             if !_frameNeedsAdjustments && i == lastPassIndex && passSize == viewportSize && fmt == .bgra8Unorm {
                 // last pass can render directly to the output render target
@@ -811,8 +820,6 @@ public final class FilterChain {
     
     public func setCompiledShader(_ container: CompiledShaderContainer) throws {
         freeShaderResources()
-        
-        let start = CACurrentMediaTime()
         
         let ss = container.shader
         
@@ -951,12 +958,12 @@ public final class FilterChain {
                 ca.destinationRGBBlendFactor = .oneMinusSourceAlpha
             }
             
-            psd.sampleCount = 1
+            psd.rasterSampleCount = 1
             psd.vertexDescriptor = vd
             
             let options = MTLCompileOptions()
             options.languageVersion = try MTLLanguageVersion(ss.languageVersion)
-            options.fastMathEnabled = true
+            options.mathMode = .fast
             do {
                 let lib = try device.makeLibrary(source: pass.vertexSource, options: options)
                 psd.vertexFunction = lib.makeFunction(name: "main0")
@@ -996,8 +1003,6 @@ public final class FilterChain {
         for pass in ss.passes {
             self.pass[pass.index].hasFeedback = pass.isFeedback
         }
-        
-        let end = CACurrentMediaTime() - start
         
         loadLuts(container)
         hasShader = true
@@ -1142,7 +1147,15 @@ extension FilterChain {
     }
     
     @frozen @usableFromInline struct Uniforms {
-        static let empty: Uniforms = .init(projectionMatrix: simd_float4x4(), outputSize: simd_float2(), time: 0.0, gamma: 1.0, saturation: 1.0, padding1: 0.0, padding2: simd_float2(0,0))
+        static let empty: Uniforms = .init(
+            projectionMatrix: simd_float4x4(),
+            outputSize: simd_float2(),
+            time: 0.0,
+            gamma: 1.0,
+            saturation: 1.0,
+            padding1: 0.0,
+            padding2: simd_float2(0, 0)
+        )
         
         var projectionMatrix: simd_float4x4 // 64 bytes
         var outputSize: simd_float2         // 8 bytes
@@ -1214,7 +1227,7 @@ extension MTLLanguageVersion {
 }
 
 extension MTLPixelFormat {
-    // swiftlint:disable cyclomatic_complexity
+    // swiftlint:disable:next cyclomatic_complexity
     init(_ pixelFormat: Compiled.PixelFormat) {
         switch pixelFormat {
         case .r8Unorm:

@@ -1,0 +1,38 @@
+# Software Information
+display_name = "Geolith"
+authors = "Geolith developers"
+supported_extensions = "neo"
+corename = "Geolith"
+license = "BSD-3-Clause"
+permissions = ""
+categories = "Emulator"
+
+# Hardware Information
+manufacturer = "SNK"
+systemname = "Neo Geo"
+systemid = "neogeo"
+
+# Libretro Features
+savestate = "true"
+cheats = "false"
+input_descriptors = "true"
+core_options = "true"
+core_options_version = "2.0"
+load_subsystem = "false"
+supports_no_game = "false"
+hw_render = "false"
+needs_fullpath = "false"
+disk_control = "false"
+
+# BIOS / Firmware
+firmware_count = 2
+firmware0_desc = "aes.zip (Neo Geo AES BIOS)"
+firmware0_path = "aes.zip"
+firmware0_opt = "false"
+firmware0_hash = "ad9585c72130c56f04ae26aae87c289d"
+firmware1_desc = "neogeo.zip (Neo Geo MVS BIOS)"
+firmware1_path = "neogeo.zip"
+firmware1_opt = "false"
+firmware1_hash = "00dad01abdbf8ea9e79ad2fe11bdb182"
+
+notes = "Neo Geo AES/MVS/CD/CDZ emulator. Cartridge games use the .neo format."

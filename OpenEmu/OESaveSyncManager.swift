@@ -229,7 +229,7 @@ final class OESaveSyncManager: NSObject {
             return
         }
         
-        FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue as CFString)
+        FSEventStreamSetDispatchQueue(stream, DispatchQueue.main)
         FSEventStreamStart(stream)
         eventStream = stream
     }

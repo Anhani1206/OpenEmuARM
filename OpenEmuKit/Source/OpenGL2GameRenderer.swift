@@ -30,6 +30,8 @@ internal import os.log
 
 final class OpenGL2GameRenderer: BaseOpenGLGameRenderer {
     
+    // This is an override of the base renderer's class property.
+    // swiftlint:disable:next static_over_final_class
     override class var attributes: [CGLPixelFormatAttribute] { [
         kCGLPFAAccelerated,
         kCGLPFAAllowOfflineRenderers,

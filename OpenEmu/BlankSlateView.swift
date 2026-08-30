@@ -339,7 +339,9 @@ class BlankSlateView: NSView {
             hStack.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: -4),
             hStack.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             hStack.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Layout.bottomTextToTop),
-            hStack.heightAnchor.constraint(equalToConstant: Layout.bottomTextHeight),
+            // Keep the original height for the normal case, but allow the
+            // core links column to grow when a system exposes several cores.
+            hStack.heightAnchor.constraint(greaterThanOrEqualToConstant: Layout.bottomTextHeight),
         ])
         
         let textView = ArrowCursorTextView()

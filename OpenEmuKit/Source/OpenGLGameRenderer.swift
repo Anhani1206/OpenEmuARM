@@ -76,8 +76,8 @@ class BaseOpenGLGameRenderer: OpenGLGameRenderer {
     // 3D games can only change buffer size.
     
     // We'll be in trouble if a game core does software vector drawing.
-    // TODO: Test alternate threads - might need to call glViewport() again on that thread.
-    // TODO: Implement for double buffered FBO - need to reallocate alternateFBO.
+    // NOTE: Test alternate threads - might need to call glViewport() again on that thread.
+    // NOTE: Implement for double buffered FBO - need to reallocate alternateFBO.
     var canChangeBufferSize: Bool { true }
     
     var presentationFramebuffer: Any? {

@@ -42,6 +42,12 @@ import OpenEmuKitPrivate
     
     var helperConnection: NSXPCConnection?
     var gameCoreOwnerProxy: OEThreadProxy?
+
+    private func installInvalidationHandler(on connection: NSXPCConnection) {
+        connection.invalidationHandler = { [weak self] in
+            self?.notifyGameCoreDidTerminate()
+        }
+    }
     
     public override func loadROM(completionHandler: @escaping StartupCompletionHandler) {
         guard let executableURL = executableURL
@@ -64,9 +70,7 @@ import OpenEmuKitPrivate
 
             self.helperConnection = cn
 
-            cn.invalidationHandler = { [weak self] in
-                self?.notifyGameCoreDidTerminate()
-            }
+            self.installInvalidationHandler(on: cn)
 
             let proxy = OEThreadProxy(target: self.gameCoreOwner, thread: .main)
 
@@ -96,6 +100,8 @@ import OpenEmuKitPrivate
                             ofReply: false)
 
             let memoryRegionClasses: NSSet = [NSDictionary.self, NSArray.self, NSString.self, NSNumber.self, NSData.self]
+            // The XPC API requires this bridged class set.
+            // swiftlint:disable:next force_cast
             intf.setClasses(memoryRegionClasses as! Set<AnyHashable>,
                             for: #selector(OEGameCoreHelper.readableMemoryRegions(completionHandler:)),
                             argumentIndex: 0,

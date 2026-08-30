@@ -27,10 +27,7 @@ public enum ZipCompiledShaderContainer {
             try FileManager.default.removeItem(at: path)
         }
         
-        guard let ar = Archive(url: path, accessMode: .create)
-        else {
-            return
-        }
+        let ar = try Archive(url: path, accessMode: .create)
         
         try shader.luts.forEach { lut in
             // Duplicate names are not permitted during compilation, so there should never
@@ -56,17 +53,17 @@ public enum ZipCompiledShaderContainer {
             guard FileManager.default.fileExists(atPath: url.path) else {
                 throw Error.pathNotExists
             }
-            if let archive = Archive(url: url, accessMode: .read) {
-                try self.init(archive: archive)
-            } else {
+            do {
+                try self.init(archive: Archive(url: url, accessMode: .read))
+            } catch {
                 throw Error.invalidArchive
             }
         }
         
         public convenience init(data: Data) throws {
-            if let archive = Archive(data: data, accessMode: .read) {
-                try self.init(archive: archive)
-            } else {
+            do {
+                try self.init(archive: Archive(data: data, accessMode: .read))
+            } catch {
                 throw Error.invalidArchive
             }
         }

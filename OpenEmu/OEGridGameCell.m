@@ -49,6 +49,7 @@ static CGColorRef placeHolderStrokeColoRef = NULL;
 static CGColorRef placeHolderFillColoRef   = NULL;
 
 static NSDictionary *disabledActions = nil;
+enum { OEGridGameCellMaxRating = 6 };
 
 + (void)initialize
 {
@@ -174,7 +175,6 @@ static NSDictionary *disabledActions = nil;
 #pragma mark - Layers & Images
 - (void)OE_setupLayers
 {
-    NSAppearance.currentAppearance = self.imageBrowserView.effectiveAppearance;
     
     _foregroundLayer = [CALayer layer];
     [_foregroundLayer setActions:disabledActions];
@@ -218,7 +218,6 @@ static NSDictionary *disabledActions = nil;
 
 - (void)updateTextLayer
 {
-    NSAppearance.currentAppearance = self.imageBrowserView.effectiveAppearance;
     
     [_textLayer removeFromSuperlayer];
     
@@ -237,7 +236,6 @@ static NSDictionary *disabledActions = nil;
 
 - (CALayer *)layerForType:(NSString *)type
 {
-    NSAppearance.currentAppearance = self.imageBrowserView.effectiveAppearance;
     
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -462,9 +460,8 @@ static NSDictionary *disabledActions = nil;
 
 - (NSImage*)OE_ratingImageForRating:(NSInteger)rating
 {
-    const  int MaxRating = 6;
-    NSAssert(rating >= 0 && rating < MaxRating, @"Rating out of bounds!");
-    static NSImage *ratings[MaxRating];
+    NSAssert(rating >= 0 && rating < OEGridGameCellMaxRating, @"Rating out of bounds!");
+    static NSImage *ratings[OEGridGameCellMaxRating];
 
     if(ratings[rating] == nil)
     {
@@ -476,7 +473,6 @@ static NSDictionary *disabledActions = nil;
 
 - (NSImage*)OE_newRatingImageForRating:(NSInteger)rating
 {
-    NSAppearance.currentAppearance = self.imageBrowserView.effectiveAppearance;
     const NSUInteger OECoverGridViewCellRatingViewNumberOfRatings = 6;
     const NSImage *ratingImage = [[NSImage imageNamed:@"grid_rating"] imageWithTintColor:NSColor.controlAccentColor];
     const NSSize  ratingImageSize = [ratingImage size];

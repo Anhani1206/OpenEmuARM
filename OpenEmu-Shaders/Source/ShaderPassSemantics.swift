@@ -27,9 +27,6 @@ import Foundation
 struct ShaderPassBufferSemantics {
     public private(set) var data: UnsafeRawPointer
     
-    init(data: UnsafeRawPointer) {
-        self.data = data
-    }
 }
 
 struct ShaderPassTextureSemantics {

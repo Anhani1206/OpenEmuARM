@@ -23,16 +23,15 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+import CryptoKit
 internal import CommonCrypto
 
 public enum Crypto {
     public struct MD5 {
         public static func digest<T: DataProtocol>(data: T) -> String {
-            var digest = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
-            data.withContiguousStorageIfAvailable {
-                _ = CC_MD5($0.baseAddress, CC_LONG($0.count), &digest)
-            }
-            return digest.hexString.lowercased()
+            Insecure.MD5.hash(data: Data(data))
+                .map { String(format: "%02x", $0) }
+                .joined()
         }
         
         public static func digest<T: StringProtocol>(string: T) -> String {

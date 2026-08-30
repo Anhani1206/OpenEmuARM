@@ -205,7 +205,7 @@ extension Notification.Name {
             os_log(.error, log: log, "Failed to create FSEventStream.")
             return
         }
-        FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue as CFString)
+        FSEventStreamSetDispatchQueue(stream, DispatchQueue.main)
         FSEventStreamStart(stream)
         eventStream = stream
         os_log(.info, log: log, "FSEventStream watching %d director(ies).", watchURLs.count)

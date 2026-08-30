@@ -141,10 +141,8 @@ class SourceParser {
         for line in buffer {
             if line.hasPrefix(Prefixes.pragmaStage) {
                 let s = Scanner(string: line)
-                s.scanString(Prefixes.pragmaStage, into: nil)
-                var tmp: NSString?
-                s.scanCharacters(from: .alphanumerics, into: &tmp)
-                guard let stage = tmp as String? else {
+                _ = s.scanString(Prefixes.pragmaStage)
+                guard let stage = s.scanCharacters(from: .alphanumerics) else {
                     continue
                 }
                 keep = stage == forStage
@@ -174,7 +172,7 @@ class SourceParser {
     // swiftformat:enable all
     
     private func load(_ url: URL, isRoot: Bool) throws {
-        let f = try String(contentsOf: url)
+        let f = try String(contentsOf: url, encoding: .utf8)
         let filename = url.lastPathComponent
         var lines = [String]()
         f.enumerateLines { line, _ in lines.append(line) }
@@ -196,7 +194,7 @@ class SourceParser {
         for line in oe {
             if line.hasPrefix(Prefixes.include) {
                 let s = Scanner(string: line)
-                s.scanString(Prefixes.include, into: nil)
+                _ = s.scanString(Prefixes.include)
                 guard let filepath = s.scanQuotedString() else {
                     throw SourceParserError.includeNotFound
                 }
@@ -239,6 +237,7 @@ class SourceParser {
         return set as CharacterSet
     }
     
+    // swiftlint:disable:next cyclomatic_complexity
     private func processPragma(line: String) throws -> Bool {
         if line.hasPrefix(Prefixes.pragmaName) {
             if name != nil {
@@ -248,13 +247,10 @@ class SourceParser {
             name = String(line.dropFirst(Prefixes.pragmaName.count))
         } else if line.hasPrefix(Prefixes.pragmaParam) {
             let s = Scanner(string: line)
-            s.scanString(Prefixes.pragmaParam, into: nil)
+            _ = s.scanString(Prefixes.pragmaParam)
             
             var count = 0
-            var tmp: NSString?
-            count += s.scanCharacters(from: .identifierCharacters, into: &tmp) ? 1 : 0
-            
-            guard let name = tmp as String? else {
+            guard let name = s.scanCharacters(from: .identifierCharacters) else {
                 throw SourceParserError.invalidParameterPragma
             }
             
@@ -263,10 +259,10 @@ class SourceParser {
             }
             count += 1
             var initial: Decimal = 0, minimum: Decimal = 0, maximum: Decimal = 0, step: Decimal = 0
-            count += s.scanDecimal(&initial) ? 1 : 0
-            count += s.scanDecimal(&minimum) ? 1 : 0
-            count += s.scanDecimal(&maximum) ? 1 : 0
-            count += s.scanDecimal(&step) ? 1 : 0
+            if let value = s.scanDecimal() { initial = value; count += 1 }
+            if let value = s.scanDecimal() { minimum = value; count += 1 }
+            if let value = s.scanDecimal() { maximum = value; count += 1 }
+            if let value = s.scanDecimal() { step = value; count += 1 }
             
             if count == 5 {
                 step = 0.1 * (maximum - minimum)
@@ -295,10 +291,8 @@ class SourceParser {
             }
             
             let s = Scanner(string: line)
-            s.scanString(Prefixes.pragmaFormat, into: nil)
-            var tmp: NSString?
-            s.scanCharacters(from: .identifierCharacters, into: &tmp)
-            if let fmt = tmp as String? {
+            _ = s.scanString(Prefixes.pragmaFormat)
+            if let fmt = s.scanCharacters(from: .identifierCharacters) {
                 format = .init(glslangFormat: fmt)
             }
             if format == nil {

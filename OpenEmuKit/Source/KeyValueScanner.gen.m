@@ -100,10 +100,7 @@ static const char _KVScanner_eof_actions[] = {
 };
 
 static const int KVScanner_start = 1;
-static const int KVScanner_first_final = 10;
 static const int KVScanner_error = 0;
-
-static const int KVScanner_en_main = 1;
 
 
 /* #line 40 "KeyValueScanner.rl" */

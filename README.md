@@ -19,9 +19,9 @@
 
 **Actively maintained. Runs natively on Apple Silicon (no Rosetta required).**
 
-This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The app runs on macOS 26.0+ and has been tested on macOS 26 (Tahoe) and macOS 27 beta 7 (Golden Gate).
+This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The app runs on macOS 12.0+ and has been tested on macOS Sequoia, macOS 26 (Tahoe) and macOS 27 (Golden Gate).
 
-### Recent modifications in relation to the original OpenEmu project
+### Recent Updates
 
 - Sony Playstation 2 (ARMSX2 Core) implemented experimentally.
 - Support for screen rotation for Shoot 'em Up games.
@@ -29,10 +29,6 @@ This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The ap
 - Implemented the option to show the FPS during games, screen position and color.
 - Neo Geo AES / MVS games via Geolith Core
 - Implemented the option to download all the Covers Arts or stop the download for each console.
-- Implemented the option to skip the import of a corrupted rom or stop the import completely.
-- Implementing a button to stop the Game Scanner in addition to pausing.
-- Added new Arcade MAME core version, add 0.78/2003 ROM
-
 
 ---
 
@@ -40,7 +36,7 @@ This is a community-maintained fork of OpenEmu-Silicon for M-series Macs. The ap
 
 > **Full details — working status, known issues, in-progress cores, and what's planned — are on the [Supported Systems](https://github.com/nickybmon/OpenEmu-Silicon/wiki/Supported-Systems) wiki page.**
 
-Quick summary: 30+ systems work today, including NES, SNES, Game Boy, GBA, N64, Neo Geo, Nintendo DS, PlayStation, Playstation 2, Dreamcast, GameCube/Wii, and more. A handful have known issues (PSP, Saturn, Game Boy Color categorization). 
+Quick summary: 30+ systems work today, including NES, SNES, Game Boy, GBA, N64, Nintendo DS, PlayStation, Playstation 2, Dreamcast, GameCube/Wii, and more. A handful have known issues (PSP, Saturn, Game Boy Color categorization). 
 
 ---
 
@@ -54,7 +50,7 @@ Quick summary: 30+ systems work today, including NES, SNES, Game Boy, GBA, N64, 
 
 ## Requirements
 
-- macOS 26.0 (Tahoe) or later
+- macOS 12.0 (Monterrey) or later
 - Apple Silicon Mac (M1 / M2 / M3 / M4 / M5)
 
 ---

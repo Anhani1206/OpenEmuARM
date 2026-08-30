@@ -613,6 +613,18 @@ extension SidebarController: NSOutlineViewDataSource {
 
 extension SidebarController: NSMenuDelegate {
     
+    @objc private func downloadAllCoverArt(_ sender: NSMenuItem) {
+        guard let system = sender.representedObject as? OEDBSystem else { return }
+        system.games.forEach { $0.requestCoverDownload() }
+        system.games.first?.save()
+    }
+    
+    @objc private func stopAllCoverArtDownloads(_ sender: NSMenuItem) {
+        guard let system = sender.representedObject as? OEDBSystem else { return }
+        system.games.forEach { $0.cancelCoverDownload() }
+        system.games.first?.save()
+    }
+    
     func menuNeedsUpdate(_ menu: NSMenu) {
         
         menu.removeAllItems()
@@ -633,6 +645,15 @@ extension SidebarController: NSMenuDelegate {
             menuItem.action = #selector(editControls(_:))
             menuItem.representedObject = item
             menu.addItem(menuItem)
+            
+            let coverArtsMenu = NSMenu(title: NSLocalizedString("Cover Arts", comment: "Sidebar context menu for console cover art downloads"))
+            let downloadCoverArtsItem = coverArtsMenu.addItem(withTitle: NSLocalizedString("Download all Cover Arts", comment: "Download cover art for every game in a console"), action: #selector(downloadAllCoverArt(_:)), keyEquivalent: "")
+            downloadCoverArtsItem.representedObject = item
+            let stopCoverArtsItem = coverArtsMenu.addItem(withTitle: NSLocalizedString("Stop download Cover Arts", comment: "Stop cover art downloads for every game in a console"), action: #selector(stopAllCoverArtDownloads(_:)), keyEquivalent: "")
+            stopCoverArtsItem.representedObject = item
+            let coverArtsMenuItem = NSMenuItem(title: NSLocalizedString("Cover Arts", comment: "Sidebar context submenu for console cover art downloads"), action: nil, keyEquivalent: "")
+            coverArtsMenuItem.submenu = coverArtsMenu
+            menu.addItem(coverArtsMenuItem)
             
             let cores = OECorePlugin.corePlugins(forSystemIdentifier: item.systemIdentifier)
             if cores.count > 1 {

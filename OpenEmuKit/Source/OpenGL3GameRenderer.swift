@@ -31,11 +31,13 @@ internal import os.log
 final class OpenGL3GameRenderer: BaseOpenGLGameRenderer {
     
     override var canChangeBufferSize: Bool {
-        // TODO: Test alternate threads - might need to call glViewport() again on that thread.
-        // TODO: Implement for double buffered FBO - need to reallocate alternateFBO.
+        // NOTE: Test alternate threads - might need to call glViewport() again on that thread.
+        // NOTE: Implement for double buffered FBO - need to reallocate alternateFBO.
         alternateContext == nil && !isDoubleBufferFBOMode
     }
     
+    // This is an override of the base renderer's class property.
+    // swiftlint:disable:next static_over_final_class
     override class var attributes: [CGLPixelFormatAttribute] { [
         kCGLPFAAccelerated,
         kCGLPFAAllowOfflineRenderers,

@@ -1632,8 +1632,8 @@ int TIntermediate::addUsedLocation(const TQualifier& qualifier, const TType& typ
 {
     typeCollision = false;
 
-    int set;
-    int setRT;
+    int set = 0;
+    int setRT = 0;
     if (qualifier.isPipeInput())
         set = 0;
     else if (qualifier.isPipeOutput())

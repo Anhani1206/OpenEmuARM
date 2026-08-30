@@ -367,8 +367,8 @@ public enum Compiled {
         case bgra8Unorm_srgb // swiftlint:disable:this identifier_name
         case bgra8Unorm
         
-        // swiftlint:disable cyclomatic_complexity
-        /// Converts a GL Slang format string to PixelFormat
+        // Converts a GL Slang format string to PixelFormat
+        // swiftlint:disable:next cyclomatic_complexity
         init?(glslangFormat str: String) {
             switch str {
             case "R8_UNORM":

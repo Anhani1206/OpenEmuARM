@@ -29,7 +29,6 @@ import OpenEmuBase
 import OpenEmuSystem
 import OpenEmuKitPrivate
 import OpenEmuShaders
-internal import os.log
 
 extension OSLog {
     static let display  = OSLog(subsystem: "org.openemu.OpenEmuKit", category: "display")
@@ -42,69 +41,104 @@ extension OSLog {
     @objc public private(set) var gameSystemResponderClientProtocol: Protocol!
     
     // MARK: - State
-    // swiftlint:disable identifier_name
+    // swiftlint:disable:next identifier_name
     var _previousScreenRect: OEIntRect = .init()
+    // swiftlint:disable:next identifier_name
     var _previousAspectSize: OEIntSize = .init()
     
     // Video
+    // swiftlint:disable:next identifier_name
     var _gameRenderer: GameRenderer!
+    // swiftlint:disable:next identifier_name
     var _openGLGameRenderer: OpenGLGameRenderer?
+    // swiftlint:disable:next identifier_name
     var _surface: CoreVideoTexture!
     var flipVertically: Bool = false
     
     // OE stuff
+    // swiftlint:disable:next identifier_name
     var _gameController: OEGameCoreController!
+    // swiftlint:disable:next identifier_name
     var _systemController: OESystemController!
+    // swiftlint:disable:next identifier_name
     var _systemResponder: OESystemResponder!
+    // swiftlint:disable:next identifier_name
     var _gameAudio: GameAudioProtocol!
     
     // initial shader and parameters
+    // swiftlint:disable:next identifier_name
     var _shader: URL?
+    // swiftlint:disable:next identifier_name
     var _shaderParameters: [String: Double]?
     
+    // swiftlint:disable:next identifier_name
     var _currentShader: URL?
     
+    // swiftlint:disable:next identifier_name
     var _gameVideoCAContext: CAContext!
     
+    // swiftlint:disable:next identifier_name
     var _videoLayer: GameHelperMetalLayer!
+    // swiftlint:disable:next identifier_name
     var _filterChain: FilterChain!
+    // swiftlint:disable:next identifier_name
     var _screenshot: Screenshot!
-    /// Only send 1 frame at once to the GPU.
-    /// Since we aren't synced to the display, even one more
-    /// is enough to block in nextDrawable for more than a frame
-    /// and cause audio skipping.
+    // Only send 1 frame at once to the GPU.
+    // Since we aren't synced to the display, even one more
+    // is enough to block in nextDrawable for more than a frame
+    // and cause audio skipping.
+    // swiftlint:disable:next identifier_name
     var _inflightSemaphore = DispatchSemaphore(value: 1)
+    // swiftlint:disable:next identifier_name
     var _scope: MTLCaptureScope!
+    // swiftlint:disable:next identifier_name
     var _device: MTLDevice!
+    // swiftlint:disable:next identifier_name
     var _commandQueue: MTLCommandQueue!
     
+    // swiftlint:disable:next identifier_name
     var _clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
+    // swiftlint:disable:next identifier_name
     var _skippedFrames: UInt = 0
+    // swiftlint:disable:next identifier_name
     var _effectsMode: OEGameCoreEffectsMode = .reflectPaused
     
+    // swiftlint:disable:next identifier_name
     var _unhandledEventsMonitor: Any?
+    // swiftlint:disable:next identifier_name
     var _hasStartedAudio = false
+    // swiftlint:disable:next identifier_name
     var _adaptiveSyncEnabled = false
     
+    // swiftlint:disable:next identifier_name
     var _handleEvents: Bool = false
+    // swiftlint:disable:next identifier_name
     var _handleKeyboardEvents: Bool = false
     
     var loadedRom = false
 
     // RetroAchievements token received from the main app via XPC.
     // Stored here so the core can pick it up at load time and on mid-session token delivery.
+    // swiftlint:disable:next identifier_name
     var _retroAchievementsToken: String?
+    // swiftlint:disable:next identifier_name
     var _retroAchievementsUsername: String?
 
     // RA hardcore mode flag received from the main app via XPC. Defaults to true
     // (RA's recommended default); cores read this at load time and on mid-session toggles.
+    // swiftlint:disable:next identifier_name
     var _hardcoreEnabled: Bool = true
 
     // Observer for achievement unlock notifications posted by the active core plugin.
+    // swiftlint:disable:next identifier_name
     var _achievementObserver: Any?
+    // swiftlint:disable:next identifier_name
     var _raSessionObserver: Any?
+    // swiftlint:disable:next identifier_name
     var _raEventObserver: Any?
+    // swiftlint:disable:next identifier_name
     var _raUnrecognizedObserver: Any?
+    // swiftlint:disable:next identifier_name
     var _raIdleTimer: DispatchSourceTimer?
 
     // frame rate debugging
@@ -141,7 +175,7 @@ extension OSLog {
         _scope          = MTLCaptureManager.shared().makeCaptureScope(device: _device)
         _commandQueue   = _device.makeCommandQueue()
         
-        // TODO: Handle error
+        // NOTE: Handle error
         // Original Obj-C didn't handle the error either
         _filterChain    = try? FilterChain(device: _device)
         _screenshot     = Screenshot(device: _device)
@@ -150,6 +184,7 @@ extension OSLog {
         setupGameRenderer()
         setupCVBuffer()
         setupRemoteLayer()
+        // swiftlint:disable:next identifier_name
         if let _shader = _shader {
             try? setShaderURL(_shader, parameters: _shaderParameters)
             self._shader            = nil
@@ -243,7 +278,7 @@ extension OSLog {
             CATransaction.setDisableActions(true)
             defer { CATransaction.commit() }
             
-            // TODO: If there's a good default bounds, use that.
+            // NOTE: If there's a good default bounds, use that.
             _videoLayer.bounds = .init(x: 0, y: 0, width: Int(gameCore.bufferSize.width), height: Int(gameCore.bufferSize.height))
             _filterChain.drawableSize = _videoLayer.drawableSize
             
@@ -330,7 +365,7 @@ extension OSLog {
                                        userInfo: [
                                         NSLocalizedDescriptionKey: NSLocalizedString("The emulator could not load ROM.",
                                                                                      comment: "Error when loading a ROM."),
-                                        NSUnderlyingErrorKey: error
+                                        NSUnderlyingErrorKey: error,
                                        ])
         }
 
@@ -464,6 +499,7 @@ extension OSLog {
     }
     
     public func setOutputBounds(_ rect: NSRect) {
+        // swiftlint:disable:next identifier_name
         if let _videoLayer = _videoLayer, _videoLayer.bounds != rect {
             CATransaction.begin()
             CATransaction.setDisableActions(true)
@@ -576,10 +612,12 @@ extension OSLog {
     }
 
     private func postRetroAchievementsTokenDidChange() {
-        var userInfo: [String: Any]? = nil
+        var userInfo: [String: Any]?
         if let token = _retroAchievementsToken, let username = _retroAchievementsUsername {
-            userInfo = [OERetroAchievementsTokenKey: token,
-                        OERetroAchievementsUsernameKey: username]
+            userInfo = [
+                OERetroAchievementsTokenKey: token,
+                OERetroAchievementsUsernameKey: username,
+            ]
         }
         NotificationCenter.default.post(
             name: .OERetroAchievementsTokenDidChange,
@@ -640,7 +678,11 @@ extension OSLog {
                     let sidecarURL = fileURL.appendingPathExtension("raprogress")
                     let blob = try? Data(contentsOf: sidecarURL)
                     if blob == nil {
-                        os_log(.debug, "[RA] no .raprogress sidecar at %{public}@ — rcheevos progress will reset for this load.", sidecarURL.lastPathComponent)
+                        os_log(
+                            .debug,
+                            "[RA] no .raprogress sidecar at %{public}@ — rcheevos progress will reset for this load.",
+                            sidecarURL.lastPathComponent
+                        )
                     }
                     self.gameCore.retroAchievementsDeserializeProgress(blob)
                 }
@@ -894,7 +936,7 @@ extension OSLog {
             
             let rpd = MTLRenderPassDescriptor()
             rpd.colorAttachments[0].clearColor = _clearColor
-            // TODO: Investigate whether we can avoid the MTLLoadActionClear
+            // NOTE: Investigate whether we can avoid the MTLLoadActionClear
             // Frame buffer should be overwritten completely by final pass.
             rpd.colorAttachments[0].loadAction = .clear
             rpd.colorAttachments[0].texture    = drawable.texture
@@ -1008,7 +1050,7 @@ extension OSLog {
 
     public func rewindGameplay(_ enable: Bool) {
         if _hardcoreEnabled { return }
-        // TODO: technically a data race, but it is only updating a single NSInteger
+        // NOTE: technically a data race, but it is only updating a single NSInteger
         _filterChain.frameDirection = enable ? -1 : 1
         gameCoreOwner.rewindGameplay(enable)
     }

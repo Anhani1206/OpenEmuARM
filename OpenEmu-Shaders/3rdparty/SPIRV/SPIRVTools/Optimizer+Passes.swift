@@ -845,7 +845,7 @@ extension SPVTOptimizer {
     /// This pass injects code to clamp indexed accesses to buffers and internal
     /// arrays, providing guarantees satisfying Vulkan's robustBufferAccess rules.
     ///
-    /// TODO(dneto): Clamps coordinates and sample index for pointer calculations
+    /// NOTE(dneto): Clamps coordinates and sample index for pointer calculations
     /// into storage images (OpImageTexelPointer).  For an cube array image, it
     /// assumes the maximum layer count times 6 is at most 0xffffffff.
     ///

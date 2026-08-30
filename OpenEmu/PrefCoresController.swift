@@ -222,12 +222,15 @@ final class PrefCoresController: NSViewController {
             warningBanner.isHidden = false
         }
         var map: [String: (name: String, cores: [CoreDownload])] = [:]
-        for core in CoreUpdater.shared.coreList {
+        for core in CoreUpdater.shared.coreList where !core.bundleIdentifier.hasSuffix("-RetroArch") {
             for sysID in core.systemIdentifiers {
                 guard !OEDBSystem.isHiddenSystemIdentifier(sysID) else { continue }
-                // The dedicated Neo Geo library ships with one tested core.
+                // Keep Neo Geo limited to the tested FBNeo core and Geolith.
                 // Other arcade cores remain available from the Arcade entry.
-                if sysID == "openemu.system.neogeo", core.bundleIdentifier != "org.openemu.FBNeo" {
+                let isGeolith = core.name.localizedCaseInsensitiveContains("geolith")
+                if sysID == "openemu.system.neogeo",
+                   core.bundleIdentifier != "org.openemu.FBNeo",
+                   !isGeolith {
                     continue
                 }
                 // Look up the display name fresh from OESystemPlugin at rebuild time.
@@ -248,10 +251,25 @@ final class PrefCoresController: NSViewController {
                 systemName: value.name,
                 cores: value.cores.sorted { $0.name < $1.name }
             )
-            entry.retroArchCores = deduplicatedRetroArchCores(allRetroArch.filter {
-                $0.systemIDs.contains(sysID) &&
-                (sysID != "openemu.system.neogeo" || $0.bundleIdentifier == "org.openemu.FBNeo")
-            })
+            let retroArchForSystem = allRetroArch.filter { raCore in
+                guard raCore.systemIDs.contains(sysID) else { return false }
+
+                // MAME 2003 is an official OpenEmu core for Arcade. Do not show
+                // a second RetroArch entry for the same 0.78 core, otherwise the
+                // picker presents duplicate choices and can save the wrong one.
+                let normalizedRAName = raCore.coreName
+                    .lowercased()
+                    .filter { $0.isLetter || $0.isNumber }
+                let isMAME2003 = normalizedRAName.contains("mame2003")
+                let hasOfficialMAME2003 = value.cores.contains { core in
+                    let normalizedName = core.name
+                        .lowercased()
+                        .filter { $0.isLetter || $0.isNumber }
+                    return normalizedName.contains("mame2003")
+                }
+                return !(isMAME2003 && hasOfficialMAME2003)
+            }
+            entry.retroArchCores = deduplicatedRetroArchCores(retroArchForSystem)
             return entry
         }
         .sorted { $0.systemName < $1.systemName }
@@ -650,6 +668,8 @@ extension PrefCoresController {
         "pc_engine_cd":          ["openemu.system.pcecd"],
         "pc_fx":                 ["openemu.system.pcfx"],   // Beetle PC-FX
         // SNK
+        "neogeo":                ["openemu.system.neogeo"],
+        "neo_geo":               ["openemu.system.neogeo"],
         "neo_geo_pocket":        ["openemu.system.ngp"],
         "neo_geo_pocket_color":  ["openemu.system.ngp"],
         // Bandai
@@ -735,7 +755,8 @@ extension PrefCoresController {
         // in the dedicated Neo Geo library as well, while retaining Arcade.
         let isFBNeo = name.localizedCaseInsensitiveContains("finalburn neo") ||
             name.localizedCaseInsensitiveContains("fbneo")
-        if isFBNeo,
+        let isGeolith = name.localizedCaseInsensitiveContains("geolith")
+        if (isFBNeo || isGeolith),
            !systemIDs.contains("openemu.system.neogeo") {
             systemIDs.append("openemu.system.neogeo")
         }
@@ -749,6 +770,8 @@ extension PrefCoresController {
                 "AllowAnyChecksum": true,
                 "RelativePath": "fbneo/neogeo.zip",
             ]]
+        } else if isGeolith, systemIDs.contains("openemu.system.neogeo") {
+            requiredFilesBySystemID["openemu.system.neogeo"] = BIOSFile.geolithBIOSRequiredFiles
         }
 
         return (name, systemIDs, hwRender, requiredFilesBySystemID)

@@ -97,6 +97,7 @@
 	<key>OEFileSuffixes</key>
 	<array>
 		<string>zip</string>
+		<string>neo</string>
 	</array>
 	<key>OEGenericControlNamesKey</key>
 	<array>

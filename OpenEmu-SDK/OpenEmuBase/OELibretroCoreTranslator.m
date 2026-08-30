@@ -32,6 +32,7 @@
 #import <dlfcn.h>
 #import "libretro.h"
 #import <Accelerate/Accelerate.h>
+#include <stdarg.h>
 #if __arm64__
 #import <arm_neon.h>
 #endif
@@ -60,7 +61,7 @@
 #define RETRO_ENVIRONMENT_SET_ROTATION 1
 #endif
 
-NSString * const OELibretroBridgeVersion = @"5";
+NSString * const OELibretroBridgeVersion = @"20";
 
 
 @interface OELibretroCoreTranslator () <OELibretroInputReceiver>
@@ -174,6 +175,8 @@ typedef struct {
 } OELibretroBIOSRequirement;
 
 static const OELibretroBIOSRequirement kBIOSRequirements[] = {
+    { "neogeo",  { "aes.zip", "neogeo.zip", NULL },
+      "Geolith requires aes.zip and neogeo.zip in your OpenEmu BIOS folder." },
     { "dc",     { "dc_boot.bin", "dc_flash.bin", NULL },
       "Dreamcast requires dc_boot.bin and dc_flash.bin in your BIOS folder." },
     { "nds",    { "bios7.bin", "bios9.bin", "firmware.bin", NULL },
@@ -215,7 +218,16 @@ static BOOL bios_requirement_satisfied(NSString *biosPath, const OELibretroBIOSR
 }
 
 static void libretro_log_cb(enum retro_log_level level, const char *fmt, ...) {
-    // Hardened: Absolute Silence
+    if (!fmt) return;
+
+    va_list args;
+    va_start(args, fmt);
+    NSString *message = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:fmt] arguments:args];
+    va_end(args);
+
+    if (message.length > 0) {
+        NSLog(@"[OELibretro Core] %@", message);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -348,6 +360,11 @@ static const OELibretroVariableDefault kC64VariableDefaults[] = {
 
 // PPSSPP: force software rendering — hardware path crashes on Apple Silicon
 // due to incompatible threading in EmuThread + our single-context bridge.
+static const OELibretroVariableDefault kNeoGeoVariableDefaults[] = {
+    { "geolith_system_type", "Neo Geo MVS (Arcade)" },
+    { "geolith_region",      "USA" },
+};
+
 static const OELibretroVariableDefault kPSPVariableDefaults[] = {
     { "ppsspp_backend",                     "SOFTWARE" },
     { "ppsspp_cpu_core",                    "jit" },
@@ -365,6 +382,12 @@ static const OELibretroVariableDefault kPSPVariableDefaults[] = {
 // (and static tables above if needed).
 static OELibretroSystemPolicy OELibretroSystemPolicyForSystemID(NSString *systemID) {
 #define ARRAY_COUNT(a) (sizeof(a) / sizeof((a)[0]))
+    if ([systemID containsString:@"neogeo"]) {
+        return (OELibretroSystemPolicy){
+            .variableDefaults     = kNeoGeoVariableDefaults,
+            .variableDefaultCount = ARRAY_COUNT(kNeoGeoVariableDefaults),
+        };
+    }
     if ([systemID containsString:@"psp"]) {
         return (OELibretroSystemPolicy){
             .forceXRGB8888        = YES,
@@ -1337,6 +1360,23 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
         self.savesPath = [self batterySavesDirectoryPath];
         self.supportPath = [self supportDirectoryPath];
 
+        // Some helper launches do not provide OpenEmu support directories to
+        // the core controller. Geolith queries the save directory during load,
+        // so never expose a NULL path to the libretro environment callback.
+        NSString *fallbackDirectory = self.biosPath.length > 0 ? self.biosPath : [self biosDirectoryPath];
+        if (self.supportPath.length == 0) {
+            self.supportPath = fallbackDirectory;
+        }
+        if (self.savesPath.length == 0) {
+            self.savesPath = [fallbackDirectory stringByAppendingPathComponent:@"Battery Saves"];
+        }
+        if (self.savesPath.length > 0) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:self.savesPath
+                                      withIntermediateDirectories:YES
+                                                       attributes:nil
+                                                            error:nil];
+        }
+
         free(_biosPathCStr);    _biosPathCStr    = self.biosPath    ? strdup([self.biosPath UTF8String])    : NULL;
         free(_savesPathCStr);   _savesPathCStr   = self.savesPath   ? strdup([self.savesPath UTF8String])   : NULL;
         free(_supportPathCStr); _supportPathCStr = self.supportPath ? strdup([self.supportPath UTF8String]) : NULL;
@@ -1362,6 +1402,24 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
     _current = self;
+
+    // Resolve directories after the controller is attached to its owner. During
+    // init, the helper has not yet provided these paths and they can be nil.
+    self.biosPath = [self biosDirectoryPath];
+    self.supportPath = [self supportDirectoryPath];
+    self.savesPath = [self batterySavesDirectoryPath];
+    NSString *fallbackDirectory = self.biosPath.length > 0 ? self.biosPath : [self biosDirectoryPath];
+    if (self.supportPath.length == 0) self.supportPath = fallbackDirectory;
+    if (self.savesPath.length == 0) self.savesPath = [fallbackDirectory stringByAppendingPathComponent:@"Battery Saves"];
+    if (self.savesPath.length > 0) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:self.savesPath
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:nil];
+    }
+    free(_biosPathCStr);    _biosPathCStr = self.biosPath.length > 0 ? strdup(self.biosPath.UTF8String) : NULL;
+    free(_supportPathCStr); _supportPathCStr = self.supportPath.length > 0 ? strdup(self.supportPath.UTF8String) : NULL;
+    free(_savesPathCStr);   _savesPathCStr = self.savesPath.length > 0 ? strdup(self.savesPath.UTF8String) : NULL;
 
     // ABI Sanity Check: Ensure our compiled layout matches the Libretro spec requirements
     // for Apple Silicon (64-byte hw_render_callback, 16-byte aligned pointers).
@@ -1510,9 +1568,29 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
     struct retro_system_info sysInfo = {0};
     _retro_get_system_info(&sysInfo);
     
+    // Geolith reports need_fullpath=1 and opens the supplied path itself.
+    // Stage the imported image in OpenEmu support storage so the helper gives
+    // the external core a stable, locally accessible path instead of a source
+    // URL from Downloads that may not carry a security scope.
+    NSString *gamePath = path;
+    if ([systemID containsString:@"neogeo"] && self.supportPath.length > 0) {
+        NSString *stageDirectory = [self.supportPath stringByAppendingPathComponent:@"Geolith Content"];
+        [[NSFileManager defaultManager] createDirectoryAtPath:stageDirectory
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:nil];
+        NSString *stagePath = [stageDirectory stringByAppendingPathComponent:path.lastPathComponent];
+        NSData *sourceData = [NSData dataWithContentsOfFile:path options:NSDataReadingMappedIfSafe error:nil];
+        if (sourceData.length > 0 && [sourceData writeToFile:stagePath atomically:YES]) {
+            gamePath = stagePath;
+        }
+    }
+
     struct retro_game_info gameInfo = {0};
-    gameInfo.path = [path UTF8String];
+    gameInfo.path = [gamePath UTF8String];
     
+    // Respect the core-reported libretro contract. The installed Geolith
+    // build requests a full path, so its game_info buffer must remain empty.
     if (sysInfo.need_fullpath) {
         gameInfo.data = NULL;
         gameInfo.size = 0;
@@ -1523,13 +1601,22 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
     }
     
     _clearFramesRemaining = 20; // Warm-up: Clear buffer for 20 frames to avoid memory artifacts
+#if DEBUG
+    NSLog(@"[OELibretro] Load request: ROM=%@ exists=%d size=%llu need_fullpath=%d BIOS aes=%d neogeo=%d",
+          gamePath,
+          [[NSFileManager defaultManager] fileExistsAtPath:gamePath],
+          (unsigned long long)gameInfo.size,
+          sysInfo.need_fullpath,
+          [[NSFileManager defaultManager] fileExistsAtPath:[biosPath stringByAppendingPathComponent:@"aes.zip"]],
+          [[NSFileManager defaultManager] fileExistsAtPath:[biosPath stringByAppendingPathComponent:@"neogeo.zip"]]);
+#endif
 
     if (!_retro_load_game(&gameInfo)) {
         errorMsg = @"The core rejected the ROM load. This is usually due to missing BIOS or corrupted files.";
 
-        // If we know this system requires specific BIOS files, surface that
-        // hint to the user instead of the generic message.
-        if (req) {
+        // Only report missing BIOS when the files are actually absent.
+        // A valid BIOS must not mask a content-format or core rejection error.
+        if (req && !bios_requirement_satisfied(biosPath, req)) {
             errorMsg = [NSString stringWithUTF8String:req->userMessage];
         }
 
@@ -2069,12 +2156,12 @@ static unsigned OERetroKeyForMacVirtualKey(NSInteger keycode) {
     }
 }
 
-- (oneway void)keyDown:(NSUInteger)keyCode {
-    [self didPressKey:(NSInteger)keyCode forPlayer:1];
+- (void)keyDown:(NSEvent *)event {
+    [self didPressKey:(NSInteger)event.keyCode forPlayer:1];
 }
 
-- (oneway void)keyUp:(NSUInteger)keyCode {
-    [self didReleaseKey:(NSInteger)keyCode forPlayer:1];
+- (void)keyUp:(NSEvent *)event {
+    [self didReleaseKey:(NSInteger)event.keyCode forPlayer:1];
 }
 
 #pragma mark - Speed Control

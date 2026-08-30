@@ -46,6 +46,8 @@ PLIST_BUDDY=/usr/libexec/PlistBuddy
 "$PLIST_BUDDY" -c 'Set :OESystemName Neo Geo' "$PLIST"
 "$PLIST_BUDDY" -c 'Set :OENumberOfPlayersKey 4' "$PLIST"
 "$PLIST_BUDDY" -c 'Set :OESystemIcon neogeo_icon' "$PLIST"
+# Neo Geo cartridge images are handled by the Geolith RetroArch core.
+"$PLIST_BUDDY" -c 'Add :OEFileSuffixes:1 string neo' "$PLIST"
 
 # Keep the purpose-built Neo Geo artwork while retaining Arcade's executable,
 # controller responder and mapping resources.

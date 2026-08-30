@@ -31,7 +31,7 @@ upstream_hits=$(echo "$PLISTS" \
 if [ -n "$upstream_hits" ]; then
   echo "ERROR: upstream OpenEmu-Update/openemu.org SUFeedURL still present in:" >&2
   echo "$upstream_hits" >&2
-  echo "Replace with https://raw.githubusercontent.com/nickybmon/OpenEmu-Silicon/main/Appcasts/<core>.xml" >&2
+  echo "Replace with https://raw.githubusercontent.com/Anhani1206/OpenEmuARM/main/Appcasts/<core>.xml" >&2
   fail=1
 fi
 
@@ -45,7 +45,7 @@ while IFS= read -r hit; do
     missing+=("$plist → Appcasts/${appcast_name}.xml")
   fi
 done < <(echo "$PLISTS" \
-  | xargs grep -H -E 'raw\.githubusercontent\.com/nickybmon/OpenEmu-Silicon/main/Appcasts/' 2>/dev/null \
+  | xargs grep -H -E 'raw\.githubusercontent\.com/Anhani1206/OpenEmuARM/main/Appcasts/' 2>/dev/null \
   || true)
 
 if [ ${#missing[@]} -gt 0 ]; then
@@ -81,7 +81,7 @@ if [ ${#missing_sufeedurl[@]} -gt 0 ]; then
   for p in "${missing_sufeedurl[@]}"; do
     echo "  $p" >&2
   done
-  echo "Add: <key>SUFeedURL</key><string>https://raw.githubusercontent.com/nickybmon/OpenEmu-Silicon/main/Appcasts/<core>.xml</string>" >&2
+  echo "Add: <key>SUFeedURL</key><string>https://raw.githubusercontent.com/Anhani1206/OpenEmuARM/main/Appcasts/<core>.xml</string>" >&2
   fail=1
 fi
 

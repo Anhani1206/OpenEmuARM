@@ -556,19 +556,24 @@ static NSString * const OESelectedMediaKey = @"_OESelectedMediaKey";
 {
     NSMenu *menu = [[NSMenu alloc] init];
     NSArray *items = [[self items] objectsAtIndexes:indexes];
-    NSArray *urls  = [items valueForKeyPath:@"URL.absoluteURL"];
-    NSArray *sharingServices = [NSSharingService sharingServicesForItems:urls];
-    
-    for (NSSharingService *currentService in sharingServices)
-    {
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[currentService title]
-                                                      action:@selector(shareFromService:) keyEquivalent:@""];
-        [item setImage:[currentService image]];
-        [item setRepresentedObject:currentService];
-        [menu addItem:item];
-    }
-    
+    NSArray *urls = [items valueForKeyPath:@"URL.absoluteURL"];
+
+    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Share", @"Screenshot View Context menu")
+                                                   action:@selector(shareSelectedItems:)
+                                            keyEquivalent:@""];
+    item.representedObject = urls;
+    [menu addItem:item];
+
     return menu;
+}
+
+- (IBAction)shareSelectedItems:(id)sender
+{
+    NSArray *urls = [sender representedObject];
+    if (urls.count == 0) return;
+
+    NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems:urls];
+    [picker showRelativeToRect:self.view.bounds ofView:self.view preferredEdge:NSMinYEdge];
 }
              
  - (IBAction)shareFromService:(id)sender

@@ -197,7 +197,7 @@ final class GameInfoHelper {
             var results = (try? database.executeQuery(sql)) ?? []
 
             // --- Region preference ---
-            var result: [String : Any]? = pickPreferredRegion(from: results)
+            let result: [String : Any]? = pickPreferredRegion(from: results)
 
             if var picked = result {
                 picked.removeValue(forKey: "region")

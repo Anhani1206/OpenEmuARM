@@ -99,7 +99,7 @@ extension SPVType.MemberTypeInfoCollection: Collection {
 extension SPVType {
     @frozen
     public struct MemberDecorationStringContainer: SPVDecorationContainer {
-        public typealias Element = String
+        public typealias Element = String // swiftlint:disable:this nesting
         // source: ParsedIR::get_member_decoration_string
         public static let validKeys: Set<SPVDecoration> = [.hlslSemanticGOOGLE]
         
@@ -129,7 +129,7 @@ extension SPVType {
     
     @frozen
     public struct MemberDecorationUInt32Container: SPVDecorationContainer {
-        public typealias Element = UInt32
+        public typealias Element = UInt32 // swiftlint:disable:this nesting
         // source: ParsedIR::get_member_decoration
         public static let validKeys: Set<SPVDecoration> = [
             .builtIn, .location, .component, .binding,

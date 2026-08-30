@@ -54,6 +54,24 @@ enum BIOSFile {
         "RelativePath": "fbneo/neogeo.zip",
     ]
 
+    /// Geolith reads Neo Geo BIOS files from the shared OpenEmu BIOS directory.
+    static let geolithBIOSRequiredFiles: [[String: Any]] = [
+        [
+            "Name": "aes.zip",
+            "Description": "Neo Geo AES BIOS (Geolith)",
+            "Optional": false,
+            "MD5": "ad9585c72130c56f04ae26aae87c289d",
+            "RelativePath": "aes.zip",
+        ],
+        [
+            "Name": "neogeo.zip",
+            "Description": "Neo Geo MVS BIOS (Geolith)",
+            "Optional": false,
+            "MD5": "00dad01abdbf8ea9e79ad2fe11bdb182",
+            "RelativePath": "neogeo.zip",
+        ],
+    ]
+
     static var nativeFBNeoIsInstalled: Bool {
         OECorePlugin.corePlugin(bundleIdentifier: "org.openemu.FBNeo") != nil
     }
@@ -252,7 +270,10 @@ enum BIOSFile {
         let fileManager = FileManager.default
         
         // Copy known BIOS/system files to BIOS folder.
-        var requiredFiles = OECorePlugin.requiredFiles
+        // Prefer Geolith's exact Neo Geo BIOS hashes before FBNeo's
+        // intentionally permissive filename-only requirement.
+        var requiredFiles = geolithBIOSRequiredFiles
+        requiredFiles.append(contentsOf: OECorePlugin.requiredFiles)
         if nativeFBNeoIsInstalled {
             requiredFiles.append(fbNeoBIOSRequiredFile)
         }

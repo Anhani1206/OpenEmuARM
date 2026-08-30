@@ -259,7 +259,31 @@ extension MainWindowController: LibraryControllerDelegate {
         openGameDocument(with: nil, saveState: saveState)
     }
     
-    @available(macOS, deprecated: 10.15, message: "Remove 'or \"User Reports\"' from alert (~line 392) and localizations, the term is not used in Catalina and above.")
+    private func perGameCorePreferenceKey(for game: OEDBGame) -> String {
+        "openemu.gameCore.(game.permanentIDURI.absoluteString)"
+    }
+    
+    private func preferredCore(for game: OEDBGame?) -> OECorePlugin? {
+        guard let game,
+              let systemIdentifier = game.system?.systemIdentifier,
+              let coreIdentifier = UserDefaults.standard.string(
+                forKey: perGameCorePreferenceKey(for: game)
+              ),
+              let core = OECorePlugin.corePlugin(bundleIdentifier: coreIdentifier),
+              core.systemIdentifiers.contains(systemIdentifier)
+        else {
+            return nil
+        }
+        return core
+    }
+    
+    private func rememberCore(_ core: OECorePlugin, for game: OEDBGame) {
+        UserDefaults.standard.set(
+            core.bundleIdentifier,
+            forKey: perGameCorePreferenceKey(for: game)
+        )
+    }
+    
     private func openGameDocument(with game: OEDBGame?, core: OECorePlugin? = nil, saveState state: OEDBSaveState?, secondAttempt retry: Bool = false, lockOnROM: OEDBRom? = nil, disableAutoReload noAutoReload: Bool = false) {
         
         guard let window = window else { return assertionFailure("MainWindow is nil") }
@@ -271,6 +295,7 @@ extension MainWindowController: LibraryControllerDelegate {
         let defaults = UserDefaults.standard
         let openInSeparateWindow = mainWindowRunsGame || defaults.bool(forKey: OEForcePopoutGameWindowKey)
         let fullScreen = defaults.bool(forKey: OEFullScreenGameWindowKey)
+        let selectedCore = core ?? preferredCore(for: game)
         
         var openWithSaveState = state != nil
         let state = state != nil ? state : game?.autosaveForLastPlayedRom
@@ -306,7 +331,9 @@ extension MainWindowController: LibraryControllerDelegate {
                         panel.canChooseFiles = true
                         panel.directoryURL = originalURL?.deletingLastPathComponent()
                         panel.allowsOtherFileTypes = false
-                        panel.allowedFileTypes = fileType != nil ? [fileType!] : nil
+                        if let fileType, let contentType = UTType(filenameExtension: fileType) {
+                            panel.allowedContentTypes = [contentType]
+                        }
                         
                         if panel.runModal() == .OK {
                             missingRom?.url = panel.url
@@ -381,6 +408,11 @@ extension MainWindowController: LibraryControllerDelegate {
                 game?.save()
             }
             
+            // Save the core only after the document has loaded successfully.
+            if let game, let resolvedCore = document?.corePlugin {
+                self.rememberCore(resolvedCore, for: game)
+            }
+            
             if openInSeparateWindow {
                 return
             }
@@ -403,10 +435,10 @@ extension MainWindowController: LibraryControllerDelegate {
         
         if openWithSaveState {
             NSDocumentController.shared.openGameDocument(with: state!, display: openInSeparateWindow, fullScreen: fullScreen, completionHandler: openDocument)
-        } else if let core, let lockOnROM {
-            NSDocumentController.shared.openGameDocument(with: game!, core: core, lockOnROM: lockOnROM, display: openInSeparateWindow, fullScreen: fullScreen, completionHandler: openDocument)
-        } else if let core {
-            NSDocumentController.shared.openGameDocument(with: game!, core: core, display: openInSeparateWindow, fullScreen: fullScreen, completionHandler: openDocument)
+        } else if let selectedCore, let lockOnROM {
+            NSDocumentController.shared.openGameDocument(with: game!, core: selectedCore, lockOnROM: lockOnROM, display: openInSeparateWindow, fullScreen: fullScreen, completionHandler: openDocument)
+        } else if let selectedCore {
+            NSDocumentController.shared.openGameDocument(with: game!, core: selectedCore, display: openInSeparateWindow, fullScreen: fullScreen, completionHandler: openDocument)
         } else {
             NSDocumentController.shared.openGameDocument(with: game!, display: openInSeparateWindow, fullScreen: fullScreen, completionHandler: openDocument)
         }

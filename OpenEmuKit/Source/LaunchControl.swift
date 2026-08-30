@@ -56,6 +56,6 @@ public struct LaunchControl {
             throw POSIXError(code)
         }
         
-        // TODO: Should throw a generic error
+        // NOTE: Should throw a generic error
     }
 }

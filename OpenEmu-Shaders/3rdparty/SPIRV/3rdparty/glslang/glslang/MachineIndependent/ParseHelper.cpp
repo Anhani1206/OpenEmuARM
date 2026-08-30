@@ -9746,10 +9746,10 @@ const TTypeList* TParseContext::recordStructCopy(TStructRecord& record, const TT
     size_t originHash = 0, tmpHash = 0;
     std::hash<size_t> hasher;
     for (size_t i = 0; i < memberCount; i++) {
-        size_t originMemberHash = hasher(originType->getStruct()->at(i).type->getQualifier().layoutPacking +
-                                         originType->getStruct()->at(i).type->getQualifier().layoutMatrix);
-        size_t tmpMemberHash = hasher(tmpType->getStruct()->at(i).type->getQualifier().layoutPacking +
-                                      tmpType->getStruct()->at(i).type->getQualifier().layoutMatrix);
+        size_t originMemberHash = hasher(static_cast<int>(originType->getStruct()->at(i).type->getQualifier().layoutPacking) +
+                                         static_cast<int>(originType->getStruct()->at(i).type->getQualifier().layoutMatrix));
+        size_t tmpMemberHash = hasher(static_cast<int>(tmpType->getStruct()->at(i).type->getQualifier().layoutPacking) +
+                                      static_cast<int>(tmpType->getStruct()->at(i).type->getQualifier().layoutMatrix));
         originHash = hasher((originHash ^ originMemberHash) << 1);
         tmpHash = hasher((tmpHash ^ tmpMemberHash) << 1);
     }

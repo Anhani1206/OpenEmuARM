@@ -28,8 +28,10 @@ import AVFoundation
 internal import os.log
 
 @objc(OEAudioUnit) final public class AudioUnit: AUAudioUnit {
-    // swiftlint:disable identifier_name
+    // swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     @objc public static var kAudioUnitSubType_Emulator     = OSType(bitPattern: 0x65_6d_75_21) // emu!
+    // swiftlint:disable:next identifier_name
     @objc public static let kAudioUnitManufacturer_OpenEmu = OSType(bitPattern: 0x6f_65_6d_75) // oemu
     
     private static var isRegistered: Bool = {
@@ -150,10 +152,15 @@ internal import os.log
     
     // MARK: - AUAudioUnit (AUAudioUnitImplementation)
     
-    @frozen @usableFromInline struct InputData {
+    @usableFromInline final class InputData {
         let pullInput: AURenderPullInputBlock?
         var timestamp: UnsafePointer<AudioTimeStamp>?
         let converter: UnsafePointer<Converter>
+
+        init(pullInput: AURenderPullInputBlock?, converter: UnsafePointer<Converter>) {
+            self.pullInput = pullInput
+            self.converter = converter
+        }
     }
     
     @objc public override var internalRenderBlock: AUInternalRenderBlock {
@@ -161,8 +168,8 @@ internal import os.log
         
         if requiresConversion {
             let inOutDataProc: AudioConverterComplexInputDataProc = { (_, ioNumberDataPackets, ioData, _, inUserData) -> OSStatus in
-                let inp  = inUserData.unsafelyUnwrapped.assumingMemoryBound(to: InputData.self)
-                let conv = inp.pointee.converter.pointee
+                let inp = Unmanaged<InputData>.fromOpaque(inUserData.unsafelyUnwrapped).takeUnretainedValue()
+                let conv = inp.converter.pointee
                 
                 var pullFlags: AudioUnitRenderActionFlags = []
                 ioData.pointee.mBuffers.mData = UnsafeMutableRawPointer(conv.buffer)
@@ -173,8 +180,8 @@ internal import os.log
                  * EVEN THOUGH THE BUFFER IS ALREADY LARGER THAN MAXIMUMFRAMESTORENDER */
                 ioNumberDataPackets.pointee = min(conv.inputFrameCount, ioNumberDataPackets.pointee)
                 
-                return inp.pointee.pullInput.unsafelyUnwrapped(&pullFlags,
-                                                               inp.pointee.timestamp.unsafelyUnwrapped,
+                return inp.pullInput.unsafelyUnwrapped(&pullFlags,
+                                                               inp.timestamp.unsafelyUnwrapped,
                                                                ioNumberDataPackets.pointee,
                                                                0,
                                                                ioData)
@@ -182,7 +189,7 @@ internal import os.log
             
             let converter = converter
             
-            var data = InputData(pullInput: pullInput,
+            let data = InputData(pullInput: pullInput,
                                  converter: converter)
             // swiftlint:disable closure_parameter_position
             return { (_ actionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlags>,
@@ -198,7 +205,8 @@ internal import os.log
                 data.timestamp = timestamp
                 var packetSize: UInt32 = frameCount
                 
-                let res = AudioConverterFillComplexBuffer(converter.pointee.conv!, inOutDataProc, &data, &packetSize, outputData, nil)
+                let dataPointer = Unmanaged.passUnretained(data).toOpaque()
+                let res = AudioConverterFillComplexBuffer(converter.pointee.conv!, inOutDataProc, dataPointer, &packetSize, outputData, nil)
                 return res
             }
         }
@@ -216,9 +224,11 @@ internal import os.log
             var pullFlags: AudioUnitRenderActionFlags = []
             return pullInput(&pullFlags, timestamp, frameCount, 0, outputData)
         }
+            // swiftlint:enable closure_parameter_position
     }
     
     @objc class CustomBus: AUAudioUnitBus {
+        // swiftlint:disable:next identifier_name
         var _format: AVAudioFormat
         
         override init(format: AVAudioFormat) throws {

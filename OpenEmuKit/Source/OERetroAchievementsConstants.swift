@@ -84,7 +84,9 @@ public let OERetroAchievementsSetsKey                = "sets"
 public let OERetroAchievementsSetIDKey               = "setID"
 public let OERetroAchievementsSetTitleKey            = "setTitle"
 public let OERetroAchievementsSetBadgeURLKey         = "setBadgeURL"
+// swiftlint:disable:next identifier_name
 public let OERetroAchievementsSetAchievementCountKey = "setAchievementCount"
+// swiftlint:disable:next identifier_name
 public let OERetroAchievementsSetLeaderboardCountKey = "setLeaderboardCount"
 public let OERetroAchievementsBucketTitleKey         = "bucketTitle"
 public let OERetroAchievementsBucketTypeKey          = "bucketType"
@@ -100,9 +102,13 @@ public let OERetroAchievementsHardcoreRarityKey      = "rarityHardcore"
 public let OERetroAchievementsUnlockedKey            = "unlocked"
 public let OERetroAchievementsSessionStatusKey       = "sessionStatus"
 public let OERetroAchievementsSessionErrorCodeKey    = "sessionErrorCode"
+// swiftlint:disable:next identifier_name
 public let OERetroAchievementsSessionErrorMessageKey = "sessionErrorMessage"
+// swiftlint:disable:next identifier_name
 public let OERetroAchievementsSessionStatusUnrecognized = "unrecognized"
+// swiftlint:disable:next identifier_name
 public let OERetroAchievementsSessionStatusLoginFailed  = "loginFailed"
+// swiftlint:disable:next identifier_name
 public let OERetroAchievementsSessionStatusLoadFailed   = "loadFailed"
 
 /// Posted inside the helper process by a core plugin when rcheevos emits a
@@ -120,6 +126,7 @@ public let OERetroAchievementsEventDescriptionKey = "eventDescription"
 public let OERetroAchievementsEventBadgeURLKey   = "eventBadgeURL"
 public let OERetroAchievementsEventPointsKey     = "eventPoints"
 public let OERetroAchievementsEventDisplayKey    = "eventDisplay"
+// swiftlint:disable:next identifier_name
 public let OERetroAchievementsEventSubmittedScoreKey = "eventSubmittedScore"
 public let OERetroAchievementsEventBestScoreKey  = "eventBestScore"
 public let OERetroAchievementsEventRankKey       = "eventRank"

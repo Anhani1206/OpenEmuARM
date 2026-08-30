@@ -64,6 +64,7 @@ extension NSEvent {
             subscriber.receive(subscription: subscription)
         }
     }
+    // swiftlint:enable nesting
 }
 
 @available(macOS 10.15, *)

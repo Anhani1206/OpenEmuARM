@@ -29,6 +29,7 @@ import OpenEmuSystem
 import OpenEmuKit
 import OpenEmuBase
 import UserNotifications
+import UniformTypeIdentifiers
 
 private var appearancePrefChangedKVOContext = 0
 
@@ -41,11 +42,11 @@ extension OEDBRom: CachedLastPlayedInfoItem {}
 @objcMembers
 class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     
-    static let websiteAddress = "https://github.com/anhani/OpenEmuARM"
-    static let userGuideAddress = "https://github.com/anhani/OpenEmuARM/wiki"
-    static let releaseNotesAddress = "https://github.com/anhani/OpenEmuARM/releases"
-    static let feedbackAddress = "https://github.com/anhani/OpenEmuARM/issues/new/choose"
-    static let bugReportAddress = "https://github.com/anhani/OpenEmuARM/issues/new"
+    static let websiteAddress = "https://github.com/Anhani1206/OpenEmuARM"
+    static let userGuideAddress = "https://github.com/Anhani1206/OpenEmuARM/wiki"
+    static let releaseNotesAddress = "https://github.com/Anhani1206/OpenEmuARM/releases"
+    static let feedbackAddress = "https://github.com/Anhani1206/OpenEmuARM/issues/new/choose"
+    static let bugReportAddress = "https://github.com/Anhani1206/OpenEmuARM/issues/new"
     private static let playStation2SystemAvailabilityMigrationKey = "playStation2SystemAvailabilityMigration"
     private static let neoGeoSystemAvailabilityMigrationKey = "neoGeoSystemAvailabilityMigration"
     private static let neoGeoSystemAvailabilityMigrationV2Key = "neoGeoSystemAvailabilityMigrationV2"
@@ -434,7 +435,9 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
             let openPanel = NSOpenPanel()
             
             openPanel.canChooseFiles = true
-            openPanel.allowedFileTypes = [OELibraryDatabase.databaseFileExtension]
+            if let databaseType = UTType(filenameExtension: OELibraryDatabase.databaseFileExtension) {
+                openPanel.allowedContentTypes = [databaseType]
+            }
             openPanel.canChooseDirectories = false
             openPanel.allowsMultipleSelection = false
             
@@ -641,7 +644,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     /// the host's `disable-library-validation` entitlement covers any plugin
     /// signature drift, so re-codesigning is not required.
     fileprivate func refreshStaleCoreFeedURLs() {
-        let canonicalPrefix = "https://raw.githubusercontent.com/nickybmon/OpenEmu-Silicon/main/Appcasts/"
+        let canonicalPrefix = "https://raw.githubusercontent.com/Anhani1206/OpenEmuARM/main/Appcasts/"
         feedURLRefreshReport = ([], [])
 
         let coresDir = FileManager.default.homeDirectoryForCurrentUser
@@ -1076,13 +1079,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
         alert.messageText = NSLocalizedString("ALERT_INPUT_MONITORING_HEADLINE", comment:"Headline for Input Monitoring permissions")
         var informativeText = NSLocalizedString("ALERT_INPUT_MONITORING_PART1", comment:"Message for Input Monitoring permissions")
         informativeText += "\n\n"
-        if #available(macOS 26, *) {
-            informativeText += NSLocalizedString("ALERT_INPUT_MONITORING_PART2_TAHOE", comment:"Message for Input Monitoring permissions on macOS 26+")
-        } else if #available(macOS 12.0, *) {
-            informativeText += NSLocalizedString("ALERT_INPUT_MONITORING_PART2_MONTEREY", comment:"Message for Input Monitoring permissions")
-        } else {
-            informativeText += NSLocalizedString("ALERT_INPUT_MONITORING_PART2", comment:"Message for Input Monitoring permissions")
-        }
+        informativeText += NSLocalizedString("ALERT_INPUT_MONITORING_PART2_TAHOE", comment:"Message for Input Monitoring permissions on macOS 26+")
         alert.informativeText = informativeText
 
         if #available(macOS 13.0, *) {
@@ -1225,6 +1222,15 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
         preferencesWindowController.showWindow(nil)
     }
     
+    // MARK: - Application Icon
+    
+    /// Applies the dark icon while the app is using the dark appearance.
+    /// Setting the property to nil restores the icon from the app bundle.
+    private func updateApplicationIconForCurrentAppearance() {
+        let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        NSApp.applicationIconImage = isDark ? NSImage(named: "OpenEmuDarkIcon1024") : nil
+    }
+    
     // MARK: - KVO
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -1238,6 +1244,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
                 default:
                     NSApp.appearance = nil
             }
+            updateApplicationIconForCurrentAppearance()
         } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }

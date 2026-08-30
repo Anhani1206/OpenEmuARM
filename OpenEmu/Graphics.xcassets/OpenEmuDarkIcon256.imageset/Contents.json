@@ -1,0 +1,30 @@
+{
+  "images" : [
+    {
+      "display-gamut" : "sRGB",
+      "idiom" : "mac",
+      "scale" : "1x"
+    },
+    {
+      "display-gamut" : "display-P3",
+      "idiom" : "mac",
+      "scale" : "1x"
+    },
+    {
+      "display-gamut" : "sRGB",
+      "filename" : "icon-256-srgb-dark.png",
+      "idiom" : "mac",
+      "scale" : "2x"
+    },
+    {
+      "display-gamut" : "display-P3",
+      "filename" : "icon-256-p3-dark.png",
+      "idiom" : "mac",
+      "scale" : "2x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

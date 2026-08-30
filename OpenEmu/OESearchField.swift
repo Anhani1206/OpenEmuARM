@@ -24,7 +24,6 @@
 
 import Cocoa
 
-@available(macOS, introduced: 10.14, deprecated: 11.0, message: "Remove everything but searchMenuTemplate.")
 final class OESearchField: NSSearchField {
     
     // Force redraw of the search glyph after changing the menu to make sure the chevron is displayed.

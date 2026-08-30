@@ -107,6 +107,9 @@ final class PrefBiosController: NSViewController {
             if core.bundleIdentifier == "org.openemu.FBNeo", !hasDeclaredFBNeoBIOS {
                 entries.append(BIOSFile.fbNeoBIOSRequiredFile)
             }
+            if core.displayName.localizedCaseInsensitiveContains("geolith") {
+                entries.append(contentsOf: BIOSFile.geolithBIOSRequiredFiles)
+            }
             guard !entries.isEmpty else { continue }
 
             // Group entries by filename — multiple entries for the same filename are alternate hashes.

@@ -698,12 +698,12 @@ char CalculateDeviceHighByte(int deviceNumber)
 
 - (void)initVideo
 {
-    // Enable libfreedo's high-resolution path so 3D CEL output and the VDL
-    // frame extractor agree on a 640x480 canvas. Leaving this at 320x240
-    // clips/scales some 3D games into the upper-left quarter of the screen.
-    HightResMode = 1;
-    videoWidth = 640;
-    videoHeight = 480;
+    // Keep the core's logical output at the native 3DO size. OpenEmu's
+    // integral scaling menu uses this size as its 1x basis, so 2x and 3x
+    // remain available on ordinary displays.
+    HightResMode = 0;
+    videoWidth = 320;
+    videoHeight = 240;
     frame = (VDLFrame*)malloc(sizeof(VDLFrame));
     memset(frame, 0, sizeof(VDLFrame));
 }

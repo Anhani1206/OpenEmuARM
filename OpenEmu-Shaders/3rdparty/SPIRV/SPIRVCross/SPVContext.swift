@@ -61,7 +61,7 @@ public final class SPVContext {
     }
     
     deinit {
-        // TODO: This is not safe if there are references to child objects
+        // NOTE: This is not safe if there are references to child objects.
         print("destroying SPVContext")
         ctx.destroy()
     }

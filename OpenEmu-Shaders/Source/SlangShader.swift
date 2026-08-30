@@ -48,7 +48,7 @@ public final class SlangShader {
     
     public init(fromURL url: URL) throws {
         self.url = url
-        let sm = try ShaderConfigSerialization.makeShaderModel(from: try String(contentsOf: url))
+        let sm = try ShaderConfigSerialization.makeShaderModel(from: try String(contentsOf: url, encoding: .utf8))
         
         let base = url.deletingLastPathComponent()
         

@@ -78,7 +78,8 @@ public class OELocalizationHelper: NSObject {
         if let value = UserDefaults.standard.value(forKey: Self.OERegionKey) as? Int {
             region = OELocalizationHelper.OERegion(rawValue: value) ?? .other
         }
-        else if let regionCode = Locale.current.regionCode {
+        else {
+            let regionCode = Locale.current.region?.identifier ?? ""
             
             if OERegionCodes.europe.contains(regionCode) {
                 region = .eu
@@ -92,9 +93,6 @@ public class OELocalizationHelper: NSObject {
             else {
                 region = .other
             }
-        }
-        else {
-            region = .other
         }
     }
     

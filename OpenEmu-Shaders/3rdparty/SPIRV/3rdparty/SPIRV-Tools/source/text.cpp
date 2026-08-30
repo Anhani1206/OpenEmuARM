@@ -504,9 +504,7 @@ spv_result_t encodeInstructionStartingWithImmediate(
 ///
 /// @param[in] grammar the grammar to use for compilation
 /// @param[in, out] context the dynamic compilation info
-/// @param[in] text stream to translate
 /// @param[out] pInst returned binary Opcode
-/// @param[in,out] pPosition in the text stream
 ///
 /// @return result code
 spv_result_t spvTextEncodeOpcode(const spvtools::AssemblyGrammar& grammar,

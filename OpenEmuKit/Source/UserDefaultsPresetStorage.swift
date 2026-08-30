@@ -81,7 +81,13 @@ public class UserDefaultsPresetStorage: ShaderPresetStorage {
             
             // Ensure created at is set
             let createdAt = existing?.createdAt ?? preset.createdAt ?? Date().timeIntervalSince1970
-            let preset    = ShaderPresetData(name: preset.name, shader: preset.shader, parameters: preset.parameters, id: preset.id, createdAt: createdAt)
+            let preset = ShaderPresetData(
+                name: preset.name,
+                shader: preset.shader,
+                parameters: preset.parameters,
+                id: preset.id,
+                createdAt: createdAt
+            )
             
             do {
                 let text = try ShaderPresetTextWriter.write(preset: preset, options: [.name, .shader, .createdAt])
@@ -112,8 +118,7 @@ public class UserDefaultsPresetStorage: ShaderPresetStorage {
             //
             if
                 var idsByShader = indexByShader[existing.shader],
-                let index = idsByShader.firstIndex(of: existing.id)
-            {
+                let index = idsByShader.firstIndex(of: existing.id) {
                 idsByShader.remove(at: index)
                 indexByShader[existing.shader] = idsByShader
             }

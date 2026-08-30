@@ -91,7 +91,6 @@ NSString *const OEImageBrowserGroupSubtitleKey = @"OEImageBrowserGroupSubtitleKe
 
 - (void)performSetup
 {
-    NSAppearance.currentAppearance = self.effectiveAppearance;
     
     _editingIndex = NSNotFound;
     _ratingTracking = NSNotFound;
@@ -559,6 +558,8 @@ NSString *const OEImageBrowserGroupSubtitleKey = @"OEImageBrowserGroupSubtitleKe
             CGSize cellSize = [self cellSize];
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSImage *thumbnail = nil;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
                 QLThumbnailRef thumbnailRef = QLThumbnailCreate(NULL, (__bridge CFURLRef)url, cellSize, NULL);
                 if(thumbnailRef)
                 {
@@ -570,6 +571,7 @@ NSString *const OEImageBrowserGroupSubtitleKey = @"OEImageBrowserGroupSubtitleKe
                     }
                     CFRelease(thumbnailRef);
                 }
+#pragma clang diagnostic pop
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self setProposedImage:thumbnail];
                 });
@@ -712,7 +714,6 @@ NSString *const OEImageBrowserGroupSubtitleKey = @"OEImageBrowserGroupSubtitleKe
 
 - (void)drawDragOverlays
 {
-    NSAppearance.currentAppearance = self.effectiveAppearance;
     id <IKRenderer> renderer = [self renderer];
 
     if([self dropOperation] != IKImageBrowserDropBefore) return;
@@ -759,7 +760,6 @@ NSString *const OEImageBrowserGroupSubtitleKey = @"OEImageBrowserGroupSubtitleKe
 
 - (void)drawGroupsOverlays
 {
-    NSAppearance.currentAppearance = self.effectiveAppearance;
     [super drawGroupsOverlays];
 
     const id <IKRenderer> renderer = [self renderer];
@@ -781,7 +781,6 @@ NSString *const OEImageBrowserGroupSubtitleKey = @"OEImageBrowserGroupSubtitleKe
 
 - (void)drawGroup:(IKImageBrowserGridGroup*)group withRect:(NSRect)headerRect
 {
-    NSAppearance.currentAppearance = self.effectiveAppearance;
     
     const CGFloat HeaderLeftBorder  = 14.0;
     const CGFloat HeaderRightBorder = 14.0;

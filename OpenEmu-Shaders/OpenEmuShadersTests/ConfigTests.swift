@@ -112,7 +112,6 @@ class ShaderConfigSerializationTests: XCTestCase {
         }
     }
     
-    // swiftlint:disable line_length
     static let phosphorlut =
         """
         shaders = 5
@@ -160,7 +159,9 @@ class ShaderConfigSerializationTests: XCTestCase {
         slot_linear = true
         slot_wrap_mode = "repeat"
 
-        parameters = box_scale;location;in_res_x;in_res_y;TVOUT_RESOLUTION;TVOUT_COMPOSITE_CONNECTION;TVOUT_TV_COLOR_LEVELS;enable_480i;top_field_first
+        // swiftlint:disable:next line_length
+        parameters = box_scale;location;in_res_x;in_res_y;TVOUT_RESOLUTION;TVOUT_COMPOSITE_CONNECTION;TVOUT_TV_COLOR_LEVELS;\
+        enable_480i;top_field_first
         box_scale = 2.000000
         location = 0.500000
         in_res_x = 240.000000

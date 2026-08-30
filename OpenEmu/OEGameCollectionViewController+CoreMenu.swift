@@ -33,7 +33,15 @@ extension OEGameCollectionViewController {
         guard let systemID = game.system?.systemIdentifier else { return nil }
         var plugins = OECorePlugin.corePlugins(forSystemIdentifier: systemID)
         if systemID == "openemu.system.neogeo" {
-            plugins.removeAll { $0.bundleIdentifier != "org.openemu.FBNeo" }
+            let isNeoCartridge = game.roms.contains {
+                $0.url?.pathExtension.caseInsensitiveCompare("neo") == .orderedSame
+            }
+            plugins.removeAll { plugin in
+                if isNeoCartridge {
+                    return !plugin.displayName.localizedCaseInsensitiveContains("geolith")
+                }
+                return plugin.bundleIdentifier != "org.openemu.FBNeo"
+            }
         }
         guard plugins.count > 1 else { return nil }
         plugins.sort { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }

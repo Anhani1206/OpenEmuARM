@@ -99,6 +99,7 @@ final class ImportOperation: Operation, NSCopying, @unchecked Sendable {
     private var md5Hash: String?
     
     private var rom: OEDBRom?
+    private var replaceExistingROM = false
     
     private var _shouldExit = false
     private var shouldExit: Bool {
@@ -127,6 +128,7 @@ final class ImportOperation: Operation, NSCopying, @unchecked Sendable {
         op.exploreArchives = exploreArchives
         op.collectionID = collectionID
         op.rom = rom
+        op.replaceExistingROM = replaceExistingROM
         
         op.systemIdentifiers = systemIdentifiers
         op.completionHandler = completionHandler
@@ -363,6 +365,8 @@ final class ImportOperation: Operation, NSCopying, @unchecked Sendable {
 
         // Ignore unsupported file extensions
         var validExtensions = OESystemPlugin.supportedTypeExtensions
+        // Neo Geo cartridge images are single-file .neo ROMs handled by Geolith.
+        validExtensions.insert("neo")
 
         // Hack fix for #2031
         // TODO: Build set for extensions from all BIOS file types?
@@ -766,11 +770,29 @@ final class ImportOperation: Operation, NSCopying, @unchecked Sendable {
         return digest.map { String(format: "%02x", $0) }.joined()
     }
     
+    func prepareForReplacement() {
+        replaceExistingROM = true
+        md5Hash = nil
+        error = nil
+        exitStatus = .none
+        isChecked = false
+        file = nil
+        extractedFileURL = nil
+        archiveFileIndex = NSNotFound
+        _shouldExit = false
+    }
+
     private func performImportStepCheckHash() {
         DLog("")
         var error: Error
         let md5 = md5Hash!
         let context = importer.context!
+
+        if replaceExistingROM, let existingROM = rom {
+            context.delete(existingROM)
+            rom = nil
+            replaceExistingROM = false
+        }
         
         var rom: OEDBRom?
         

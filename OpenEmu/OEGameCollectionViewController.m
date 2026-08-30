@@ -25,6 +25,7 @@
  */
 
 #import "OEGameCollectionViewController.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #import "OEAlert.h"
 
@@ -490,8 +491,14 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
     [openPanel setAllowsMultipleSelection:NO];
     [openPanel setCanChooseDirectories:NO];
     [openPanel setCanChooseFiles:YES];
-    NSArray *imageTypes = [NSImage imageTypes];
-    [openPanel setAllowedFileTypes:imageTypes];
+    NSArray<NSString *> *imageTypes = [NSImage imageTypes];
+    NSMutableArray<UTType *> *imageContentTypes = [NSMutableArray arrayWithCapacity:imageTypes.count];
+    for (NSString *identifier in imageTypes) {
+        UTType *contentType = [UTType typeWithIdentifier:identifier];
+        if (contentType != nil)
+            [imageContentTypes addObject:contentType];
+    }
+    [openPanel setAllowedContentTypes:imageContentTypes];
 
     [openPanel beginWithCompletionHandler:^(NSInteger result) {
         if(result != NSModalResponseOK)
@@ -766,11 +773,12 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
         }
         [menu addItem:[NSMenuItem separatorItem]];
 
-        if(game.status == OEDBGameStatusOK)
-            [menu addItemWithTitle:NSLocalizedString(@"Download Cover Art", @"") action:@selector(downloadCoverArt:) keyEquivalent:@""];
-        if(game.status == OEDBGameStatusProcessing)
-            [menu addItemWithTitle:NSLocalizedString(@"Cancel Cover Art Download", @"") action:@selector(cancelCoverArtDownload:) keyEquivalent:@""];
-
+        NSMenu *coverArtsMenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Cover Arts", @"Game context submenu for cover art actions")];
+        [coverArtsMenu addItemWithTitle:NSLocalizedString(@"Download Cover Art", @"Download cover art for the selected game") action:@selector(downloadCoverArt:) keyEquivalent:@""];
+        [coverArtsMenu addItemWithTitle:NSLocalizedString(@"Stop download Cover Art", @"Stop cover art download for the selected game") action:@selector(cancelCoverArtDownload:) keyEquivalent:@""];
+        NSMenuItem *coverArtsMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Cover Arts", @"Game context submenu for cover art actions") action:NULL keyEquivalent:@""];
+        coverArtsMenuItem.submenu = coverArtsMenu;
+        [menu addItem:coverArtsMenuItem];
         [menu addItemWithTitle:NSLocalizedString(@"Add Cover Art from File…", @"") action:@selector(addCoverArtFromFile:) keyEquivalent:@""];
         [menu addItemWithTitle:NSLocalizedString(@"Import Artwork from Folder…", @"") action:@selector(importArtworkFromFolder:) keyEquivalent:@""];
         if(hasLocalFiles)
@@ -814,7 +822,12 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
         }
         [menu addItem:[NSMenuItem separatorItem]];
 
-        [menu addItemWithTitle:NSLocalizedString(@"Download Cover Art", @"") action:@selector(downloadCoverArt:) keyEquivalent:@""];
+        NSMenu *coverArtsMenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Cover Arts", @"Game context submenu for cover art actions")];
+        [coverArtsMenu addItemWithTitle:NSLocalizedString(@"Download Cover Art", @"Download cover art for the selected game") action:@selector(downloadCoverArt:) keyEquivalent:@""];
+        [coverArtsMenu addItemWithTitle:NSLocalizedString(@"Stop download Cover Art", @"Stop cover art download for the selected game") action:@selector(cancelCoverArtDownload:) keyEquivalent:@""];
+        NSMenuItem *coverArtsMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Cover Arts", @"Game context submenu for cover art actions") action:NULL keyEquivalent:@""];
+        coverArtsMenuItem.submenu = coverArtsMenu;
+        [menu addItem:coverArtsMenuItem];
         [menu addItemWithTitle:NSLocalizedString(@"Add Cover Art from File…", @"") action:@selector(addCoverArtFromFile:) keyEquivalent:@""];
         [menu addItemWithTitle:NSLocalizedString(@"Import Artwork from Folder…", @"") action:@selector(importArtworkFromFolder:) keyEquivalent:@""];
         [menu addItemWithTitle:NSLocalizedString(@"Consolidate Files…", @"") action:@selector(consolidateFiles:) keyEquivalent:@""];
@@ -1169,6 +1182,9 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
 }
 
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
 {
     if(aTableView == [self listView])
@@ -1181,6 +1197,7 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
     
     return NO;
 }
+#pragma clang diagnostic pop
 
 #pragma mark - NSTableView Delegate
 - (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex

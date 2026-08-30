@@ -62,3 +62,13 @@ O ZIP foi montado a partir desse Archive, com os 35 cores portáteis disponívei
 - Opera: ausente
 
 O teste estrutural do ZIP foi concluído sem erros e a assinatura ad-hoc foi validada no app montado antes da compactação. Em outro Mac, pode ser necessário usar **Abrir** pelo menu contextual na primeira execução.
+
+## Escala integral do 3DO — 29 de agosto de 2026
+
+O core 4DO estava informando uma saída lógica de 640×480. Como o menu de escala integral do OpenEmu calcula as opções a partir desse tamanho, em muitas telas apenas 1× ficava disponível.
+
+O 4DO voltou a informar sua saída lógica nativa de 320×240 (`HightResMode = 0`). Com isso, o OpenEmu pode oferecer 2× (640×480) e 3× (960×720), limitando a lista ao espaço real disponível na tela. A alteração não muda o formato 4:3 nem o backend gráfico do app.
+
+Backup criado antes da alteração:
+
+`Backups/4do-before-integral-scaling-2026-08-29/FreeDOGameCore.mm`

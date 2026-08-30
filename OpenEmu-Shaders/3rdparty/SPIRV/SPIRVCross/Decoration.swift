@@ -88,7 +88,7 @@ extension DecorationCollection: Sequence {
     public typealias Iterator = SPVDecorationAccessorIterator
     
     public struct SPVDecorationAccessorIterator: IteratorProtocol {
-        public typealias Element = DecorationCollection.Element
+        public typealias Element = DecorationCollection.Element // swiftlint:disable:this nesting
         
         let accessor: T
         var i: Int

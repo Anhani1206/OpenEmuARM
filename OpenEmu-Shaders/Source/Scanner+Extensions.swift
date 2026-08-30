@@ -26,16 +26,16 @@ import Foundation
 
 public extension Scanner {
     func scanQuotedString() -> String? {
-        if !scanString("\"", into: nil) {
+        guard scanString("\"") != nil else {
             return nil
         }
-        var s: NSString?
-        scanUpTo("\"", into: &s)
-        
-        if !scanString("\"", into: nil) {
+        guard let s = scanUpToString("\"") else {
+            return nil
+        }
+        guard scanString("\"") != nil else {
             return nil
         }
         
-        return s as String?
+        return s
     }
 }

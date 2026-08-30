@@ -56,6 +56,12 @@
 		3E82BC4D1F507B940081AF7B /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E82BC431F507B940081AF7B /* RSP_LoadMatrix.cpp */; };
 		3E82BC561F507C380081AF7B /* ColorBufferReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E82BC551F507C380081AF7B /* ColorBufferReader.cpp */; };
 		551FEDF525B6232500B9030D /* new_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8784175025994FEF002ED39D /* new_dynarec.c */; };
+		77BB88DF304385FD00EAAA76 /* libhardware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88D5304385FD00EAAA76 /* libhardware.cpp */; };
+		77BB88E0304385FD00EAAA76 /* android_hardware_buffer_compat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88D8304385FD00EAAA76 /* android_hardware_buffer_compat.cpp */; };
+		77BB88E1304385FD00EAAA76 /* GraphicBufferWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88DD304385FD00EAAA76 /* GraphicBufferWrapper.cpp */; };
+		77BB88E2304385FD00EAAA76 /* GraphicBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88D3304385FD00EAAA76 /* GraphicBuffer.cpp */; };
+		77BB88E43043864000EAAA76 /* MemoryStatus_mupenplus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88E33043864000EAAA76 /* MemoryStatus_mupenplus.cpp */; };
+		77BB88E63043865900EAAA76 /* iob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88E53043865900EAAA76 /* iob.cpp */; };
 		8723F7001F74A36E003E572A /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8723F6FF1F74A36E003E572A /* CRC_OPT.cpp */; };
 		8723F7341F74A4D7003E572A /* F3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8723F7061F74A49E003E572A /* F3D.cpp */; };
 		8723F7351F74A4D7003E572A /* F3DAM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8723F7081F74A49E003E572A /* F3DAM.cpp */; };
@@ -292,10 +298,6 @@
 		94E1B94418D0F707003ACCFF /* mupen64plus-rsp-cxd4.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94E1B8FD18D0F61F003ACCFF /* mupen64plus-rsp-cxd4.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C62301A9171227B900576081 /* OpenEmuBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6D120F61711312600E868A8 /* OpenEmuBase.framework */; };
 		C6D120F71711312600E868A8 /* OpenEmuBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6D120F61711312600E868A8 /* OpenEmuBase.framework */; };
-		EE2BBC40225AD5050007BF6F /* libhardware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2BBC35225AD5040007BF6F /* libhardware.cpp */; };
-		EE2BBC41225AD5050007BF6F /* GraphicBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2BBC38225AD5040007BF6F /* GraphicBuffer.cpp */; };
-		EE2BBC46225AD5380007BF6F /* iob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2BBC45225AD5370007BF6F /* iob.cpp */; };
-		EE2BBC48225AD6520007BF6F /* MemoryStatus_mupenplus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2BBC47225AD6510007BF6F /* MemoryStatus_mupenplus.cpp */; };
 		OE0M64P0BUILDFILE000000001 /* rcheevos_build.c in Sources */ = {isa = PBXBuildFile; fileRef = OE0M64P0FILEREF000000001 /* rcheevos_build.c */; settings = {COMPILER_FLAGS = "-DRC_NO_THREADS=1 -DRC_CLIENT_SUPPORTS_HASH=1 -Dmd5_init=rc_md5_init -Dmd5_append=rc_md5_append -Dmd5_finish=rc_md5_finish"; }; };
 		OE0M64P0BUILDFILE000000002 /* OERetroAchievementsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = OE0M64P0FILEREF000000002 /* OERetroAchievementsTransport.m */; };
 /* End PBXBuildFile section */
@@ -500,6 +502,20 @@
 		3E82BC6C1F507D6D0081AF7B /* FrameBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameBuffer.cpp; path = OpenGL/FrameBuffer.cpp; sourceTree = "<group>"; };
 		551FEEAF25B64D9000B9030D /* linkage.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = linkage.o; sourceTree = "<group>"; };
 		55E0604525B377BC00521CB0 /* SSE2NEON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSE2NEON.h; sourceTree = "<group>"; usesTabs = 0; };
+		77BB88D1304385FD00EAAA76 /* gralloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gralloc.h; sourceTree = "<group>"; };
+		77BB88D2304385FD00EAAA76 /* GraphicBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicBuffer.h; sourceTree = "<group>"; };
+		77BB88D3304385FD00EAAA76 /* GraphicBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicBuffer.cpp; sourceTree = "<group>"; };
+		77BB88D4304385FD00EAAA76 /* libhardware.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libhardware.h; sourceTree = "<group>"; };
+		77BB88D5304385FD00EAAA76 /* libhardware.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = libhardware.cpp; sourceTree = "<group>"; };
+		77BB88D7304385FD00EAAA76 /* android_hardware_buffer_compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = android_hardware_buffer_compat.h; sourceTree = "<group>"; };
+		77BB88D8304385FD00EAAA76 /* android_hardware_buffer_compat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = android_hardware_buffer_compat.cpp; sourceTree = "<group>"; };
+		77BB88D9304385FD00EAAA76 /* check.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = check.h; sourceTree = "<group>"; };
+		77BB88DA304385FD00EAAA76 /* dcheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dcheck.h; sourceTree = "<group>"; };
+		77BB88DC304385FD00EAAA76 /* GraphicBufferWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicBufferWrapper.h; sourceTree = "<group>"; };
+		77BB88DD304385FD00EAAA76 /* GraphicBufferWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicBufferWrapper.cpp; sourceTree = "<group>"; };
+		77BB88E33043864000EAAA76 /* MemoryStatus_mupenplus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryStatus_mupenplus.cpp; sourceTree = "<group>"; };
+		77BB88E53043865900EAAA76 /* iob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iob.cpp; sourceTree = "<group>"; };
+		77BB88E73043867100EAAA76 /* MemoryStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemoryStatus.h; sourceTree = "<group>"; };
 		8723F6FF1F74A36E003E572A /* CRC_OPT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT.cpp; sourceTree = "<group>"; };
 		8723F7031F74A3A3003E572A /* xxhash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xxhash.h; sourceTree = "<group>"; };
 		8723F7061F74A49E003E572A /* F3D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3D.cpp; sourceTree = "<group>"; };
@@ -1147,14 +1163,6 @@
 		94E6B877166C2A0A00082F27 /* rsp_api_export.ver */ = {isa = PBXFileReference; lastKnownFileType = text; path = rsp_api_export.ver; sourceTree = "<group>"; };
 		C6D120F61711312600E868A8 /* OpenEmuBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEmuBase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		EE2BBC34225AD5040007BF6F /* GraphicBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicBuffer.h; sourceTree = "<group>"; };
-		EE2BBC35225AD5040007BF6F /* libhardware.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libhardware.cpp; sourceTree = "<group>"; };
-		EE2BBC36225AD5040007BF6F /* libhardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libhardware.h; sourceTree = "<group>"; };
-		EE2BBC37225AD5040007BF6F /* gralloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gralloc.h; sourceTree = "<group>"; };
-		EE2BBC38225AD5040007BF6F /* GraphicBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicBuffer.cpp; sourceTree = "<group>"; };
-		EE2BBC44225AD5370007BF6F /* MemoryStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemoryStatus.h; path = ../../../Mupen64plus/GLideN64/src/MemoryStatus.h; sourceTree = "<group>"; };
-		EE2BBC45225AD5370007BF6F /* iob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = iob.cpp; path = ../../../Mupen64plus/GLideN64/src/iob.cpp; sourceTree = "<group>"; };
-		EE2BBC47225AD6510007BF6F /* MemoryStatus_mupenplus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MemoryStatus_mupenplus.cpp; path = ../../../../Mupen64plus/GLideN64/src/mupenplus/MemoryStatus_mupenplus.cpp; sourceTree = "<group>"; };
 		FCB24781096647F2B503592C12C8D2DD /* assem_arm64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = assem_arm64.c; sourceTree = "<group>"; };
 		OE0M64P0FILEREF000000001 /* rcheevos_build.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rcheevos_build.c; path = ../Vendor/rcheevos/rcheevos_build.c; sourceTree = SOURCE_ROOT; };
 		OE0M64P0FILEREF000000002 /* OERetroAchievementsTransport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OERetroAchievementsTransport.m; path = ../OpenEmuKit/Source/OERetroAchievementsTransport.m; sourceTree = SOURCE_ROOT; };
@@ -1547,6 +1555,40 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
+		77BB88D6304385FD00EAAA76 /* PrivateApi */ = {
+			isa = PBXGroup;
+			children = (
+				77BB88D1304385FD00EAAA76 /* gralloc.h */,
+				77BB88D2304385FD00EAAA76 /* GraphicBuffer.h */,
+				77BB88D3304385FD00EAAA76 /* GraphicBuffer.cpp */,
+				77BB88D4304385FD00EAAA76 /* libhardware.h */,
+				77BB88D5304385FD00EAAA76 /* libhardware.cpp */,
+			);
+			path = PrivateApi;
+			sourceTree = "<group>";
+		};
+		77BB88DB304385FD00EAAA76 /* PublicApi */ = {
+			isa = PBXGroup;
+			children = (
+				77BB88D7304385FD00EAAA76 /* android_hardware_buffer_compat.h */,
+				77BB88D8304385FD00EAAA76 /* android_hardware_buffer_compat.cpp */,
+				77BB88D9304385FD00EAAA76 /* check.h */,
+				77BB88DA304385FD00EAAA76 /* dcheck.h */,
+			);
+			path = PublicApi;
+			sourceTree = "<group>";
+		};
+		77BB88DE304385FD00EAAA76 /* GraphicBuffer */ = {
+			isa = PBXGroup;
+			children = (
+				77BB88D6304385FD00EAAA76 /* PrivateApi */,
+				77BB88DB304385FD00EAAA76 /* PublicApi */,
+				77BB88DC304385FD00EAAA76 /* GraphicBufferWrapper.h */,
+				77BB88DD304385FD00EAAA76 /* GraphicBufferWrapper.cpp */,
+			);
+			path = GraphicBuffer;
+			sourceTree = "<group>";
+		};
 		8723F7011F74A3A3003E572A /* xxHash */ = {
 			isa = PBXGroup;
 			children = (
@@ -1703,8 +1745,8 @@
 		875503AF1E74C7BE002222F3 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				EE2BBC45225AD5370007BF6F /* iob.cpp */,
-				EE2BBC44225AD5370007BF6F /* MemoryStatus.h */,
+				77BB88E73043867100EAAA76 /* MemoryStatus.h */,
+				77BB88E53043865900EAAA76 /* iob.cpp */,
 				3E82BC331F507B930081AF7B /* DebugDump.h */,
 				3E82BC341F507B930081AF7B /* Debugger.h */,
 				3E82BC3A1F507B930081AF7B /* ZilmarGFX_1_3.h */,
@@ -2004,7 +2046,7 @@
 		875504601E74C7BF002222F3 /* OpenGLContext */ = {
 			isa = PBXGroup;
 			children = (
-				EE2BBC32225AD5040007BF6F /* GraphicBuffer */,
+				77BB88DE304385FD00EAAA76 /* GraphicBuffer */,
 				3E82BC5D1F507C6D0081AF7B /* opengl_Attributes.h */,
 				875504611E74C7BF002222F3 /* GLFunctions.cpp */,
 				875504621E74C7BF002222F3 /* GLFunctions.h */,
@@ -2118,7 +2160,7 @@
 		875504C01E74C7BF002222F3 /* mupenplus */ = {
 			isa = PBXGroup;
 			children = (
-				EE2BBC47225AD6510007BF6F /* MemoryStatus_mupenplus.cpp */,
+				77BB88E33043864000EAAA76 /* MemoryStatus_mupenplus.cpp */,
 				875504C11E74C7BF002222F3 /* CommonAPIImpl_mupenplus.cpp */,
 				875504C21E74C7BF002222F3 /* Config_mupenplus.cpp */,
 				875504C31E74C7BF002222F3 /* GLideN64_mupenplus.h */,
@@ -2875,27 +2917,6 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		EE2BBC32225AD5040007BF6F /* GraphicBuffer */ = {
-			isa = PBXGroup;
-			children = (
-				EE2BBC33225AD5040007BF6F /* PrivateApi */,
-			);
-			name = GraphicBuffer;
-			path = ../../../../../Mupen64plus/GLideN64/src/Graphics/OpenGLContext/GraphicBuffer;
-			sourceTree = "<group>";
-		};
-		EE2BBC33225AD5040007BF6F /* PrivateApi */ = {
-			isa = PBXGroup;
-			children = (
-				EE2BBC34225AD5040007BF6F /* GraphicBuffer.h */,
-				EE2BBC35225AD5040007BF6F /* libhardware.cpp */,
-				EE2BBC36225AD5040007BF6F /* libhardware.h */,
-				EE2BBC37225AD5040007BF6F /* gralloc.h */,
-				EE2BBC38225AD5040007BF6F /* GraphicBuffer.cpp */,
-			);
-			path = PrivateApi;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3086,6 +3107,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77BB88E43043864000EAAA76 /* MemoryStatus_mupenplus.cpp in Sources */,
 				875505761E74C7BF002222F3 /* osal_files_unix.c in Sources */,
 				87841BA2259AF95C002ED39D /* osal_keys_unix.c in Sources */,
 				875505091E74C7BF002222F3 /* 3DMath.cpp in Sources */,
@@ -3150,10 +3172,10 @@
 				875505621E74C7BF002222F3 /* opengl_Parameters.cpp in Sources */,
 				875505631E74C7BF002222F3 /* opengl_TextureManipulationObjectFactory.cpp in Sources */,
 				875505641E74C7BF002222F3 /* opengl_UnbufferedDrawer.cpp in Sources */,
-				EE2BBC41225AD5050007BF6F /* GraphicBuffer.cpp in Sources */,
 				875505651E74C7BF002222F3 /* opengl_Utils.cpp in Sources */,
 				8755054E1E74C7BF002222F3 /* glsl_CombinerInputs.cpp in Sources */,
 				8755054F1E74C7BF002222F3 /* glsl_CombinerProgramBuilder.cpp in Sources */,
+				77BB88E63043865900EAAA76 /* iob.cpp in Sources */,
 				875505501E74C7BF002222F3 /* glsl_CombinerProgramImpl.cpp in Sources */,
 				875505511E74C7BF002222F3 /* glsl_CombinerProgramUniformFactory.cpp in Sources */,
 				87FB3C19214DED1800A221BE /* glsl_FXAA.cpp in Sources */,
@@ -3162,13 +3184,11 @@
 				875505541E74C7BF002222F3 /* glsl_Utils.cpp in Sources */,
 				875505851E74C7BF002222F3 /* TxFilterStub.cpp in Sources */,
 				875505731E74C7BF002222F3 /* MupenPlusPluginAPI.cpp in Sources */,
-				EE2BBC48225AD6520007BF6F /* MemoryStatus_mupenplus.cpp in Sources */,
 				3E82BC491F507B940081AF7B /* Debugger.cpp in Sources */,
 				875505711E74C7BF002222F3 /* Config_mupenplus.cpp in Sources */,
 				875505701E74C7BF002222F3 /* CommonAPIImpl_mupenplus.cpp in Sources */,
 				875505721E74C7BF002222F3 /* MupenPlusAPIImpl.cpp in Sources */,
 				3E82BC561F507C380081AF7B /* ColorBufferReader.cpp in Sources */,
-				EE2BBC46225AD5380007BF6F /* iob.cpp in Sources */,
 				875505571E74C7BF002222F3 /* mupen64plus_DisplayWindow.cpp in Sources */,
 				8723F7341F74A4D7003E572A /* F3D.cpp in Sources */,
 				8723F7351F74A4D7003E572A /* F3DAM.cpp in Sources */,
@@ -3183,12 +3203,15 @@
 				8723F73E1F74A4D7003E572A /* F3DPD.cpp in Sources */,
 				8723F73F1F74A4D7003E572A /* F3DSETA.cpp in Sources */,
 				8723F7411F74A4D7003E572A /* F3DTEXA.cpp in Sources */,
+				77BB88DF304385FD00EAAA76 /* libhardware.cpp in Sources */,
+				77BB88E0304385FD00EAAA76 /* android_hardware_buffer_compat.cpp in Sources */,
+				77BB88E1304385FD00EAAA76 /* GraphicBufferWrapper.cpp in Sources */,
+				77BB88E2304385FD00EAAA76 /* GraphicBuffer.cpp in Sources */,
 				8723F7421F74A4D7003E572A /* F3DZEX2.cpp in Sources */,
 				87FB3C17214DECE300A221BE /* F5Indi_Naboo.cpp in Sources */,
 				87FB3C18214DECE300A221BE /* F5Rogue.cpp in Sources */,
 				8723F7431F74A4D7003E572A /* L3D.cpp in Sources */,
 				8723F7441F74A4D7003E572A /* L3DEX.cpp in Sources */,
-				EE2BBC40225AD5050007BF6F /* libhardware.cpp in Sources */,
 				8723F7451F74A4D7003E572A /* L3DEX2.cpp in Sources */,
 				8723F7461F74A4D7003E572A /* S2DEX.cpp in Sources */,
 				8723F7471F74A4D7003E572A /* S2DEX2.cpp in Sources */,
@@ -3425,7 +3448,7 @@
 					"\"$(SRCROOT)\"",
 					/sw/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				OTHER_CFLAGS = (
 					"-DIN_OPENEMU",
 					"-DM64P_PARALLEL",
@@ -3491,7 +3514,7 @@
 					"\"$(SRCROOT)\"",
 					/sw/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				OTHER_CFLAGS = (
 					"-DIN_OPENEMU",
 					"-DM64P_PARALLEL",
@@ -3595,6 +3618,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 			};
@@ -3607,6 +3631,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_NAME = "Build & Install";
 				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
@@ -3633,7 +3658,7 @@
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
@@ -3656,7 +3681,7 @@
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
@@ -3695,7 +3720,7 @@
 					"\"$(SRCROOT)/png\"",
 				);
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				OTHER_CFLAGS = (
 					"-DMUPENPLUSAPI",
 					"-DOS_MAC_OS_X",
@@ -3743,7 +3768,7 @@
 					"\"$(SRCROOT)/png\"",
 				);
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				OTHER_CFLAGS = (
 					"-DMUPENPLUSAPI",
 					"-DOS_MAC_OS_X",
@@ -3791,7 +3816,7 @@
 					"$(PROJECT_DIR)/angrylion-rdp-plus/src",
 				);
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				OTHER_CFLAGS = (
 					"-DMUPENPLUSAPI=On",
 					"-DNDEBUG",
@@ -3836,7 +3861,7 @@
 					"$(PROJECT_DIR)/angrylion-rdp-plus/src",
 				);
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				OTHER_CFLAGS = (
 					"-DMUPENPLUSAPI=On",
 					"-DNDEBUG",
@@ -3857,6 +3882,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_NAME = Distribution;
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "arm64 x86_64";
@@ -3870,6 +3896,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_NAME = Distribution;
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "arm64 x86_64";
@@ -3899,7 +3926,7 @@
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				OTHER_CFLAGS = (
 					"-fno-strict-aliasing",
 					"-DGCC",
@@ -3948,7 +3975,7 @@
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				OTHER_CFLAGS = (
 					"-fno-strict-aliasing",
 					"-DGCC",

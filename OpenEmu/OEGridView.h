@@ -35,6 +35,8 @@ typedef enum
     IKImageBrowserDropNone = 2
 } ExtendedIKImageBrowserDropOperation;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @interface OEGridView : IKImageBrowserView <NSTextFieldDelegate, NSViewToolTipOwner>
 @property NSImage *proposedImage;
 @property (assign) IKImageBrowserDropOperation draggingOperation;
@@ -48,6 +50,8 @@ typedef enum
 - (void)beginEditingItemAtIndex:(NSInteger)index;
 - (void)reloadCellDataAtIndex:(unsigned long long)arg1;
 @end
+
+#pragma clang diagnostic pop
 
 @protocol OEGridViewMenuSource <NSObject>
 - (NSMenu *)gridView:(OEGridView*)gridView menuForItemsAtIndexes:(NSIndexSet*)indexes;

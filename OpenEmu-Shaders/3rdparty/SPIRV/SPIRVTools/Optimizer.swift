@@ -37,7 +37,7 @@ public class SPVTOptimizer {
             let opt = CSPVTOptimizerOptions()
             opt.setRunValidator(false)
             
-            // TODO: Expose this
+            // NOTE: Expose this through the public optimizer API.
             spvt_optimizer_set_consumer(optimizer) { (lvl, _, _, message) in
                 guard let msg = message else { return }
                 

@@ -111,7 +111,7 @@ final class MTL3DGameRenderer: GameRenderer {
     
     func didRenderFrameOnAlternateThread() {
         // Update the IOSurface.
-        //glFlushRenderAPPLE()
+        // glFlushRenderAPPLE()
         
         // Do FPS limiting, but only once setup is over.
         if isFPSLimiting.load(ordering: .sequentiallyConsistent) != 0 {

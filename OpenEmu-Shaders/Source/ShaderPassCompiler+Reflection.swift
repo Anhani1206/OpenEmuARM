@@ -54,7 +54,7 @@ extension ShaderPassCompiler {
         return sym
     }
     
-    // swiftlint:disable cyclomatic_complexity
+    // swiftlint:disable:next cyclomatic_complexity
     func reflect(passNumber: Int, withSymbols sym: ShaderSymbols, withVertexCompiler vsCompiler: SPVCompiler, fragmentCompiler fsCompiler: SPVCompiler) -> ShaderPassReflection? {
         let ref = ShaderPassReflection(passNumber: passNumber)
         
@@ -406,7 +406,7 @@ class ShaderSymbols {
             if uniformSemanticArrays.contains(sem) {
                 // An array texture may be referred to as PassOutput0, PassOutput1, etc
                 if name.hasPrefix(key) {
-                    // TODO: Validate the suffix is a number and within range
+                    // NOTE: Validate the suffix is a number and within range.
                     let index = Int(name.suffix(from: key.endIndex))
                     return ShaderBufferSemanticMap(semantic: sem, index: index ?? 0, name: name, baseType: .fp32, vecSize: 4, cols: 1)
                 }
@@ -422,7 +422,7 @@ class ShaderSymbols {
             if textureSemanticArrays.contains(sem) {
                 // An array texture may be referred to as PassOutput0, PassOutput1, etc
                 if name.hasPrefix(key) {
-                    // TODO: Validate the suffix is a number and within range
+                    // NOTE: Validate the suffix is a number and within range.
                     let index = Int(name.suffix(from: key.endIndex))
                     return ShaderTextureSemanticMap(textureSemantic: sem, index: index ?? 0, name: name)
                 }

@@ -33,7 +33,7 @@ class GameHelperMetalLayer: CAMetalLayer {
         anchorPoint     = .zero
         contentsGravity = .resizeAspect
         
-        // TODO: this should come from the host
+        // NOTE: this should come from the host
         contentsScale   = 2.0
         pixelFormat     = pixelFormat
     }
@@ -42,7 +42,7 @@ class GameHelperMetalLayer: CAMetalLayer {
         super.init(coder: coder)
     }
     
-    // TODO: Set this to match the final pixel format of FilterChain whenever the shader changes.
+    // NOTE: Set this to match the final pixel format of FilterChain whenever the shader changes.
     
     override var pixelFormat: MTLPixelFormat {
         didSet {
@@ -51,9 +51,9 @@ class GameHelperMetalLayer: CAMetalLayer {
                 // Note: all 8bit images are sRGB. It's mathematically incorrect to use a non-sRGB pixel format
                 // but most filters do it anyway and the different bugs cancel each other out.
                 
-                // TODO: Use the sRGB pixel format when not using shaders.
+                // NOTE: Use the sRGB pixel format when not using shaders.
                 
-                // TODO: Since our images are mostly the "old TV" colorspace (NTSC 1953), try
+                // NOTE: Since our images are mostly the "old TV" colorspace (NTSC 1953), try
                 // using that (with a per-core setting). The color hue will be a little different.
                 // Currently we use ITUR_709 (HDTV) which is close to sRGB but adapted to a dark room.
                 let colorSpace = CGColorSpace(name: CGColorSpace.itur_709)

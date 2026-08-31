@@ -50,7 +50,7 @@ Quick summary: 30+ systems work today, including NES, SNES, Game Boy, GBA, N64, 
 
 ## Requirements
 
-- macOS 12.0 (Monterrey) or later
+- macOS 11.0 (Big Sur) or later
 - Apple Silicon Mac (M1 / M2 / M3 / M4 / M5)
 
 ---

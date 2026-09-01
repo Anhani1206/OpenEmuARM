@@ -27,8 +27,9 @@ This is a community-maintained fork of OpenEmu for M-series Macs. The app runs o
 - Support for screen rotation for Shoot 'em Up games.
 - Game display preferences - Per-game shader and integer-scaling persistence.
 - Implemented the option to show the FPS during games, screen position and color.
-- Neo Geo AES / MVS games via Geolith Core
+- Neo Geo AES / MVS games via Geolith Core.
 - Implemented the option to download all the Covers Arts or stop the download for each console.
+- Commodore 64 implemented using the Vice core.
 
 ---
 

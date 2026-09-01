@@ -23,6 +23,7 @@ não a compatibilidade completa da biblioteca de jogos.
 | Bibliotecas de shader Metal | Compiladas do fonte ARMSX2 usando o Metal Toolchain | 100% |
 | Inicialização, vídeo e áudio | Validados em God of War (`SCUS-97399`) | 80% |
 | GameDB e recursos persistentes | Validados; recursos são atualizados quando o bundle muda | 90% |
+| Desempenho em Release | Validado com bundle otimizado instalado | 100% |
 | Compatibilidade entre jogos | Parcial; Gran Turismo 4 ainda requer regressão | 45% |
 | Input, memory cards, save/load state e encerramento repetido | Ainda não validados sistematicamente | 20% |
 
@@ -47,6 +48,8 @@ não a compatibilidade completa da biblioteca de jogos.
   controles DualShock 2 de forma explícita.
 - God of War (`SCUS-97399`) inicia com vídeo e áudio; o GameDB aplica
   `autoFlush=1` e `halfPixelOffset=5`.
+- A variante `Release` foi instalada e validada com desempenho e áudio normais;
+  `Debug` permanece somente para diagnóstico.
 
 ## Limitação conhecida
 

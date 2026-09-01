@@ -232,14 +232,50 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
     private func coreMenu(for game: OEDBGame) -> NSMenu? {
         guard let systemID = game.system?.systemIdentifier else { return nil }
         var plugins = OECorePlugin.corePlugins(forSystemIdentifier: systemID)
+        if systemID == "openemu.system.arcade" {
+            // The Neo Geo subset belongs only to the dedicated Neo Geo library.
+            plugins.removeAll { plugin in
+                let name = plugin.displayName.lowercased()
+                return (name.contains("finalburn neo") || name.contains("fbneo")) &&
+                    (name.contains("neogeo") || name.contains("neo geo"))
+            }
+        }
         if systemID == "openemu.system.neogeo" {
-            plugins.removeAll { $0.bundleIdentifier != "org.openemu.FBNeo" }
+            let isNeoCartridge = game.roms.contains {
+                $0.url?.pathExtension.caseInsensitiveCompare("neo") == .orderedSame
+            }
+            plugins.removeAll { plugin in
+                if isNeoCartridge {
+                    return !plugin.displayName.localizedCaseInsensitiveContains("geolith")
+                }
+                return !plugin.displayName.localizedCaseInsensitiveContains("fbneo") &&
+                    !plugin.displayName.localizedCaseInsensitiveContains("finalburn neo")
+            }
         }
         guard plugins.count > 1 else { return nil }
-        plugins.sort { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
+
+        func displayName(for plugin: OECorePlugin) -> String {
+            let name = plugin.displayName
+            let normalized = name.lowercased()
+            let isArcadeFamily = systemID == "openemu.system.arcade" ||
+                systemID == "openemu.system.neogeo"
+            guard isArcadeFamily else { return name }
+
+            if normalized.contains("finalburn neo") || normalized.contains("fbneo") {
+                if normalized.contains("neogeo") || normalized.contains("neo geo") {
+                    return "FinalBurn Neo (Neo Geo)"
+                }
+                return normalized == "fbneo" ? "FBNeo" : "FinalBurn Neo"
+            }
+            return name
+                .replacingOccurrences(of: " (RetroArch)", with: "")
+                .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+        }
+
+        plugins.sort { displayName(for: $0).localizedStandardCompare(displayName(for: $1)) == .orderedAscending }
         let menu = NSMenu()
         for plugin in plugins {
-            let item = NSMenuItem(title: plugin.displayName,
+            let item = NSMenuItem(title: displayName(for: plugin),
                                   action: #selector(LibraryController.startSelectedGame(withCore:)),
                                   keyEquivalent: "")
             item.representedObject = plugin

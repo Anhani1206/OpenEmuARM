@@ -113,6 +113,7 @@ final class PrefCoresController: NSViewController {
     private var tableView: NSTableView!
     private var scrollView: NSScrollView!
     private var warningBanner: NSTextField!
+    private var updateBanner: NSTextField!
 
     private var entries: [SystemEntry] = []
     private var coreListObservation: NSKeyValueObservation?
@@ -160,6 +161,12 @@ final class PrefCoresController: NSViewController {
         warning.isHidden = true
         self.warningBanner = warning
 
+        let updates = NSTextField(wrappingLabelWithString: "")
+        updates.textColor = .systemBlue
+        updates.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        updates.isHidden = true
+        self.updateBanner = updates
+
         let checkUpdatesButton = NSButton(
             title: NSLocalizedString("Check for Updates", comment: "Cores preferences button"),
             target: self,
@@ -170,7 +177,7 @@ final class PrefCoresController: NSViewController {
 
         // NSStackView collapses hidden views to zero height automatically,
         // so the table fills the full space when no collision banner is shown.
-        let stack = NSStackView(views: [warning, checkUpdatesButton, scroll])
+        let stack = NSStackView(views: [warning, updates, checkUpdatesButton, scroll])
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.distribution = .fill
@@ -191,13 +198,17 @@ final class PrefCoresController: NSViewController {
             self?.rebuildEntries()
         }
 
-        CoreUpdater.shared.checkForNewCores()
-        CoreUpdater.shared.checkForUpdates()
         rebuildEntries()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
             self?.rebuildEntries()
         }
+    }
+
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        CoreUpdater.shared.checkForNewCores()
+        CoreUpdater.shared.checkForUpdates()
     }
 
     // MARK: - Data
@@ -221,15 +232,37 @@ final class PrefCoresController: NSViewController {
             warningBanner.stringValue = "⚠ Duplicate core bundles detected: \(names). Open ~/Library/Application Support/OpenEmu/Cores/ and remove the extra copy of each affected core."
             warningBanner.isHidden = false
         }
+
+        let availableUpdates = CoreUpdater.shared.coreList
+            .filter { $0.hasUpdate }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+
+        if availableUpdates.isEmpty {
+            updateBanner.isHidden = true
+        } else {
+            let names = availableUpdates.map { core in
+                let version = core.appcastItem?.version ?? "?"
+                return "\(core.name) (\(version))"
+            }.joined(separator: ", ")
+            updateBanner.stringValue = String(
+                format: NSLocalizedString(
+                    "%d core update(s) available: %@",
+                    comment: "Cores preferences update notice"),
+                availableUpdates.count,
+                names)
+            updateBanner.isHidden = false
+        }
         var map: [String: (name: String, cores: [CoreDownload])] = [:]
         for core in CoreUpdater.shared.coreList where !core.bundleIdentifier.hasSuffix("-RetroArch") {
             for sysID in core.systemIdentifiers {
                 guard !OEDBSystem.isHiddenSystemIdentifier(sysID) else { continue }
                 // Keep Neo Geo limited to the tested FBNeo core and Geolith.
                 // Other arcade cores remain available from the Arcade entry.
+                let isFBNeo = core.name.localizedCaseInsensitiveContains("fbneo") ||
+                    core.name.localizedCaseInsensitiveContains("finalburn neo")
                 let isGeolith = core.name.localizedCaseInsensitiveContains("geolith")
                 if sysID == "openemu.system.neogeo",
-                   core.bundleIdentifier != "org.openemu.FBNeo",
+                   !isFBNeo,
                    !isGeolith {
                     continue
                 }
@@ -253,6 +286,14 @@ final class PrefCoresController: NSViewController {
             )
             let retroArchForSystem = allRetroArch.filter { raCore in
                 guard raCore.systemIDs.contains(sysID) else { return false }
+
+                if sysID == "openemu.system.arcade" {
+                    let name = raCore.coreName.lowercased()
+                    if (name.contains("finalburn neo") || name.contains("fbneo")) &&
+                        (name.contains("neogeo") || name.contains("neo geo")) {
+                        return false
+                    }
+                }
 
                 // MAME 2003 is an official OpenEmu core for Arcade. Do not show
                 // a second RetroArch entry for the same 0.78 core, otherwise the
@@ -699,6 +740,23 @@ extension PrefCoresController {
     /// for the startup inventory diagnostic in AppDelegate.
     static var retroArchSystemIDMap: [String: [String]] { systemIDMap }
 
+    private func cleanRetroArchDisplayName(_ name: String, systemIDs: [String]) -> String {
+        guard systemIDs.contains("openemu.system.arcade") else {
+            return "\\(name) (RetroArch)"
+        }
+
+        let normalized = name.lowercased()
+        if normalized.contains("finalburn neo") {
+            if normalized.contains("neogeo") || normalized.contains("neo geo") {
+                return "FinalBurn Neo (Neo Geo)"
+            }
+            return "FinalBurn Neo"
+        }
+        return name
+            .replacingOccurrences(of: " (RetroArch)", with: "")
+            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+    }
+
     private func scanRetroArchCores() -> [RetroArchCore] {
         let fm = FileManager.default
         let home = fm.homeDirectoryForCurrentUser
@@ -719,7 +777,7 @@ extension PrefCoresController {
                 guard !sysIDs.isEmpty else { return nil }
                 return RetroArchCore(
                     coreName:         parsed.coreName,
-                    displayName:      "\(parsed.coreName) (RetroArch)",
+                    displayName:      self.cleanRetroArchDisplayName(parsed.coreName, systemIDs: sysIDs),
                     dylibURL:         dylib,
                     systemIDs:        sysIDs,
                     requiresHWRender: parsed.requiresHWRender,

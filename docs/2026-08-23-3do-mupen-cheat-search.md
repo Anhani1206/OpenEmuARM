@@ -69,6 +69,27 @@ O core 4DO estava informando uma saída lógica de 640×480. Como o menu de esca
 
 O 4DO voltou a informar sua saída lógica nativa de 320×240 (`HightResMode = 0`). Com isso, o OpenEmu pode oferecer 2× (640×480) e 3× (960×720), limitando a lista ao espaço real disponível na tela. A alteração não muda o formato 4:3 nem o backend gráfico do app.
 
+O `OEBundledCoreRefreshRevision` do 4DO também foi adicionado para que o
+OpenEmu reconheça a alteração em instalações antigas do plugin.
+
 Backup criado antes da alteração:
 
 `Backups/4do-before-integral-scaling-2026-08-29/FreeDOGameCore.mm`
+
+## Escala integral do Mupen64Plus — 31 de agosto de 2026
+
+O Mupen64Plus iniciava informando 640×480 como `bufferSize`. Como o OpenEmu
+usa esse tamanho para calcular as opções de escala integral, muitas telas
+ofereciam somente 1×.
+
+O tamanho lógico inicial foi alterado para 320×240, que é o modo nativo comum
+do Nintendo 64. Assim, o menu pode oferecer 2× (640×480), 3× (960×720) e
+outras opções quando houver espaço disponível. A renderização 3D continua
+usando o backend GLideN64 e pode redimensionar o framebuffer quando necessário.
+
+O `OEBundledCoreRefreshRevision` do Mupen64Plus foi incrementado para forçar a
+atualização de instalações antigas do core.
+
+Backup criado antes da alteração:
+
+`Backups/3do-mupen-integral-scaling-2026-08-31/`

@@ -26,7 +26,11 @@ As BIOS reconhecidas pelo OpenEmu são:
 
 Os dois arquivos ficam diretamente na pasta `OpenEmu/BIOS`, sem uma subpasta `geolith`.
 
-O Geolith é um core externo do ecossistema Libretro; seus fontes não são incorporados ao repositório do OpenEmu. A implementação apenas faz o mapeamento correto do core, sistema e BIOS na tela de Preferências.
+No desenvolvimento, o Geolith continua sendo um core externo do ecossistema
+Libretro. Para uma distribuição Release, `Scripts/build-geolith-openemu-arm64.sh`
+baixa o repositório oficial, compila a variante otimizada arm64 e cria um
+plugin portátil dentro do app. Assim, a versão distribuída não depende de uma
+instalação local do RetroArch.
 
 ## Correção aplicada em 25/08/2026
 

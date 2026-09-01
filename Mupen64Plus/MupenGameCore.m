@@ -319,8 +319,11 @@ static void mupen_rc_event_handler(const rc_client_event_t *event, rc_client_t *
         _initializing = YES;
         _frameCounter = 0;
 
-        _videoWidth  = 640;
-        _videoHeight = 480;
+        // Use the N64's common native 320x240 mode as the logical 1x size.
+        // OpenEmu uses bufferSize to calculate integral scaling options; starting
+        // at 640x480 made ordinary displays expose only the 1x menu item.
+        _videoWidth  = 320;
+        _videoHeight = 240;
         _videoBitDepth = 32; // ignored
         
         _sampleRate = 33600;

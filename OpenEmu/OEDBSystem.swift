@@ -37,7 +37,6 @@ final class OEDBSystem: OEDBItem {
     /// remain in place so the Xcode project and installed cores stay intact.
     private static let hiddenSystemIdentifiers: Set<String> = [
         "openemu.system.pokemini",
-        "openemu.system.c64",
     ]
 
     class func isHiddenSystemIdentifier(_ identifier: String) -> Bool {
@@ -50,8 +49,7 @@ final class OEDBSystem: OEDBItem {
         // bundle cannot restore it in Preferences → Cores.
         let normalized = identifier.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
         return normalized.contains("pokemini") ||
-               normalized.contains("pokemonmini") ||
-               normalized.hasSuffix(".c64")
+               normalized.contains("pokemonmini")
     }
 
     private class func isHiddenSystem(_ system: OEDBSystem) -> Bool {
@@ -63,8 +61,7 @@ final class OEDBSystem: OEDBItem {
         // localized name is the reliable fallback for those database entries.
         let name = system.lastLocalizedName.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
         return name.contains("pokemon mini") ||
-               name.contains("poke mini") ||
-               name.contains("commodore 64")
+               name.contains("poke mini")
     }
     
     private static let ErrorDomain = "OEDBSystemErrorDomain"

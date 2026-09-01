@@ -482,8 +482,21 @@ final class GameControlsBar: NSWindow {
     var coresMenu: NSMenu? {
         let systemIdentifier = gameViewController.systemIdentifier
         var corePlugins = OECorePlugin.corePlugins(forSystemIdentifier: systemIdentifier)
+        if systemIdentifier == "openemu.system.arcade" {
+            corePlugins.removeAll {
+                let name = $0.displayName.lowercased()
+                return name.contains("finalburn neo") && !name.contains("fbneo")
+            }
+        }
         if systemIdentifier == "openemu.system.neogeo" {
-            corePlugins.removeAll { $0.bundleIdentifier != "org.openemu.FBNeo" }
+            let isNeoCartridge = gameViewController.document.romFileURL.pathExtension
+                .caseInsensitiveCompare("neo") == .orderedSame
+            corePlugins.removeAll { plugin in
+                if isNeoCartridge {
+                    return !plugin.displayName.localizedCaseInsensitiveContains("geolith")
+                }
+                return !plugin.displayName.localizedCaseInsensitiveContains("fbneo")
+            }
         }
         if systemIdentifier == "openemu.system.3do" {
             corePlugins.removeAll { $0.bundleIdentifier == "org.openemu.Opera" }
@@ -492,11 +505,37 @@ final class GameControlsBar: NSWindow {
         else { return nil }
         
         let menu = NSMenu()
+
+        func displayName(for plugin: OECorePlugin) -> String {
+            guard systemIdentifier == "openemu.system.arcade" || systemIdentifier == "openemu.system.neogeo" else {
+                return plugin.displayName
+            }
+
+            let normalizedName = plugin.displayName.lowercased()
+            if systemIdentifier == "openemu.system.arcade" {
+                if normalizedName.contains("fbneo") {
+                    return "FBNeo"
+                }
+            } else if systemIdentifier == "openemu.system.neogeo" {
+                if normalizedName.contains("geolith") {
+                    return "Geolith"
+                }
+                if normalizedName.contains("fbneo") {
+                    return "FBNeo"
+                }
+            }
+
+            return plugin.displayName
+                .replacingOccurrences(of: " (RetroArch)", with: "")
+                .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+        }
         
-        corePlugins.sort { ($0.displayName).localizedStandardCompare($1.displayName) == .orderedAscending }
+        corePlugins.sort {
+            displayName(for: $0).localizedStandardCompare(displayName(for: $1)) == .orderedAscending
+        }
         
         for plugin in corePlugins {
-            let item = NSMenuItem(title: plugin.displayName, action: #selector(OEGameDocument.switchCore(_:)), keyEquivalent: "")
+            let item = NSMenuItem(title: displayName(for: plugin), action: #selector(OEGameDocument.switchCore(_:)), keyEquivalent: "")
             item.representedObject = plugin
             
             if plugin.bundleIdentifier == gameViewController.coreIdentifier {

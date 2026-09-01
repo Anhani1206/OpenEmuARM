@@ -24,12 +24,14 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "GL/glew.h"
 #import "PPSSPPGameCore.h"
 #import <OpenEmuBase/OEGameCoreController.h>
 #import <OpenEmuBase/OERingBuffer.h>
 #import <OpenGL/gl.h>
 
 #include "Common/GPU/OpenGL/OpenEmuGLContext.h"
+#include "Common/File/AndroidContentURI.h"
 
 #include "System/NativeApp.h"
 
@@ -54,6 +56,22 @@
 #include "thin3d_create.h"
 #include "GLRenderManager.h"
 #include "DataFormatGL.h"
+
+// Android content URIs are not used by the macOS core. The shared PPSSPP
+// path code still references this type, so keep a harmless macOS implementation
+// in the wrapper instead of pulling Android storage APIs into the app.
+bool AndroidContentURI::Parse(std::string_view) { return false; }
+AndroidContentURI AndroidContentURI::WithRootFilePath(const std::string &) { return *this; }
+AndroidContentURI AndroidContentURI::WithComponent(std::string_view) { return *this; }
+AndroidContentURI AndroidContentURI::WithExtraExtension(std::string_view) { return *this; }
+AndroidContentURI AndroidContentURI::WithReplacedExtension(const std::string &, const std::string &) const { return *this; }
+AndroidContentURI AndroidContentURI::WithReplacedExtension(const std::string &) const { return *this; }
+bool AndroidContentURI::CanNavigateUp() const { return false; }
+bool AndroidContentURI::ComputePathTo(const AndroidContentURI &, std::string &) const { return false; }
+std::string AndroidContentURI::GetFileExtension() const { return {}; }
+std::string AndroidContentURI::GetLastPart() const { return {}; }
+bool AndroidContentURI::NavigateUp() { return false; }
+std::string AndroidContentURI::ToString() const { return {}; }
 
 #define AUDIO_FREQ          44100
 #define AUDIO_CHANNELS      2
@@ -94,6 +112,7 @@ void NativeSetThreadState(OpenEmuCoreThread::EmuThreadState threadState);
    OpenEmuGLContext *OEgraphicsContext;
 }
 @end
+
 
 PPSSPPGameCore *_current = 0;
 

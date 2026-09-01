@@ -655,10 +655,22 @@ extension SidebarController: NSMenuDelegate {
             coverArtsMenuItem.submenu = coverArtsMenu
             menu.addItem(coverArtsMenuItem)
             
-            let cores = OECorePlugin.corePlugins(forSystemIdentifier: item.systemIdentifier)
+            var cores = OECorePlugin.corePlugins(forSystemIdentifier: item.systemIdentifier)
+            let systemIdentifier = item.systemIdentifier
+            if systemIdentifier == "openemu.system.arcade" {
+                cores.removeAll {
+                    let name = $0.displayName.lowercased()
+                    return name.contains("finalburn neo") && !name.contains("fbneo")
+                }
+            }
+            if systemIdentifier == "openemu.system.neogeo" {
+                cores.removeAll { plugin in
+                    let name = plugin.displayName.lowercased()
+                    return !name.contains("geolith") &&
+                        !name.contains("fbneo")
+                }
+            }
             if cores.count > 1 {
-                
-                let systemIdentifier = item.systemIdentifier
                 let defaultCoreKey = "defaultCore.\(systemIdentifier)"
                 let defaultCoreIdentifier = UserDefaults.standard.object(forKey: defaultCoreKey) as? String
                 
@@ -667,8 +679,19 @@ extension SidebarController: NSMenuDelegate {
                 let submenu = NSMenu()
                 
                 cores.forEach { core in
-                    let coreName = core.displayName
-                    let systemIdentifier = item.systemIdentifier
+                    let normalizedName = core.displayName.lowercased()
+                    let coreName: String
+                    if systemIdentifier == "openemu.system.arcade" && normalizedName.contains("fbneo") {
+                        coreName = "FBNeo"
+                    } else if systemIdentifier == "openemu.system.neogeo" && normalizedName.contains("geolith") {
+                        coreName = "Geolith"
+                    } else if systemIdentifier == "openemu.system.neogeo" && normalizedName.contains("fbneo") {
+                        coreName = "FBNeo"
+                    } else {
+                        coreName = core.displayName
+                            .replacingOccurrences(of: " (RetroArch)", with: "")
+                            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+                    }
                     let coreIdentifier = core.bundleIdentifier
                     
                     let item = NSMenuItem()
@@ -746,4 +769,3 @@ class SidebarGroupItem: NSObject, SidebarItem {
 extension Key {
     static let lastSidebarSelection: Key = "lastSidebarSelection"
 }
-

@@ -56,10 +56,6 @@
 		3E82BC4D1F507B940081AF7B /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E82BC431F507B940081AF7B /* RSP_LoadMatrix.cpp */; };
 		3E82BC561F507C380081AF7B /* ColorBufferReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E82BC551F507C380081AF7B /* ColorBufferReader.cpp */; };
 		551FEDF525B6232500B9030D /* new_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8784175025994FEF002ED39D /* new_dynarec.c */; };
-		77BB88DF304385FD00EAAA76 /* libhardware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88D5304385FD00EAAA76 /* libhardware.cpp */; };
-		77BB88E0304385FD00EAAA76 /* android_hardware_buffer_compat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88D8304385FD00EAAA76 /* android_hardware_buffer_compat.cpp */; };
-		77BB88E1304385FD00EAAA76 /* GraphicBufferWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88DD304385FD00EAAA76 /* GraphicBufferWrapper.cpp */; };
-		77BB88E2304385FD00EAAA76 /* GraphicBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88D3304385FD00EAAA76 /* GraphicBuffer.cpp */; };
 		77BB88E43043864000EAAA76 /* MemoryStatus_mupenplus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88E33043864000EAAA76 /* MemoryStatus_mupenplus.cpp */; };
 		77BB88E63043865900EAAA76 /* iob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77BB88E53043865900EAAA76 /* iob.cpp */; };
 		8723F7001F74A36E003E572A /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8723F6FF1F74A36E003E572A /* CRC_OPT.cpp */; };
@@ -3203,10 +3199,6 @@
 				8723F73E1F74A4D7003E572A /* F3DPD.cpp in Sources */,
 				8723F73F1F74A4D7003E572A /* F3DSETA.cpp in Sources */,
 				8723F7411F74A4D7003E572A /* F3DTEXA.cpp in Sources */,
-				77BB88DF304385FD00EAAA76 /* libhardware.cpp in Sources */,
-				77BB88E0304385FD00EAAA76 /* android_hardware_buffer_compat.cpp in Sources */,
-				77BB88E1304385FD00EAAA76 /* GraphicBufferWrapper.cpp in Sources */,
-				77BB88E2304385FD00EAAA76 /* GraphicBuffer.cpp in Sources */,
 				8723F7421F74A4D7003E572A /* F3DZEX2.cpp in Sources */,
 				87FB3C17214DECE300A221BE /* F5Indi_Naboo.cpp in Sources */,
 				87FB3C18214DECE300A221BE /* F5Rogue.cpp in Sources */,
@@ -3431,14 +3423,15 @@
 					"NEW_DYNAREC=NEW_DYNAREC_X64",
 				);
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mupen64plus-core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"\"$(SRCROOT)/mupen64plus-core/subprojects/md5\"",
-					"\"$(SRCROOT)/mupen64plus-core/subprojects/xxhash\"",
-					"\"$(SRCROOT)/mupen64plus-core/subprojects/minizip\"",
-					"\"$(SRCROOT)/../Vendor/rcheevos/include\"",
-					"\"$(SRCROOT)/../Vendor/rcheevos/src\"",
-					"\"$(SRCROOT)/../OpenEmuKit/Source\"",
+					"$(PROJECT_DIR)/mupen64plus-core/src",
+					"$(PROJECT_DIR)/Compatibility/SDL",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/md5",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/xxhash",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/minizip",
+					"$(PROJECT_DIR)/../OpenEmu-SDK",
+					"$(PROJECT_DIR)/../Vendor/rcheevos/include",
+					"$(PROJECT_DIR)/../Vendor/rcheevos/src",
+					"$(PROJECT_DIR)/../OpenEmuKit/Source",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
@@ -3466,6 +3459,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Mupen64Plus;
 				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = oecoreplugin;
 			};
@@ -3497,14 +3491,15 @@
 					"NEW_DYNAREC=NEW_DYNAREC_X64",
 				);
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mupen64plus-core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"\"$(SRCROOT)/mupen64plus-core/subprojects/md5\"",
-					"\"$(SRCROOT)/mupen64plus-core/subprojects/xxhash\"",
-					"\"$(SRCROOT)/mupen64plus-core/subprojects/minizip\"",
-					"\"$(SRCROOT)/../Vendor/rcheevos/include\"",
-					"\"$(SRCROOT)/../Vendor/rcheevos/src\"",
-					"\"$(SRCROOT)/../OpenEmuKit/Source\"",
+					"$(PROJECT_DIR)/mupen64plus-core/src",
+					"$(PROJECT_DIR)/Compatibility/SDL",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/md5",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/xxhash",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/minizip",
+					"$(PROJECT_DIR)/../OpenEmu-SDK",
+					"$(PROJECT_DIR)/../Vendor/rcheevos/include",
+					"$(PROJECT_DIR)/../Vendor/rcheevos/src",
+					"$(PROJECT_DIR)/../OpenEmuKit/Source",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
@@ -3532,6 +3527,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Mupen64Plus;
 				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = oecoreplugin;
 			};
@@ -3708,10 +3704,14 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/GLideN64/src\"",
-					"\"$(SRCROOT)/GLideN64/src/inc\"",
-					"\"$(SRCROOT)/GLideN64/src/osal\"",
-					"\"$(SRCROOT)/Compatibility\"",
+					"$(PROJECT_DIR)/GLideN64/src",
+					"$(PROJECT_DIR)/GLideN64/src/inc",
+					"$(PROJECT_DIR)/GLideN64/src/osal",
+					"$(PROJECT_DIR)/Compatibility",
+					"$(PROJECT_DIR)/mupen64plus-core/src",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/md5",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/xxhash",
+					"$(PROJECT_DIR)/../OpenEmu-SDK",
 				);
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
@@ -3731,7 +3731,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/GLideN64/src\" \"$(SRCROOT)/GLideN64/src/inc\" \"$(SRCROOT)/GLideN64/src/osal\"";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -3756,10 +3756,14 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/GLideN64/src\"",
-					"\"$(SRCROOT)/GLideN64/src/inc\"",
-					"\"$(SRCROOT)/GLideN64/src/osal\"",
-					"\"$(SRCROOT)/Compatibility\"",
+					"$(PROJECT_DIR)/GLideN64/src",
+					"$(PROJECT_DIR)/GLideN64/src/inc",
+					"$(PROJECT_DIR)/GLideN64/src/osal",
+					"$(PROJECT_DIR)/Compatibility",
+					"$(PROJECT_DIR)/mupen64plus-core/src",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/md5",
+					"$(PROJECT_DIR)/mupen64plus-core/subprojects/xxhash",
+					"$(PROJECT_DIR)/../OpenEmu-SDK",
 				);
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
@@ -3779,7 +3783,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/GLideN64/src\" \"$(SRCROOT)/GLideN64/src/inc\" \"$(SRCROOT)/GLideN64/src/osal\"";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 				USE_HEADERMAP = NO;
 			};
 			name = Release;
@@ -3804,9 +3808,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/angrylion-rdp-plus\"",
-					"\"$(SRCROOT)/angrylion-rdp-plus/src\"",
-					"\"$(SRCROOT)/angrylion-rdp-plus/plugin-mupen64plus\"",
+					"$(PROJECT_DIR)/angrylion-rdp-plus/src",
+					"$(PROJECT_DIR)/Compatibility",
+					"$(PROJECT_DIR)/../OpenEmu-SDK",
 				);
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
@@ -3825,7 +3829,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/angrylion-rdp-plus\" \"$(SRCROOT)/angrylion-rdp-plus/core\" \"$(SRCROOT)/angrylion-rdp-plus/plugin-mupen64plus\"";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 			};
 			name = Debug;
 		};
@@ -3849,9 +3853,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/angrylion-rdp-plus\"",
-					"\"$(SRCROOT)/angrylion-rdp-plus/src\"",
-					"\"$(SRCROOT)/angrylion-rdp-plus/plugin-mupen64plus\"",
+					"$(PROJECT_DIR)/angrylion-rdp-plus/src",
+					"$(PROJECT_DIR)/Compatibility",
+					"$(PROJECT_DIR)/../OpenEmu-SDK",
 				);
 				INSTALL_PATH = "";
 				LD_DYLIB_INSTALL_NAME = "";
@@ -3870,7 +3874,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/angrylion-rdp-plus\" \"$(SRCROOT)/angrylion-rdp-plus/core\" \"$(SRCROOT)/angrylion-rdp-plus/plugin-mupen64plus\"";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 			};
 			name = Release;
 		};

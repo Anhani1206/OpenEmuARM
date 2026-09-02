@@ -1,6 +1,6 @@
 # dmgbuild_settings.py
 #
-# Read by `dmgbuild -s dmgbuild_settings.py "OpenEmu-Silicon" output.dmg`.
+# Read by `dmgbuild -s dmgbuild_settings.py "OpenEmuARM" output.dmg`.
 # dmgbuild writes the .DS_Store binary blob directly via the mac_alias
 # Python library — it does NOT call AppleScript or Finder. This sidesteps
 # every macOS 26 (Tahoe) Finder/alias-bookmark regression we hit with
@@ -12,7 +12,7 @@
 import os
 
 # ── Volume + format ──────────────────────────────────────────────────────────
-volume_name = "OpenEmu-Silicon"
+volume_name = "OpenEmuARM"
 format      = "UDZO"
 filesystem  = "HFS+"
 
@@ -52,6 +52,6 @@ symlinks = {"Applications": "/Applications"}
 #   left  pedestal centre  (240, 340)
 #   right cartridge centre (720, 340)
 icon_locations = {
-    "OpenEmu.app":  (240, 340),
+    "OpenEmuARM.app": (240, 340),
     "Applications": (720, 340),
 }

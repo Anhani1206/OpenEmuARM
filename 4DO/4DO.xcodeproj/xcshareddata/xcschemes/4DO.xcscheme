@@ -17,7 +17,7 @@
                BlueprintIdentifier = "8D5B49AC048680CD000E48DA"
                BuildableName = "4DO.oecoreplugin"
                BlueprintName = "4DO"
-               ReferencedContainer = "group:4DO/4DO.xcodeproj">
+               ReferencedContainer = "container:4DO.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

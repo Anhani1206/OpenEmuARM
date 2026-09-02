@@ -32,7 +32,9 @@ if grep -q '#if defined(MACOS) || defined(TARGET_OS_MAC)' "$VICE_ROOT/deps/libz/
 fi
 
 if ! grep -q -- '-I$(EMU)/crtc' "$VICE_ROOT/Makefile.common"; then
-    sed -i '' '/-I$(EMU) \\/a\	-I$(EMU)/crtc \\' "$VICE_ROOT/Makefile.common"
+    sed -i '' '8i\
+    -I$(EMU)/crtc \\
+' "$VICE_ROOT/Makefile.common"
 fi
 
 echo "Building VICE libretro (Release arm64)..."

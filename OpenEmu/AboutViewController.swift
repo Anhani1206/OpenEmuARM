@@ -52,11 +52,12 @@ final class AboutViewController: NSViewController {
     }
     
     @objc dynamic var appVersion: String {
-        return Bundle.main.infoDictionary!["CFBundleVersion"] as! String
+        return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
     }
     
     @objc dynamic var buildVersion: String {
-        return Bundle.main.infoDictionary!["OEBuildVersion"] as? String ?? ""
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "0"
+        return "Build \(build)"
     }
     
     @objc dynamic lazy var specialThanks: NSAttributedString = {

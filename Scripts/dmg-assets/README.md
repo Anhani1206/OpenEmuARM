@@ -40,7 +40,7 @@ background.png                                  (1920 × 1360 px @ 144 DPI — F
        │
        │  dmgbuild -s dmgbuild_settings.py
        ▼
-OpenEmu-Silicon.dmg                             (UDZO, with .DS_Store written directly via mac_alias)
+OpenEmuARM.dmg                                   (UDZO, with .DS_Store written directly via mac_alias)
 ```
 
 | File | Role |

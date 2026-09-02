@@ -372,6 +372,7 @@ final class PrefControlsController: NSViewController {
         newControllerView.image = systemController?.controllerImage
         newControllerView.imageMask = systemController?.controllerImageMask
         newControllerView.keyPositions = systemController?.controllerKeyPositions
+        newControllerView.centersImageVertically = systemController?.systemIdentifier == "openemu.system.c64"
         newControllerView.target = self
         newControllerView.action = #selector(changeInputControl(_:))
         

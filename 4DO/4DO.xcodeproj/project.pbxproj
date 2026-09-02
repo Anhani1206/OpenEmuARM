@@ -509,12 +509,7 @@
 					"$(BUILT_PRODUCTS_DIR)",
 				);
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = (
-					"\"$(PROJECT_DIR)/core/lib/\"",
-					"\"$(PROJECT_DIR)/core/\"",
-					"\"$(PROJECT_DIR)/libfreedo\"",
-					"\"$(PROJECT_DIR)/libcue/\"/**",
-				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = (
@@ -533,7 +528,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.4DO;
 				PRODUCT_NAME = 4DO;
-				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)/core/\" \"$(PROJECT_DIR)/libcue/\"/** \"$(PROJECT_DIR)/libfreedo/\"";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 				WRAPPER_EXTENSION = oecoreplugin;
 			};
 			name = Debug;
@@ -548,12 +543,7 @@
 					"$(BUILT_PRODUCTS_DIR)",
 				);
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = (
-					"\"$(PROJECT_DIR)/core/lib/\"",
-					"\"$(PROJECT_DIR)/core/\"",
-					"\"$(PROJECT_DIR)/libfreedo\"",
-					"\"$(PROJECT_DIR)/libcue/\"/**",
-				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = (
@@ -572,7 +562,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.4DO;
 				PRODUCT_NAME = 4DO;
-				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)/core/\" \"$(PROJECT_DIR)/libcue/\"/** \"$(PROJECT_DIR)/libfreedo/\"";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../OpenEmu-SDK";
 				WRAPPER_EXTENSION = oecoreplugin;
 			};
 			name = Release;

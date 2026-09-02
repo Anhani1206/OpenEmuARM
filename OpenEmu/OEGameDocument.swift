@@ -883,7 +883,8 @@ final class OEGameDocument: NSDocument {
                 if isNeoCartridge {
                     return !plugin.displayName.localizedCaseInsensitiveContains("geolith")
                 }
-                return plugin.bundleIdentifier != "org.openemu.FBNeo"
+                return !plugin.displayName.localizedCaseInsensitiveContains("fbneo") &&
+                    !plugin.displayName.localizedCaseInsensitiveContains("finalburn neo")
             }
         }
         if systemIdentifier == "openemu.system.3do" {
@@ -918,7 +919,9 @@ final class OEGameDocument: NSDocument {
         // does not advertise it in its Info.plist. Use the host-side metadata
         // so a missing BIOS is reported before the core starts.
         if systemPlugin.systemIdentifier == "openemu.system.neogeo" {
-            if corePlugin.bundleIdentifier == "org.openemu.FBNeo" {
+            let isFBNeo = corePlugin.displayName.localizedCaseInsensitiveContains("fbneo") ||
+                corePlugin.displayName.localizedCaseInsensitiveContains("finalburn neo")
+            if isFBNeo {
                 return BIOSFile.requiredFilesAvailable(forSystemIdentifier: [BIOSFile.fbNeoBIOSRequiredFile])
             }
             if corePlugin.displayName.localizedCaseInsensitiveContains("geolith") {

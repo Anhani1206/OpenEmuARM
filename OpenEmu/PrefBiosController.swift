@@ -95,6 +95,7 @@ final class PrefBiosController: NSViewController {
     
     private func reloadData() {
         var items: [AnyHashable] = []
+        var shownFBNeoBIOS = false
         let hasDeclaredFBNeoBIOS = OECorePlugin.allPlugins.contains { core in
             core.requiredFiles.contains { file in
                 (file["RelativePath"] as? String) == "fbneo/neogeo.zip"
@@ -104,7 +105,9 @@ final class PrefBiosController: NSViewController {
         for core in OECorePlugin.allPlugins {
             guard !isHiddenSystemCore(core) else { continue }
             var entries = core.requiredFiles
-            if core.bundleIdentifier == "org.openemu.FBNeo", !hasDeclaredFBNeoBIOS {
+            let isFBNeo = core.displayName.localizedCaseInsensitiveContains("fbneo") ||
+                core.displayName.localizedCaseInsensitiveContains("finalburn neo")
+            if isFBNeo, !hasDeclaredFBNeoBIOS {
                 entries.append(BIOSFile.fbNeoBIOSRequiredFile)
             }
             if core.displayName.localizedCaseInsensitiveContains("geolith") {
@@ -132,12 +135,38 @@ final class PrefBiosController: NSViewController {
             }
 
             let sorted = order.sorted { $0.caseInsensitiveCompare($1) == .orderedAscending }
+            let visibleGroups = sorted.compactMap { name -> BIOSFileGroup? in
+                guard let group = groups[name] else { return nil }
+                let isFBNeoBIOS = group.variants.contains {
+                    ($0["RelativePath"] as? String) == "fbneo/neogeo.zip"
+                }
+                if isFBNeoBIOS {
+                    guard !shownFBNeoBIOS else { return nil }
+                    shownFBNeoBIOS = true
+                }
+                return group
+            }
+            guard !visibleGroups.isEmpty else { continue }
             items.append(core)
-            items.append(contentsOf: sorted.compactMap { groups[$0] })
+            items.append(contentsOf: visibleGroups)
         }
 
         self.items = items
         tableView.reloadData()
+    }
+
+    private func displayName(for core: OECorePlugin) -> String {
+        let name = core.displayName
+        guard core.systemIdentifiers.contains("openemu.system.arcade") else { return name }
+
+        let normalized = name.lowercased()
+        if normalized.contains("finalburn neo") {
+            if normalized.contains("neogeo") || normalized.contains("neo geo") {
+                return "FinalBurn Neo (Neo Geo)"
+            }
+            return "FinalBurn Neo"
+        }
+        return name.replacingOccurrences(of: " (RetroArch)", with: "")
     }
 
     /// Some older installed core bundles do not report their system identifier
@@ -255,7 +284,7 @@ extension PrefBiosController: NSTableViewDelegate {
             let groupCell = tableView.makeView(withIdentifier: .coreCell, owner: self) as? NSTableCellView
             // CFBundleName may be an unresolved Xcode build variable like "${PRODUCT_NAME}".
             // Fall back to the system name from the core's system identifiers in that case.
-            var name = core?.displayName ?? ""
+            var name = core.map { displayName(for: $0) } ?? ""
             if name.hasPrefix("${") {
                 name = core?.systemIdentifiers.first.flatMap { OESystemPlugin.systemPlugin(forIdentifier: $0)?.systemName } ?? core?.bundleIdentifier ?? name
             }

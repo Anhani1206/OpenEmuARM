@@ -1,5 +1,16 @@
 # Neo Geo com FBNeo
 
+## Regra de seleção por formato
+
+- Arquivos `.neo` são abertos exclusivamente pelo **Geolith**.
+- Arquivos `.zip` são abertos exclusivamente pelo **FBNeo nativo**.
+- O **FinalBurn Neo via RetroArch** e o subconjunto Neo Geo não aparecem nos
+  menus de seleção.
+
+Essa apresentação é igual nos menus **Default Core**, **Play With…** e
+**Select Core**. No menu padrão do sistema, sem um jogo selecionado, Geolith e
+FBNeo são mostrados como as duas opções possíveis.
+
 O OpenEmu-Silicon disponibiliza Neo Geo como um sistema separado na barra lateral. A emulacao e fornecida pelo **FinalBurn Neo (FBNeo)**, que e o unico core exposto para esse sistema.
 
 Internamente, Neo Geo usa o perfil de entrada Arcade (`OESystemTypeArcade` e `OESystemMediaArcadeROM`). O plugin final e derivado do plugin Arcade para preservar `OEArcadeSystemResponder`, que encaminha corretamente Coin, Start e os botoes ao FBNeo, embora a interface continue a apresenta-lo como **Neo Geo** separado.

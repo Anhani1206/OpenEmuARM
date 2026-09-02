@@ -54,7 +54,7 @@
                                 <connections>
                                     <binding destination="Slx-nK-pNK" name="displayPatternValue1" keyPath="appVersion" id="NHd-G1-uJw">
                                         <dictionary key="options">
-                                            <string key="NSDisplayPattern">OpenEmu v%{value1}@</string>
+                                            <string key="NSDisplayPattern">OpenEmuARM v%{value1}@</string>
                                         </dictionary>
                                     </binding>
                                 </connections>

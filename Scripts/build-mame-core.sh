@@ -47,10 +47,11 @@ fi
 "$SCRIPT_DIR/prepare-mame-core.sh"
 
 cd "$MAME_DIR/deps/mame"
+MAME_JOBS="${MAME_JOBS:-4}"
 make NOWERROR=1 REGENIE=1 macosx_arm64_clang \
   OSD="headless" verbose=1 TARGETOS="macosx" CONFIG="release" \
   TARGET=mame SUBTARGET=arcade MACOSX_DEPLOYMENT_TARGET=11.0 \
-  -j"$(sysctl -n hw.ncpu)"
+  -j"$MAME_JOBS"
 
 install_name_tool -id mamearcade_headless.dylib mamearcade_headless.dylib
 

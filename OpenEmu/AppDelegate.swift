@@ -41,7 +41,7 @@ extension OEDBRom: CachedLastPlayedInfoItem {}
 @objc(OEApplicationDelegate)
 @objcMembers
 class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
-    
+
     static let websiteAddress = "https://github.com/Anhani1206/OpenEmuARM"
     static let userGuideAddress = "https://github.com/Anhani1206/OpenEmuARM/wiki"
     static let releaseNotesAddress = "https://github.com/Anhani1206/OpenEmuARM/releases"
@@ -52,12 +52,16 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     private static let neoGeoSystemAvailabilityMigrationV2Key = "neoGeoSystemAvailabilityMigrationV2"
     private static let playStationSystemAvailabilityMigrationKey = "playStationSystemAvailabilityMigration"
     private static let wiiSystemAvailabilityMigrationKey = "wiiSystemAvailabilityMigration"
+    private static let c64SystemAvailabilityMigrationKey = "c64SystemAvailabilityMigration"
     private static let wiiRVZSystemMigrationKey = "wiiRVZSystemMigration"
     private static let bundledCoreRefreshRevision = "20260823.1"
     private static let bundledCoreRefreshBundleNames = [
-        "Stella", "CrabEmu", "FCEU", "Gambatte", "GenesisPlus", "Nestopia",
-        "SNES9x", "mGBA", "Mednafen", "Mupen64Plus", "BSNES", "DeSmuME",
-        "FBNeo", "ARMSX2"
+        "4DO", "Mupen64Plus", "MAME", "Stella", "Atari800", "ProSystem",
+        "VirtualJaguar", "Mednafen", "JollyCV", "CrabEmu", "blueMSX",
+        "Nestopia", "FCEU", "Gambatte", "mGBA", "Dolphin", "Bliss",
+        "O2EM", "GenesisPlus", "Flycast", "Picodrive", "SNES9x", "BSNES",
+        "VecXGL", "Potator", "DeSmuME", "PPSSPP", "FBNeo", "ARMSX2",
+        "Geolith-RetroArch"
     ]
 
     @IBOutlet weak var fileMenu: NSMenu!
@@ -86,7 +90,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     var cachedLastPlayedInfo = [CachedLastPlayedInfoItem]()
     
     var logHIDEvents = false {
-        
+
         didSet {
             
             if let hidEventsMonitor = hidEventsMonitor {
@@ -325,6 +329,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
 
     deinit {
         NSUserDefaultsController.shared.removeObserver(self, forKeyPath: "values.\(OEAppearance.Application.key)", context: &appearancePrefChangedKVOContext)
+        DistributedNotificationCenter.default.removeObserver(self, name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)
     }
     
     // MARK: - Library Database
@@ -883,6 +888,16 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
             defaults.set(true, forKey: Self.wiiSystemAvailabilityMigrationKey)
         }
 
+        // Commodore 64 was previously hidden while its offline VICE core was
+        // unavailable. Re-enable it once now that the system plugin and core
+        // are shipped together; later user changes remain untouched.
+        if !defaults.bool(forKey: Self.c64SystemAvailabilityMigrationKey),
+           let plugin = OESystemPlugin.systemPlugin(forIdentifier: "openemu.system.c64") {
+            let system = OEDBSystem.system(for: plugin, in: context)
+            system.isEnabled = true
+            defaults.set(true, forKey: Self.c64SystemAvailabilityMigrationKey)
+        }
+
         migrateMisclassifiedWiiRVZGames(in: context, defaults: defaults)
 
         library.disableSystemsWithoutPlugin()
@@ -1224,11 +1239,18 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     
     // MARK: - Application Icon
     
-    /// Applies the dark icon while the app is using the dark appearance.
-    /// Setting the property to nil restores the icon from the app bundle.
+    /// Selects the icon from the macOS appearance, independent of the app's
+    /// optional Dark/Light appearance preference.
     private func updateApplicationIconForCurrentAppearance() {
-        let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        NSApp.applicationIconImage = isDark ? NSImage(named: "OpenEmuDarkIcon1024") : nil
+        let isDark = UserDefaults.standard.string(forKey: "AppleInterfaceStyle") == "Dark"
+        let iconName = isDark ? "OpenEmuDarkIcon1024" : "OpenEmu"
+        if let icon = NSImage(named: iconName) {
+            NSApp.applicationIconImage = icon
+        }
+    }
+    
+    @objc private func systemAppearanceDidChange(_ notification: Notification) {
+        updateApplicationIconForCurrentAppearance()
     }
     
     // MARK: - KVO
@@ -1473,6 +1495,13 @@ extension AppDelegate: NSMenuDelegate {
         AppMover.moveIfNecessary()
         
         NSUserDefaultsController.shared.addObserver(self, forKeyPath: "values.\(OEAppearance.Application.key)", options: [.initial], context: &appearancePrefChangedKVOContext)
+        
+        DistributedNotificationCenter.default.addObserver(
+            self,
+            selector: #selector(systemAppearanceDidChange(_:)),
+            name: Notification.Name("AppleInterfaceThemeChangedNotification"),
+            object: nil
+        )
         
         NotificationCenter.default.addObserver(self, selector: #selector(removeLibraryDidLoadObserverForRestoreWindowFromNotificationCenter), name: NSApplication.didFinishRestoringWindowsNotification, object: nil)
     }

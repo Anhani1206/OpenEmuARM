@@ -4,6 +4,7 @@
 # Usage:
 #   ./Scripts/notarize.sh                          # uses latest xcarchive
 #   ./Scripts/notarize.sh "path/to/archive.xcarchive"
+#   ./Scripts/notarize.sh "path/to/OpenEmu-with-cores.app"
 
 IDENTITY="Developer ID Application"
 PROFILE_NAME="OpenEmu"
@@ -26,26 +27,30 @@ notarytool_auth_flags() {
 }
 
 # ── 1. Find archive ──────────────────────────────────────────────────────────
-if [ $# -ge 1 ]; then
+if [ $# -ge 1 ] && [ -d "$1" ] && [[ "$1" == *.app ]]; then
+  APP_SRC="$1"
+  echo "Using app: $APP_SRC"
+elif [ $# -ge 1 ]; then
   ARCHIVE="$1"
+  [ -d "$ARCHIVE" ] || die "Archive not found: $ARCHIVE"
+  APP_SRC=$(find "$ARCHIVE/Products" -name "OpenEmu.app" -maxdepth 4 | head -1)
 else
   ARCHIVE=$(find "$HOME/Library/Developer/Xcode/Archives" -maxdepth 2 \
     -name "*.xcarchive" -print0 \
     | xargs -0 ls -d 2>/dev/null \
     | sort | tail -1)
+  [ -d "$ARCHIVE" ] || die "No .xcarchive found. Pass a path or run an Xcode archive first."
+  echo "Using archive: $ARCHIVE"
+  APP_SRC=$(find "$ARCHIVE/Products" -name "OpenEmu.app" -maxdepth 4 | head -1)
 fi
 
-[ -d "$ARCHIVE" ] || die "No .xcarchive found. Pass a path or run an Xcode archive first."
-echo "Using archive: $ARCHIVE"
-
-# ── 2. Extract app ───────────────────────────────────────────────────────────
-APP_SRC=$(find "$ARCHIVE/Products" -name "OpenEmu.app" -maxdepth 4 | head -1)
 [ -n "$APP_SRC" ] || die "OpenEmu.app not found in archive."
 
+# ── 2. Extract app ───────────────────────────────────────────────────────────
 WORK_DIR=$(mktemp -d)
 APP="$WORK_DIR/OpenEmu.app"
 echo "Copying app to temp dir..."
-cp -R "$APP_SRC" "$APP" || die "Failed to copy app."
+ditto "$APP_SRC" "$APP" || die "Failed to copy app."
 
 # ── 3. Credential check ──────────────────────────────────────────────────────
 echo ""
@@ -220,7 +225,7 @@ if grep -q "status: Accepted" "$NOTARIZE_LOG"; then
   xcrun stapler staple "$APP" || die "Stapling failed."
 
   # ── 8. Create DMG with custom background ────────────────────────────────
-  DMG="$REPO_ROOT/Releases/OpenEmu-Silicon.dmg"
+  DMG="$REPO_ROOT/Releases/OpenEmuARM.dmg"
   mkdir -p "$REPO_ROOT/Releases"
   echo ""
   echo "=== Creating styled DMG ==="

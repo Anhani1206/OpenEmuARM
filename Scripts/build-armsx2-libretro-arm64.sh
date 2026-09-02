@@ -47,7 +47,24 @@ if ! xcrun --find metal >/dev/null 2>&1 || ! xcrun --find metallib >/dev/null 2>
     done
 fi
 
-if ! xcrun --find metal >/dev/null 2>&1 || ! xcrun --find metallib >/dev/null 2>&1; then
+METAL_TOOL=(xcrun metal)
+METALLIB_TOOL=(xcrun metallib)
+
+# Newer Xcode versions can install Metal as an optional toolchain under
+# DVTDownloads. In that case xcrun finds the shim in XcodeDefault.xctoolchain,
+# but executing it fails until the downloaded toolchain is selected explicitly.
+if ! xcrun metal --version >/dev/null 2>&1; then
+    METAL_MOUNT="$(find "/Users/$(id -un)/Library/Developer/DVTDownloads/MetalToolchain/mounts" \
+        -path '*/Metal.xctoolchain/usr/bin/metal' -print -quit 2>/dev/null)"
+    METALLIB_MOUNT="$(find "/Users/$(id -un)/Library/Developer/DVTDownloads/MetalToolchain/mounts" \
+        -path '*/Metal.xctoolchain/usr/bin/metallib' -print -quit 2>/dev/null)"
+    if [[ -n "$METAL_MOUNT" && -n "$METALLIB_MOUNT" ]]; then
+        METAL_TOOL=("$METAL_MOUNT")
+        METALLIB_TOOL=("$METALLIB_MOUNT")
+    fi
+fi
+
+if ! "${METAL_TOOL[@]}" --version >/dev/null 2>&1 || ! "${METALLIB_TOOL[@]}" --version >/dev/null 2>&1; then
     die "The complete Xcode Metal toolchain is required. Select Xcode.app with xcode-select."
 fi
 
@@ -95,12 +112,12 @@ for standard in 2.0 2.2 2.3; do
     air_files=()
     for source in "${metal_sources[@]}"; do
         air="$ARMSX2_BUILD_DIR/${source}-${standard}.air"
-        xcrun metal -c -std=macos-metal"$standard" -mmacosx-version-min=12.0 \
+        "${METAL_TOOL[@]}" -c -std=macos-metal"$standard" -mmacosx-version-min=12.0 \
             -fmodules-cache-path="$CLANG_MODULE_CACHE_PATH" \
             "$METAL_SOURCE_DIR/${source}.metal" -o "$air"
         air_files+=("$air")
     done
-    xcrun metallib "${air_files[@]}" -o "$RESOURCES/resources/$output"
+    "${METALLIB_TOOL[@]}" "${air_files[@]}" -o "$RESOURCES/resources/$output"
 done
 
 echo "Building OpenEmu wrapper..."

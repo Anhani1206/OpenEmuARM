@@ -15,10 +15,11 @@ Metal diretamente, sem Rosetta no caminho normal.
 | Componente | Responsabilidade |
 |---|---|
 | `ARMSX2-Core/` | Código do emulador, wrapper libretro e renderizador Metal. |
-| `ARMSX2.oecoreplugin` | Bundle instalado em `~/Library/Application Support/OpenEmu/Cores/`. |
+| `ARMSX2.oecoreplugin` | Bundle Release empacotado no app e instalado em `~/Library/Application Support/OpenEmu/Cores/`. |
 | `OEPS2SystemController` | Sistema, controles DualShock 2 e arquivo de BIOS exibidos pelo OpenEmu. |
 | `Scripts/build-armsx2-libretro-arm64.sh` | Build arm64 do core e das bibliotecas Metal. |
 | `Scripts/install-debug-armsx2-core.sh` | Instalação segura do core Debug. |
+| `Scripts/build-geolith-openemu-arm64.sh` | Build Release arm64 e empacotamento portátil do Geolith. |
 
 ### Configuração do usuário
 
@@ -40,6 +41,14 @@ CONFIGURATION=Release ./Scripts/build-armsx2-libretro-arm64.sh
 ./Scripts/install-core.sh ARMSX2 --release
 ./Scripts/verify-core-installed.sh ARMSX2 --release
 ```
+
+### Validação de desempenho — 2026-08-31
+
+O ARMSX2 foi recompilado em `Release` e instalado no diretório de cores do
+OpenEmu. A verificação confirmou que o bundle instalado corresponde exatamente
+ao produto gerado, com wrapper e biblioteca libretro em `arm64`. A execução de
+teste confirmou que o desempenho e o áudio estão normais; a variante `Debug`
+deve ser usada somente para diagnóstico.
 
 ### Correções importantes da integração Metal
 

@@ -27,11 +27,36 @@ import OpenEmuKit
 
 extension OEGameCollectionViewController {
 
+    private func oeDisplayName(for plugin: OECorePlugin, systemID: String) -> String {
+        guard systemID == "openemu.system.arcade" || systemID == "openemu.system.neogeo" else {
+            return plugin.displayName
+        }
+
+        let name = plugin.displayName
+        let normalized = name.lowercased()
+        if systemID == "openemu.system.neogeo" {
+            if normalized.contains("geolith") { return "Geolith" }
+            if normalized.contains("fbneo") { return "FBNeo" }
+        }
+        if normalized.contains("finalburn neo") {
+            return "FinalBurn Neo"
+        }
+        return name
+            .replacingOccurrences(of: " (RetroArch)", with: "")
+            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+    }
+
     /// Builds a sorted "Play With…" submenu listing every installed core for the game's system.
     /// Returns nil when fewer than two cores are available (menu item is hidden in that case).
     @objc func oe_coreMenu(for game: OEDBGame) -> NSMenu? {
         guard let systemID = game.system?.systemIdentifier else { return nil }
         var plugins = OECorePlugin.corePlugins(forSystemIdentifier: systemID)
+        if systemID == "openemu.system.arcade" {
+            plugins.removeAll { plugin in
+                let name = plugin.displayName.lowercased()
+                return name.contains("finalburn neo") && !name.contains("fbneo")
+            }
+        }
         if systemID == "openemu.system.neogeo" {
             let isNeoCartridge = game.roms.contains {
                 $0.url?.pathExtension.caseInsensitiveCompare("neo") == .orderedSame
@@ -40,14 +65,17 @@ extension OEGameCollectionViewController {
                 if isNeoCartridge {
                     return !plugin.displayName.localizedCaseInsensitiveContains("geolith")
                 }
-                return plugin.bundleIdentifier != "org.openemu.FBNeo"
+                return !plugin.displayName.localizedCaseInsensitiveContains("fbneo")
             }
         }
         guard plugins.count > 1 else { return nil }
-        plugins.sort { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
+        plugins.sort {
+            oeDisplayName(for: $0, systemID: systemID)
+                .localizedStandardCompare(oeDisplayName(for: $1, systemID: systemID)) == .orderedAscending
+        }
         let menu = NSMenu()
         for plugin in plugins {
-            let item = NSMenuItem(title: plugin.displayName,
+            let item = NSMenuItem(title: oeDisplayName(for: plugin, systemID: systemID),
                                   action: #selector(LibraryController.startSelectedGame(withCore:)),
                                   keyEquivalent: "")
             item.representedObject = plugin

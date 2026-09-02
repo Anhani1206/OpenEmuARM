@@ -95,14 +95,33 @@ extern PFNGLISVERTEXARRAYOESPROC glIsVertexArrayOES;
 #define GL_DEPTH24_STENCIL8_OES 0x88F0
 #endif
 
-
-// OpenEmu workaraounds for limitations in Apple's OpenGL
-#define GL_COMPUTE_SHADER 0x91B9
-#define GL_DEBUG_SOURCE_APPLICATION 0x824A
-
+// OpenEmu workarounds for limitations of Apple's OpenGL
+#ifdef glCopyImageSubData
+#undef glCopyImageSubData
+#endif
+#ifdef glCopyImageSubDataNV
+#undef glCopyImageSubDataNV
+#endif
+#ifdef glBufferStorage
+#undef glBufferStorage
+#endif
+#ifdef glGetTextureSubImage
+#undef glGetTextureSubImage
+#endif
+#ifdef glPushDebugGroup
+#undef glPushDebugGroup
+#endif
+#ifdef glPopDebugGroup
+#undef glPopDebugGroup
+#endif
 static void (*glCopyImageSubData)(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth) = 0;
 static void (*glCopyImageSubDataNV)(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth) = 0;
 static void  (*glBufferStorage) (GLenum target, GLsizeiptr size, const void *data, GLbitfield flags) = 0;
 static void (*glGetTextureSubImage)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei bufSize, void *pixels) = 0;
 static void (*glPushDebugGroup)(GLenum source, GLuint id, GLsizei length, const char * message) = 0;
 static void (*glPopDebugGroup)(void) = 0;
+
+
+// OpenEmu workaraounds for limitations in Apple's OpenGL
+#define GL_COMPUTE_SHADER 0x91B9
+#define GL_DEBUG_SOURCE_APPLICATION 0x824A

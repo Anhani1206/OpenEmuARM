@@ -28,7 +28,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 APPCAST="$REPO_ROOT/appcast.xml"
-DMG="$REPO_ROOT/Releases/OpenEmu-Silicon.dmg"
+DMG="$REPO_ROOT/Releases/OpenEmuARM.dmg"
 IDENTITY="Developer ID Application"
 
 die() { echo ""; echo "ERROR: $*" >&2; exit 1; }
@@ -154,8 +154,163 @@ APP_IN_ARCHIVE="$ARCHIVE_PATH/Products/Applications/OpenEmu.app"
 ARMSX2_DESTINATION="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/ARMSX2.oecoreplugin"
 PS2_SYSTEM_PLUGIN="$APP_IN_ARCHIVE/Contents/PlugIns/Systems/PlayStation 2.oesystemplugin"
 
+# These core bundles are staged inside the app, then copied to Application
+# Support on first launch. This keeps a fresh installation independent of
+# appcasts and network access.
+BUNDLED_CORE_REFRESH_REVISION="${BUNDLED_CORE_REFRESH_REVISION:-20260901.1}"
+
+stamp_bundled_core() {
+  local core_path="$1"
+  local plist="$core_path/Contents/Info.plist"
+  /usr/libexec/PlistBuddy -c "Delete :OEBundledCoreRefreshRevision" "$plist" 2>/dev/null || true
+  /usr/libexec/PlistBuddy -c "Add :OEBundledCoreRefreshRevision string $BUNDLED_CORE_REFRESH_REVISION" "$plist"
+}
+
+stage_xcode_core() {
+  local project="$1"
+  local scheme="$2"
+  local bundle_name="$3"
+  local derived_data="$4"
+  local source="$derived_data/Build/Products/Release/$bundle_name.oecoreplugin"
+  local destination="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/$bundle_name.oecoreplugin"
+  local build_setting_args=()
+
+  if [ -n "${FRAMEWORK_SEARCH_PATHS:-}" ]; then
+    build_setting_args+=("FRAMEWORK_SEARCH_PATHS=$FRAMEWORK_SEARCH_PATHS")
+  fi
+  if [ -n "${HEADER_SEARCH_PATHS:-}" ]; then
+    build_setting_args+=("HEADER_SEARCH_PATHS=$HEADER_SEARCH_PATHS")
+  fi
+  if [ -n "${CORE_MACOS_DEPLOYMENT_TARGET:-}" ]; then
+    build_setting_args+=("MACOSX_DEPLOYMENT_TARGET=$CORE_MACOS_DEPLOYMENT_TARGET")
+  fi
+  if [ -n "${CORE_EXCLUDED_SOURCE_FILE_NAMES:-}" ]; then
+    build_setting_args+=("EXCLUDED_SOURCE_FILE_NAMES=$CORE_EXCLUDED_SOURCE_FILE_NAMES")
+  fi
+
+  local build_status=0
+  local build_log="/tmp/OpenEmu-${scheme}-Release-build.log"
+  xcodebuild \
+    -project "$REPO_ROOT/$project" \
+    -scheme "$scheme" \
+    -configuration Release \
+    -derivedDataPath "$derived_data" \
+    -destination 'platform=macOS,arch=arm64' \
+    "${build_setting_args[@]}" build > "$build_log" 2>&1 || build_status=$?
+  cat "$build_log"
+
+  if [ "$build_status" -ne 0 ] && [ "$scheme" = "PPSSPP" ]; then
+    # The flattened PPSSPP project omits glew.c from its target. Xcode still
+    # produces every static library, so finish the bundle with the original
+    # linker command plus a locally compiled arm64 GLEW object.
+    local ppsspp_root="$REPO_ROOT/PPSSPP/PPSSPP-Core/ppsspp"
+    local glew_object="$derived_data/glew-arm64.o"
+    clang -c -arch arm64 -mmacosx-version-min=12.0 \
+      -I"$ppsspp_root/ext/glew" \
+      -isysroot "$(xcrun --sdk macosx --show-sdk-path)" \
+      "$ppsspp_root/ext/glew/glew.c" -o "$glew_object"
+    local link_line
+    link_line="$(sed -n '/clang++ -Xlinker -reproducible/ p' "$build_log" | tail -1)"
+    [ -n "$link_line" ] || die "PPSSPP linker command was not captured."
+    link_line="$(printf '%s' "$link_line" | sed 's/^[[:space:]]*//; s# -Xlinker -no_adhoc_codesign# '"$glew_object"' -Xlinker -no_adhoc_codesign#')"
+    (cd "$REPO_ROOT/PPSSPP/PPSSPP-Core" && eval "$link_line") \
+      || die "PPSSPP Release relink failed."
+  elif [ "$build_status" -ne 0 ]; then
+    die "Release build failed for $scheme."
+  fi
+
+  [ -d "$source" ] || die "Release core was not produced: $source"
+  rm -rf "$destination"
+  mkdir -p "$(dirname "$destination")"
+  ditto "$source" "$destination"
+  stamp_bundled_core "$destination"
+  codesign --force --deep --sign - "$destination"
+  codesign --verify --deep --strict "$destination" \
+    || die "$bundle_name core failed codesign verification."
+  echo "OK: $bundle_name core staged in archive"
+}
+
 [ -d "$APP_IN_ARCHIVE" ] || die "OpenEmu.app not found inside archive."
 [ -d "$PS2_SYSTEM_PLUGIN" ] || die "PlayStation 2 system plugin is missing from archive."
+
+step "Bundling 4DO core"
+OPENEMU_SDK_DERIVED_DATA="${OPENEMU_SDK_DERIVED_DATA:-/tmp/OpenEmu-SDK-Release-DD}"
+xcodebuild \
+  -project "$REPO_ROOT/OpenEmu-SDK/OpenEmu-SDK.xcodeproj" \
+  -scheme OpenEmuBase \
+  -configuration Release \
+  -derivedDataPath "$OPENEMU_SDK_DERIVED_DATA" \
+  -destination 'platform=macOS,arch=arm64' build
+
+OPENEMU_BASE_PRODUCTS="$OPENEMU_SDK_DERIVED_DATA/Build/Products/Release"
+[ -d "$OPENEMU_BASE_PRODUCTS/OpenEmuBase.framework" ] \
+  || die "OpenEmuBase Release framework was not produced."
+
+FOURDO_DERIVED_DATA="${FOURDO_DERIVED_DATA:-/tmp/OpenEmu-4DO-DD}"
+FRAMEWORK_SEARCH_PATHS="$OPENEMU_BASE_PRODUCTS" \
+  HEADER_SEARCH_PATHS="$REPO_ROOT/OpenEmu-SDK" \
+  stage_xcode_core "4DO/4DO.xcodeproj" "4DO" "4DO" "$FOURDO_DERIVED_DATA"
+
+step "Bundling Mupen64Plus core"
+MUPEN64PLUS_DERIVED_DATA="${MUPEN64PLUS_DERIVED_DATA:-/tmp/OpenEmu-Mupen64Plus-DD}"
+FRAMEWORK_SEARCH_PATHS="$OPENEMU_BASE_PRODUCTS" \
+  stage_xcode_core "Mupen64Plus/Mupen64Plus.xcodeproj" "Mupen64Plus" "Mupen64Plus" "$MUPEN64PLUS_DERIVED_DATA"
+
+# The main application target only embeds the libretro bridge. Every native
+# core must therefore be built and staged explicitly for an offline DMG.
+# Pokémon Mini is intentionally absent from the offline distribution.
+NATIVE_CORE_SPECS=(
+  "MAME|MAME|MAME"
+  "Stella|Stella|Stella"
+  "Atari800|Atari800|Atari800"
+  "ProSystem|ProSystem|ProSystem"
+  "VirtualJaguar|VirtualJaguar|VirtualJaguar"
+  "Mednafen|Mednafen|Mednafen"
+  "JollyCV|JollyCV|JollyCV"
+  "CrabEmu|CrabEmu|CrabEmu"
+  "blueMSX|blueMSX|blueMSX"
+  "Nestopia|Nestopia|Nestopia"
+  "FCEU|FCEU|FCEU"
+  "Gambatte|Gambatte|Gambatte"
+  "mGBA|mGBA|mGBA"
+  "Dolphin|Dolphin|Dolphin"
+  "Bliss|Bliss|Bliss"
+  "O2EM|O2EM|O2EM"
+  "GenesisPlus|GenesisPlus|GenesisPlus"
+  "Flycast|Flycast|Flycast"
+  "Picodrive|Picodrive|Picodrive"
+  "SNES9x|SNES9x|SNES9x"
+  "BSNES|BSNES|BSNES"
+  "VecXGL|VecXGL|VecXGL"
+  "Potator-Core|Potator|Potator"
+  "DeSmuME/src/frontend/cocoa/DeSmuME (Latest)|DeSmuME|DeSmuME"
+  "PPSSPP/PPSSPP-Core|PPSSPP|PPSSPP"
+)
+
+for core_spec in "${NATIVE_CORE_SPECS[@]}"; do
+  IFS='|' read -r core_project core_scheme core_bundle <<< "$core_spec"
+  step "Bundling $core_bundle core"
+  core_derived_data="${CORE_DERIVED_DATA_ROOT:-/tmp/OpenEmu-Native-Cores-DD}/$core_bundle"
+  CORE_MACOS_DEPLOYMENT_TARGET=""
+  HEADER_SEARCH_PATHS=""
+  CORE_EXCLUDED_SOURCE_FILE_NAMES=""
+  if [ "$core_bundle" = "PPSSPP" ]; then
+    CORE_MACOS_DEPLOYMENT_TARGET="12.0"
+    PPSSPP_ROOT="$REPO_ROOT/PPSSPP/PPSSPP-Core/ppsspp"
+    mkdir -p "$PPSSPP_ROOT/assets/flash0"
+    touch "$PPSSPP_ROOT/assets/flash0/.empty"
+    cat > "$PPSSPP_ROOT/git-version.cpp" <<'EOF'
+// Generated for the flattened OpenEmu PPSSPP source tree.
+const char *PPSSPP_GIT_VERSION = "openemu-bundled";
+EOF
+    HEADER_SEARCH_PATHS="$PPSSPP_ROOT/ext/glew $PPSSPP_ROOT/ext/openxr/include $PPSSPP_ROOT $PPSSPP_ROOT/Common $PPSSPP_ROOT/ext/libpng17 $PPSSPP_ROOT/ext/snappy $PPSSPP_ROOT/ext/glslang $PPSSPP_ROOT/ext/zstd/lib $PPSSPP_ROOT/ext/armips $PPSSPP_ROOT/ext/armips/ext/tinyformat $PPSSPP_ROOT/ext/armips/ext/filesystem/include $PPSSPP_ROOT/ffmpeg/macosx/universal/include $REPO_ROOT/OpenEmu/SystemPlugins/PSP $REPO_ROOT/OpenEmu-SDK"
+    CORE_EXCLUDED_SOURCE_FILE_NAMES="gl3stub.c"
+  fi
+  FRAMEWORK_SEARCH_PATHS="$OPENEMU_BASE_PRODUCTS" \
+    HEADER_SEARCH_PATHS="$HEADER_SEARCH_PATHS" \
+    CORE_EXCLUDED_SOURCE_FILE_NAMES="$CORE_EXCLUDED_SOURCE_FILE_NAMES" \
+    stage_xcode_core "$core_project/$core_scheme.xcodeproj" "$core_scheme" "$core_bundle" "$core_derived_data"
+done
 
 CONFIGURATION=Release "$SCRIPT_DIR/build-armsx2-libretro-arm64.sh"
 ARMSX2_SOURCE="${DERIVED_DATA:-/tmp/OpenEmu-Shared-DD}/Build/Products/Release/ARMSX2.oecoreplugin"
@@ -165,11 +320,77 @@ rm -rf "$ARMSX2_DESTINATION"
 mkdir -p "$(dirname "$ARMSX2_DESTINATION")"
 ditto "$ARMSX2_SOURCE" "$ARMSX2_DESTINATION"
 "$SCRIPT_DIR/bundle-armsx2-dependencies.sh" "$ARMSX2_DESTINATION"
+stamp_bundled_core "$ARMSX2_DESTINATION"
 
 if otool -L "$ARMSX2_DESTINATION/Contents/Resources/armsx2_libretro.dylib" | grep -q '/opt/homebrew'; then
   die "ARMSX2 still references Homebrew after bundling."
 fi
 echo "OK: portable ARMSX2 core staged in archive"
+
+# FBNeo is built outside the OpenEmu application target as well. Without this
+# step a clean Release archive contains the app but loses the native Arcade
+# and Neo Geo core.
+step "Bundling portable FBNeo core"
+
+FBNEO_DERIVED_DATA="${FBNEO_DERIVED_DATA:-/tmp/OpenEmu-FBNeo-DD}"
+CONFIGURATION=Release DERIVED_DATA="$FBNEO_DERIVED_DATA" \
+  "$SCRIPT_DIR/build-fbneo-openemu-arm64.sh"
+FBNEO_SOURCE="$FBNEO_DERIVED_DATA/Build/Products/Release/FBNeo.oecoreplugin"
+FBNEO_DESTINATION="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/FBNeo.oecoreplugin"
+
+[ -d "$FBNEO_SOURCE" ] || die "FBNeo Release core was not produced."
+rm -rf "$FBNEO_DESTINATION"
+mkdir -p "$(dirname "$FBNEO_DESTINATION")"
+ditto "$FBNEO_SOURCE" "$FBNEO_DESTINATION"
+stamp_bundled_core "$FBNEO_DESTINATION"
+codesign --force --deep --sign - "$FBNEO_DESTINATION"
+codesign --verify --deep --strict "$FBNEO_DESTINATION" \
+  || die "FBNeo core failed codesign verification."
+echo "OK: portable FBNeo core staged in archive"
+
+# Commodore 64 is bundled through the VICE libretro engine. The dylib and its
+# embedded machine data are copied into the app, so a user does not need
+# RetroArch, Appcast access, or a separate core download.
+step "Bundling portable VICE core"
+
+VICE_DERIVED_DATA="${VICE_DERIVED_DATA:-/tmp/OpenEmu-VICE-DD}"
+OPENEMU_LIBRETRO_BRIDGE="$APP_IN_ARCHIVE/Contents/PlugIns/OpenEmuLibretroBridge.oecoreplugin/Contents/MacOS/OpenEmuLibretroBridge" \
+  DERIVED_DATA="$VICE_DERIVED_DATA" \
+  "$SCRIPT_DIR/build-vice-openemu-arm64.sh"
+VICE_SOURCE="$VICE_DERIVED_DATA/Build/Products/Release/VICE.oecoreplugin"
+VICE_DESTINATION="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/VICE.oecoreplugin"
+
+[ -d "$VICE_SOURCE" ] || die "VICE Release core was not produced."
+rm -rf "$VICE_DESTINATION"
+mkdir -p "$(dirname "$VICE_DESTINATION")"
+ditto "$VICE_SOURCE" "$VICE_DESTINATION"
+stamp_bundled_core "$VICE_DESTINATION"
+codesign --force --deep --sign - "$VICE_DESTINATION"
+codesign --verify --deep --strict "$VICE_DESTINATION" \
+  || die "VICE core failed codesign verification."
+echo "OK: portable VICE core staged in archive"
+
+# Geolith is an external libretro core, so it has no Xcode project in this
+# workspace. Build it from the official source and package it as a relative,
+# self-contained plugin for the Release archive.
+step "Bundling portable Geolith core"
+
+GEOLITH_DERIVED_DATA="${GEOLITH_DERIVED_DATA:-/tmp/OpenEmu-Geolith-DD}"
+OPENEMU_LIBRETRO_BRIDGE="$APP_IN_ARCHIVE/Contents/PlugIns/OpenEmuLibretroBridge.oecoreplugin/Contents/MacOS/OpenEmuLibretroBridge" \
+  DERIVED_DATA="$GEOLITH_DERIVED_DATA" \
+  "$SCRIPT_DIR/build-geolith-openemu-arm64.sh"
+GEOLITH_SOURCE="$GEOLITH_DERIVED_DATA/Build/Products/Release/Geolith-RetroArch.oecoreplugin"
+GEOLITH_DESTINATION="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/Geolith-RetroArch.oecoreplugin"
+
+[ -d "$GEOLITH_SOURCE" ] || die "Geolith Release core was not produced."
+rm -rf "$GEOLITH_DESTINATION"
+mkdir -p "$(dirname "$GEOLITH_DESTINATION")"
+ditto "$GEOLITH_SOURCE" "$GEOLITH_DESTINATION"
+stamp_bundled_core "$GEOLITH_DESTINATION"
+codesign --force --deep --sign - "$GEOLITH_DESTINATION"
+codesign --verify --deep --strict "$GEOLITH_DESTINATION" \
+  || die "Geolith core failed codesign verification."
+echo "OK: portable Geolith core staged in archive"
 
 # ── 1.5. Verify and upload dSYMs to Sentry ────────────────────────────────────
 step "Verifying and uploading dSYMs to Sentry (symbolicated crash reports)"

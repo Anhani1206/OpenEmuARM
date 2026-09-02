@@ -85,11 +85,21 @@ if [ "$CORE" = "ARMSX2" ]; then
   CANDIDATE="${ARMSX2_DERIVED_DATA:-/tmp/OpenEmu-Shared-DD}/Build/Products/${CONFIG}/ARMSX2.oecoreplugin"
   [ -e "$CANDIDATE/Contents/MacOS/ARMSX2" ] && ARMSX2_BUILD="$CANDIDATE"
 fi
+FBNEO_BUILD=""
+if [ "$CORE" = "FBNeo" ]; then
+  CANDIDATE="${FBNEO_DERIVED_DATA:-/tmp/OpenEmu-FBNeo-DD}/Build/Products/${CONFIG}/FBNeo.oecoreplugin"
+  [ -e "$CANDIDATE/Contents/MacOS/FBNeo" ] && FBNEO_BUILD="$CANDIDATE"
+fi
+VICE_BUILD=""
+if [ "$CORE" = "VICE" ]; then
+  CANDIDATE="${VICE_DERIVED_DATA:-/tmp/OpenEmu-VICE-DD}/Build/Products/${CONFIG}/VICE.oecoreplugin"
+  [ -e "$CANDIDATE/Contents/MacOS/VICE" ] && VICE_BUILD="$CANDIDATE"
+fi
 
 # Choose whichever candidate has the more recently modified binary.
 DERIVED=""
 DERIVED_MTIME=0
-for CANDIDATE in "$WORKTREE_BUILD" "$LOCAL_CORE_BUILD" "$DERIVED_BUILD" "$ARMSX2_BUILD"; do
+for CANDIDATE in "$WORKTREE_BUILD" "$LOCAL_CORE_BUILD" "$DERIVED_BUILD" "$ARMSX2_BUILD" "$FBNEO_BUILD" "$VICE_BUILD"; do
   [ -n "$CANDIDATE" ] || continue
   CANDIDATE_MTIME=$(stat -f "%m" "$CANDIDATE/Contents/MacOS/${CORE}" 2>/dev/null || echo 0)
   if [ "$CANDIDATE_MTIME" -ge "$DERIVED_MTIME" ]; then
@@ -106,6 +116,12 @@ if [ -z "$DERIVED" ]; then
   echo "         ~/Library/Developer/Xcode/DerivedData/OpenEmu-metal-*/Build/Products/${CONFIG}/"
   if [ "$CORE" = "ARMSX2" ]; then
     echo "         /tmp/OpenEmu-Shared-DD/Build/Products/${CONFIG}/"
+  fi
+  if [ "$CORE" = "FBNeo" ]; then
+    echo "         /tmp/OpenEmu-FBNeo-DD/Build/Products/${CONFIG}/"
+  fi
+  if [ "$CORE" = "VICE" ]; then
+    echo "         /tmp/OpenEmu-VICE-DD/Build/Products/${CONFIG}/"
   fi
   echo "       Build the '${CORE}' scheme first:"
   echo "       xcodebuild -workspace OpenEmu-metal.xcworkspace -scheme \"OpenEmu + ${CORE}\" \\"

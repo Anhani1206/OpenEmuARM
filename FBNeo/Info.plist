@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>FBNeo</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.openemu.FBNeo</string>
+	<key>CFBundleName</key>
+	<string>FBNeo</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>NSPrincipalClass</key>
+	<string>OEGameCoreController</string>
+	<key>OEGameCoreClass</key>
+	<string>FBNeoGameCore</string>
+	<key>OELibretroCorePath</key>
+	<string>../Resources/fbneo_libretro.dylib</string>
+	<key>OESystemIdentifiers</key>
+	<array>
+		<string>openemu.system.arcade</string>
+		<string>openemu.system.neogeo</string>
+	</array>
+	<key>OEGameCoreOptions</key>
+	<dict>
+		<key>openemu.system.arcade</key>
+		<dict>
+			<key>OEGameCoreSupportsRewinding</key>
+			<true/>
+		</dict>
+		<key>openemu.system.neogeo</key>
+		<dict>
+			<key>OEGameCoreSupportsRewinding</key>
+			<true/>
+		</dict>
+	</dict>
+	<key>SUEnableAutomaticChecks</key>
+	<string>1</string>
+</dict>
+</plist>

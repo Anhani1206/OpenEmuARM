@@ -319,6 +319,8 @@ verificar também que há composição dinâmica, `draws=1` e áudio.
 - GameDB aplicado para `SCUS-97399`, com `autoFlush=1` e
   `halfPixelOffset=5`;
 - atualização persistente de `GameIndex.yaml` e dos metallibs;
+- desempenho validado com o bundle `Release` instalado; a variante `Debug`
+  permanece indicada apenas para diagnóstico;
 - encerramento que remove callbacks Metal antes da descarga;
 - dois controles DualShock 2 declarados explicitamente.
 
@@ -326,7 +328,6 @@ verificar também que há composição dinâmica, `draws=1` e áudio.
 
 - regressão completa de **Gran Turismo 4**: tela inicial, menus, HUD, corrida
   e composição de múltiplas camadas;
-- desempenho fora de Debug;
 - input em jogo, memory cards, save/load state e ciclos repetidos de abertura;
 - estabilidade prolongada em títulos distintos;
 - eliminar o flash rosa somente se ele passar a ocorrer durante o jogo ou

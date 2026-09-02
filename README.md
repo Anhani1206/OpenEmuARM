@@ -21,15 +21,18 @@
 
 This is a community-maintained fork of OpenEmu for M-series Macs. The app runs on macOS 11.0+ and has been tested on macOS Sequoia and macOS 26 (Tahoe) and macOS 27 (Golden Gate).
 
-### Recent Updates
+### Recent Updates OpenEmuARM 2.0
 
-- Sony Playstation 2 (ARMSX2 Core) implemented experimentally.
-- Support for screen rotation for Shoot 'em Up games.
-- Game display preferences - Per-game shader and integer-scaling persistence.
-- Implemented the option to show the FPS during games, screen position and color.
-- Neo Geo AES / MVS games via Geolith Core.
-- Implemented the option to download all the Covers Arts or stop the download for each console.
-- Commodore 64 implemented using the Vice core.
+
+- Expanded the bundled core package so the native cores are available without an initial download.
+- Added Commodore 64 support through the VICE core.
+- Added Neo Geo support with both core options:
+Geolith for .neo ROMs.
+FBNeo for .zip ROMs.
+- Added automatic core update checking when the Preferences → Cores window is opened.
+- Update alerts now show the number of available updates, each core name, and the new version.
+- Kept optional cores available for installation on demand.
+- Updated the application, About screen, and disk image branding to OpenEmuARM.
 
 ---
 

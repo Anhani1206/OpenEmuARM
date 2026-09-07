@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>OpenEmu</string>
+	<string>OpenEmuARM</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -118,11 +118,11 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>OpenEmu</string>
+	<string>OpenEmuARM</string>
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.0</string>
+	<string>2.0.1</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -143,7 +143,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>22</string>
+	<string>23</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.games</string>
 	<key>LSMinimumSystemVersion</key>
@@ -176,9 +176,9 @@
 	<key>OELongBuildVersion</key>
 	<string></string>
 	<key>SUEnableAutomaticChecks</key>
-	<false/>
+	<true/>
 	<key>SUFeedURL</key>
-	<string>https://raw.github.com/OpenEmu/OpenEmu-Update/master/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/Anhani1206/OpenEmuARM/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>wVICc/NGoDFzkEbDb63QMFpKlRs14e/WhIiwIngQGsg=</string>
 	<key>UTExportedTypeDeclarations</key>

@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>About OpenEmu</key>
-	<string>Acerca de OpenEmu</string>
+	<key>About OpenEmuARM</key>
+	<string>Acerca de OpenEmuARM</string>
 	<key>Always Hide HUD</key>
 	<string>Siempre ocultar HUD</string>
 	<key>Back Up…</key>

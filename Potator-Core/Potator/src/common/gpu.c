@@ -23,6 +23,8 @@ static uint16	*supervision_palette;
 static uint8    gpu_regs[4];
 #ifdef NDS
 #define RGB555(R,G,B) ((((int)(B))<<10)|(((int)(G))<<5)|(((int)(R)))|BIT(15))
+#elif defined(OPENEMU)
+#define RGB555(R,G,B) ((((int)(B))<<10)|(((int)(G))<<5)|(((int)(R)))|BIT(15))
 #else
 #define RGB555(R,G,B) ((((int)(B))<<10)|(((int)(G))<<5)|(((int)(R))))
 #endif
@@ -532,4 +534,3 @@ void gpu_render_scanline_fast(uint32 scanline, int16 *backbuffer)
 		
 //	}
 }
-

@@ -108,10 +108,12 @@ static void MupenDebugCallback(void *context, int level, const char *message)
         @(M64MSG_VERBOSE) : @"Verbose",
     };
 
-    // Ignore "Verbose" messages (maybe too console spammy?) and plugin warnings that aren't relevant
+#ifndef DEBUG
+    // Keep Release logs quiet; Debug builds retain the full Mupen diagnostic stream.
     if (level >= M64MSG_VERBOSE) return;
     if (strcmp(message, "No audio plugin attached.  There will be no sound output.") == 0) return;
     if (strcmp(message, "No input plugin attached.  You won't be able to control the game.") == 0) return;
+#endif
     NSLog(@"[Mupen64Plus] (%@): %s", levels[@(level)], message);
 }
 
@@ -319,11 +321,11 @@ static void mupen_rc_event_handler(const rc_client_event_t *event, rc_client_t *
         _initializing = YES;
         _frameCounter = 0;
 
-        // Use the N64's common native 320x240 mode as the logical 1x size.
-        // OpenEmu uses bufferSize to calculate integral scaling options; starting
-        // at 640x480 made ordinary displays expose only the 1x menu item.
-        _videoWidth  = 320;
-        _videoHeight = 240;
+        // GLideN64 establishes the N64 video mode at 640x480 during setup.
+        // Keep the initial buffer equal to that mode so the alternate OpenGL
+        // renderer does not try to resize its IOSurface after it is created.
+        _videoWidth  = 640;
+        _videoHeight = 480;
         _videoBitDepth = 32; // ignored
         
         _sampleRate = 33600;
@@ -481,8 +483,22 @@ static void MupenAudioLenChanged()
 {
     GET_CURRENT_OR_RETURN();
 
-    int LenReg = *AudioInfo.AI_LEN_REG;
-    uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
+    if (!AudioInfo.RDRAM || !AudioInfo.AI_LEN_REG || !AudioInfo.AI_DRAM_ADDR_REG)
+        return;
+
+    uint32_t LenReg = (uint32_t)*AudioInfo.AI_LEN_REG;
+    uint32_t dramAddress = (uint32_t)*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF;
+    if (LenReg == 0 || dramAddress >= 0x800000)
+        return;
+
+    // N64 audio DMA lengths are aligned to stereo 16-bit samples.  Clamp the
+    // final block so a malformed register value cannot read past RDRAM.
+    LenReg &= ~3u;
+    LenReg = MIN(LenReg, 0x800000u - dramAddress);
+    if (LenReg == 0)
+        return;
+
+    uint8_t *ptr = (uint8_t *)(AudioInfo.RDRAM + dramAddress);
 
     // Swap channels
     for (uint32_t i = 0; i < LenReg; i += 4)
@@ -495,7 +511,23 @@ static void MupenAudioLenChanged()
         ptr[i + 1] ^= ptr[i + 3];
     }
 
-    [[current ringBufferAtIndex:0] write:ptr maxLength:LenReg];
+    OERingBuffer *ringBuffer = [current ringBufferAtIndex:0];
+    // Mupen produces short audio DMA blocks while the ARM interpreter is
+    // catching up.  Requiring twice the requested amount makes OpenEmu return
+    // zero-byte audio buffers continuously, which can stall CoreAudio.
+    ringBuffer.anticipatesUnderflow = NO;
+    [ringBuffer write:ptr maxLength:LenReg];
+
+    // Keep the emulated RDRAM in its original layout after the host copy.
+    for (uint32_t i = 0; i < LenReg; i += 4)
+    {
+        ptr[i] ^= ptr[i + 2];
+        ptr[i + 2] ^= ptr[i];
+        ptr[i] ^= ptr[i + 2];
+        ptr[i + 1] ^= ptr[i + 3];
+        ptr[i + 3] ^= ptr[i + 1];
+        ptr[i + 1] ^= ptr[i + 3];
+    }
 }
 
 static int MupenOpenAudio(AUDIO_INFO info)
@@ -514,6 +546,7 @@ static void MupenSetAudioSpeed(int percent)
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
+    NSLog(@"[Mupen64Plus][debug] loadFileAtPath: %@", path);
     // Load ROM
     NSData *romData = [NSData dataWithContentsOfFile:path options:NSDataReadingMappedIfSafe error:error];
 
@@ -693,15 +726,21 @@ static void MupenSetAudioSpeed(int percent)
 {
     @autoreleasepool
     {
+        NSLog(@"[Mupen64Plus][debug] emulation thread starting; renderer=%@", self.renderDelegate);
         OESetThreadRealtime(1. / 50, .007, .03); // guessed from bsnes
         [self.renderDelegate willRenderFrameOnAlternateThread];
 
         CoreDoCommand(M64CMD_EXECUTE, 0, NULL);
+        NSLog(@"[Mupen64Plus][debug] CoreDoCommand(M64CMD_EXECUTE) returned");
     }
 }
 
 - (void)videoInterrupt
 {
+    static NSUInteger videoInterruptCount = 0;
+    videoInterruptCount++;
+    if (videoInterruptCount <= 10 || videoInterruptCount % 60 == 0)
+        NSLog(@"[Mupen64Plus][debug] video interrupt #%lu", (unsigned long)videoInterruptCount);
     [self.renderDelegate didRenderFrameOnAlternateThread];
 
     if (_rcClient) {

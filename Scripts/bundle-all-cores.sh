@@ -50,7 +50,8 @@ OPENEMU_SDK_DERIVED_DATA="${OPENEMU_SDK_DERIVED_DATA:-$DERIVED_ROOT/OpenEmu-SDK}
 xcodebuild -project "$REPO_ROOT/OpenEmu-SDK/OpenEmu-SDK.xcodeproj" \
     -scheme OpenEmuBase -configuration Release \
     -derivedDataPath "$OPENEMU_SDK_DERIVED_DATA" \
-    -destination 'platform=macOS,arch=arm64' build
+    -destination 'platform=macOS,arch=arm64' \
+    ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build
 
 SDK_PRODUCTS="$OPENEMU_SDK_DERIVED_DATA/Build/Products/Release"
 [ -d "$SDK_PRODUCTS/OpenEmuBase.framework" ] || die "OpenEmuBase framework was not produced"
@@ -59,11 +60,19 @@ stage_xcode_core() {
     local project="$1" scheme="$2" bundle="$3"
     local dd="$DERIVED_ROOT/$bundle"
     local source="$dd/Build/Products/Release/$bundle.oecoreplugin"
-    local project_path="$REPO_ROOT/$project/$scheme.xcodeproj"
+    local project_path="$REPO_ROOT/$project"
+    if [[ "$project_path" != *.xcodeproj ]]; then
+        project_path="$project_path/$scheme.xcodeproj"
+    fi
     [ -d "$project_path" ] || die "project not found: $project_path"
     local build_args=("FRAMEWORK_SEARCH_PATHS=$SDK_PRODUCTS")
     if [ "$bundle" = "4DO" ]; then
         build_args+=("HEADER_SEARCH_PATHS=$REPO_ROOT/OpenEmu-SDK")
+    elif [ "$bundle" = "PPSSPP" ]; then
+        build_args+=(
+            "MACOSX_DEPLOYMENT_TARGET=12.0"
+            "EXCLUDED_SOURCE_FILE_NAMES=gl3stub.c"
+        )
     elif [ "$bundle" = "Mupen64Plus" ]; then
         build_args+=("HEADER_SEARCH_PATHS=$REPO_ROOT/OpenEmu-SDK $REPO_ROOT/OpenEmuKit/Source $REPO_ROOT/Vendor/rcheevos/include $REPO_ROOT/Mupen64Plus/GLideN64/src $REPO_ROOT/Mupen64Plus/GLideN64/src/inc $REPO_ROOT/Mupen64Plus/GLideN64/src/osal $REPO_ROOT/Mupen64Plus/GLideN64/src/xxHash $REPO_ROOT/Mupen64Plus/mupen64plus-core/src $REPO_ROOT/Mupen64Plus/mupen64plus-core/subprojects/md5 $REPO_ROOT/Mupen64Plus/mupen64plus-core/subprojects/minizip $REPO_ROOT/Mupen64Plus/mupen64plus-core/subprojects/xxhash $REPO_ROOT/Mupen64Plus/angrylion-rdp-plus/src $REPO_ROOT/Mupen64Plus/angrylion-rdp-plus/src/plugin/mupen64plus $REPO_ROOT/Mupen64Plus/Compatibility $REPO_ROOT/Mupen64Plus/Compatibility/SDL")
     elif [ "$bundle" = "VecXGL" ]; then
@@ -71,6 +80,7 @@ stage_xcode_core() {
     fi
     xcodebuild -project "$project_path" -scheme "$scheme" -configuration Release \
         -derivedDataPath "$dd" -destination 'platform=macOS,arch=arm64' \
+        ARCHS=arm64 ONLY_ACTIVE_ARCH=YES \
         "${build_args[@]}" build
     stage_core "$source" "$bundle"
 }
@@ -103,7 +113,7 @@ CORE_SPECS=(
   "VecXGL|VecXGL|VecXGL"
   "Potator-Core|Potator|Potator"
   "PokeMini|PokeMini|PokeMini"
-  "DeSmuME/src/frontend/cocoa|DeSmuME (Latest)|DeSmuME"
+  "DeSmuME/src/frontend/cocoa/DeSmuME (Latest).xcodeproj|DeSmuME|DeSmuME"
   "PPSSPP/PPSSPP-Core|PPSSPP|PPSSPP"
 )
 
@@ -122,12 +132,8 @@ for spec in "${CORE_SPECS[@]}"; do
         if [ ! -f "$ppsspp_root/git-version.cpp" ]; then
             printf '%s\n' '// Generated for the flattened OpenEmu PPSSPP source tree.' 'const char *PPSSPP_GIT_VERSION = "openemu-bundled";' > "$ppsspp_root/git-version.cpp"
         fi
-        xcodebuild -project "$REPO_ROOT/$project/$scheme.xcodeproj" -scheme "$scheme" \
-            -configuration Release -derivedDataPath "$DERIVED_ROOT/$bundle" \
-            -destination 'platform=macOS,arch=arm64' \
-            FRAMEWORK_SEARCH_PATHS="$SDK_PRODUCTS" \
-            HEADER_SEARCH_PATHS="$REPO_ROOT/OpenEmu-SDK $ppsspp_root $ppsspp_root/Common $ppsspp_root/ext/glew $ppsspp_root/ext/glslang $ppsspp_root/ext/zstd/lib $ppsspp_root/ext/armips" \
-            MACOSX_DEPLOYMENT_TARGET=12.0 EXCLUDED_SOURCE_FILE_NAMES=gl3stub.c build
+        stage_xcode_core "$project" "$scheme" "$bundle"
+        continue
     else
         stage_xcode_core "$project" "$scheme" "$bundle"
         continue
@@ -148,11 +154,28 @@ OPENEMU_LIBRETRO_BRIDGE="$BRIDGE" DERIVED_DATA="$DERIVED_ROOT/VICE" \
     "$SCRIPT_DIR/build-vice-openemu-arm64.sh"
 stage_core "$DERIVED_ROOT/VICE/Build/Products/Release/VICE.oecoreplugin" "VICE"
 
-echo "building: Geolith-RetroArch"
+echo "building: Geolith"
 OPENEMU_LIBRETRO_BRIDGE="$BRIDGE" DERIVED_DATA="$DERIVED_ROOT/Geolith" \
     "$SCRIPT_DIR/build-geolith-openemu-arm64.sh"
-stage_core "$DERIVED_ROOT/Geolith/Build/Products/Release/Geolith-RetroArch.oecoreplugin" "Geolith-RetroArch"
+stage_core "$DERIVED_ROOT/Geolith/Build/Products/Release/Geolith.oecoreplugin" "Geolith"
 
+# Some vendored support frameworks ship as universal binaries even when every
+# OpenEmu target is built for arm64. Remove only their unused Intel slice from
+# the distribution copy, then sign the final app below.
+strip_intel_slices() {
+    local file arches
+    while IFS= read -r -d '' file; do
+        arches=$(lipo -archs "$file" 2>/dev/null || true)
+        case "$arches" in
+            *x86_64*)
+                lipo -remove x86_64 "$file" -output "$file"
+                echo "removed x86_64 slice: $file"
+                ;;
+        esac
+    done < <(find "$APP/Contents" -type f -print0)
+}
+
+strip_intel_slices
 codesign --force --deep --sign - "$APP"
 codesign --verify --deep --strict "$APP" || die "final app codesign verification failed"
 

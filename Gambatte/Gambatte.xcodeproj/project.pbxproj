@@ -668,8 +668,10 @@
 		828387830E6CDB2300A96E2C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = x86_64;
 				HEADER_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/gambatte\"",
 					"\"$(SRCROOT)/libgambatte/src\"",
@@ -693,8 +695,10 @@
 		828387840E6CDB2300A96E2C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = x86_64;
 				HEADER_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/gambatte\"",
 					"\"$(SRCROOT)/libgambatte/src\"",

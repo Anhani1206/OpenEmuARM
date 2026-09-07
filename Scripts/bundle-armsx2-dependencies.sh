@@ -20,7 +20,7 @@ fi
 CORE_BUNDLE="$1"
 ROOT_BINARY="$CORE_BUNDLE/Contents/Resources/armsx2_libretro.dylib"
 FRAMEWORKS_DIRECTORY="$CORE_BUNDLE/Contents/Frameworks"
-HOMEBREW_PREFIX="/opt/homebrew/"
+HOMEBREW_PREFIXES=("/opt/homebrew/" "/usr/local/")
 
 if [ ! -f "$ROOT_BINARY" ]; then
     echo "error: ARMSX2 libretro binary was not found: $ROOT_BINARY" >&2
@@ -33,6 +33,16 @@ dependencies_for() {
     /usr/bin/otool -L "$1" | /usr/bin/sed 1d | /usr/bin/awk '{ print $1 }'
 }
 
+homebrew_dependency_path() {
+    dependency="$1"
+    for prefix in "${HOMEBREW_PREFIXES[@]}"; do
+        case "$dependency" in
+            "$prefix"*) printf '%s\n' "$dependency"; return 0 ;;
+        esac
+    done
+    return 1
+}
+
 # Copy recursively: Homebrew libraries often depend on other Homebrew
 # libraries, not only on the ones directly referenced by ARMSX2.
 while :; do
@@ -43,27 +53,30 @@ while :; do
 
     while IFS= read -r binary; do
         while IFS= read -r dependency; do
-            case "$dependency" in
-                "$HOMEBREW_PREFIX"*)
-                    if [ ! -f "$dependency" ]; then
+            if resolved_dependency="$(homebrew_dependency_path "$dependency")"; then
+                    if [ ! -f "$resolved_dependency" ]; then
                         echo "error: required Homebrew library is missing: $dependency" >&2
                         rm -f "$scan_list"
                         exit 1
                     fi
 
-                    destination="$FRAMEWORKS_DIRECTORY/$(basename "$dependency")"
+                    destination="$FRAMEWORKS_DIRECTORY/$(basename "$resolved_dependency")"
                     if [ ! -f "$destination" ]; then
-                        echo "Bundling $(basename "$dependency")"
-                        /bin/cp -L "$dependency" "$destination"
+                        echo "Bundling $(basename "$resolved_dependency")"
+                        /bin/cp -L "$resolved_dependency" "$destination"
                         copied_any=1
                     fi
-                    ;;
-                @rpath/*)
+            elif case "$dependency" in @rpath/*) true;; *) false;; esac; then
                     # Some Homebrew libraries (notably libwebp) reference a
                     # sibling through @rpath instead of an absolute path.
                     # If Homebrew supplies that sibling, bundle it too.
-                    candidate="/opt/homebrew/lib/$(basename "$dependency")"
-                    if [ -f "$candidate" ]; then
+                    candidate=""
+                    for prefix in "${HOMEBREW_PREFIXES[@]}"; do
+                        candidate="${prefix}lib/$(basename "$dependency")"
+                        [ -f "$candidate" ] && break
+                        candidate=""
+                    done
+                    if [ -n "$candidate" ]; then
                         destination="$FRAMEWORKS_DIRECTORY/$(basename "$dependency")"
                         if [ ! -f "$destination" ]; then
                             echo "Bundling $(basename "$dependency")"
@@ -71,8 +84,7 @@ while :; do
                             copied_any=1
                         fi
                     fi
-                    ;;
-            esac
+            fi
         done < <(dependencies_for "$binary")
     done < "$scan_list"
     rm -f "$scan_list"
@@ -107,8 +119,17 @@ while IFS= read -r library; do
     /usr/bin/install_name_tool -id "@rpath/$(basename "$library")" "$library"
 done < <(/usr/bin/find "$FRAMEWORKS_DIRECTORY" -type f -name '*.dylib' -print)
 
-if /usr/bin/otool -L "$ROOT_BINARY" | /usr/bin/grep -q "$HOMEBREW_PREFIX"; then
-    echo "error: ARMSX2 still references Homebrew after bundling." >&2
+while IFS= read -r library; do
+    if /usr/bin/otool -L "$library" | /usr/bin/sed 1,2d | \
+        /usr/bin/grep -E -q '(/opt/homebrew|/usr/local|@rpath/)'; then
+        echo "error: ARMSX2 still has an external dependency: $library" >&2
+        exit 1
+    fi
+done < <(/usr/bin/find "$FRAMEWORKS_DIRECTORY" -type f -name '*.dylib' -print)
+
+if /usr/bin/otool -L "$ROOT_BINARY" | /usr/bin/sed 1,2d | \
+    /usr/bin/grep -E -q '(/opt/homebrew|/usr/local|@rpath/)'; then
+    echo "error: ARMSX2 still references an external dependency." >&2
     exit 1
 fi
 

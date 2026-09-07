@@ -947,6 +947,10 @@ static void armsx2_openemu_did_execute(void *context)
 
 - (NSData *)serializeStateWithError:(NSError **)outError
 {
+    armsx2_debug_log(@"[ARMSX2] serializeState requested: gameLoaded=%d sizeSymbol=%d serializeSymbol=%d.",
+                     _gameLoaded ? 1 : 0,
+                     _api.serialize_size != nullptr ? 1 : 0,
+                     _api.serialize != nullptr ? 1 : 0);
     if (!_gameLoaded || _api.serialize_size == nullptr || _api.serialize == nullptr) {
         if (outError != nullptr) {
             *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
@@ -957,6 +961,7 @@ static void armsx2_openemu_did_execute(void *context)
     }
 
     const size_t size = _api.serialize_size();
+    armsx2_debug_log(@"[ARMSX2] serializeState buffer size=%zu.", size);
     if (size == 0) {
         if (outError != nullptr) {
             *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
@@ -967,6 +972,7 @@ static void armsx2_openemu_did_execute(void *context)
     }
     NSMutableData *data = [NSMutableData dataWithLength:size];
     if (!_api.serialize(data.mutableBytes, size)) {
+        armsx2_debug_log(@"[ARMSX2] serializeState failed in libretro core.");
         if (outError != nullptr) {
             *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
                                             code:OEGameCoreCouldNotSaveStateError
@@ -974,12 +980,18 @@ static void armsx2_openemu_did_execute(void *context)
         }
         return nil;
     }
+    armsx2_debug_log(@"[ARMSX2] serializeState succeeded: %lu bytes.", (unsigned long)data.length);
     return data;
 }
 
 - (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
 {
+    armsx2_debug_log(@"[ARMSX2] deserializeState requested: gameLoaded=%d bytes=%lu unserializeSymbol=%d.",
+                     _gameLoaded ? 1 : 0,
+                     (unsigned long)state.length,
+                     _api.unserialize != nullptr ? 1 : 0);
     if (!_gameLoaded || state.length == 0 || _api.unserialize == nullptr || !_api.unserialize(state.bytes, state.length)) {
+        armsx2_debug_log(@"[ARMSX2] deserializeState failed in libretro core.");
         if (outError != nullptr) {
             *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
                                             code:OEGameCoreCouldNotLoadStateError
@@ -987,6 +999,7 @@ static void armsx2_openemu_did_execute(void *context)
         }
         return NO;
     }
+    armsx2_debug_log(@"[ARMSX2] deserializeState succeeded.");
     return YES;
 }
 

@@ -8,7 +8,7 @@ REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 GEOLITH_ROOT="${GEOLITH_ROOT:-/tmp/openemu-geolith-source}"
 DERIVED_DATA="${DERIVED_DATA:-/tmp/OpenEmu-Geolith-DD}"
 PRODUCTS="$DERIVED_DATA/Build/Products/Release"
-PLUGIN="$PRODUCTS/Geolith-RetroArch.oecoreplugin"
+PLUGIN="$PRODUCTS/Geolith.oecoreplugin"
 
 die() { echo "error: $*" >&2; exit 1; }
 
@@ -44,15 +44,15 @@ BRIDGE="${OPENEMU_LIBRETRO_BRIDGE:-$REPO_ROOT/OpenEmu/OpenEmuLibretroBridge.oeco
 
 rm -rf "$PLUGIN"
 mkdir -p "$PLUGIN/Contents/MacOS" "$PLUGIN/Contents/Resources"
-cp "$BRIDGE" "$PLUGIN/Contents/MacOS/Geolith-RetroArch"
+cp "$BRIDGE" "$PLUGIN/Contents/MacOS/Geolith"
 cp "$LIBRETRO" "$PLUGIN/Contents/Resources/geolith_libretro.dylib"
 
 cat > "$PLUGIN/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-<key>CFBundleExecutable</key><string>Geolith-RetroArch</string>
-<key>CFBundleIdentifier</key><string>org.openemu.Geolith-RetroArch</string>
+<key>CFBundleExecutable</key><string>Geolith</string>
+<key>CFBundleIdentifier</key><string>org.openemu.Geolith</string>
 <key>CFBundleName</key><string>Geolith</string>
 <key>CFBundlePackageType</key><string>BNDL</string>
 <key>CFBundleShortVersionString</key><string>1.0</string>
@@ -63,7 +63,7 @@ cat > "$PLUGIN/Contents/Info.plist" <<'PLIST'
 <key>OELibretroCorePath</key><string>../Resources/geolith_libretro.dylib</string>
 <key>OESystemIdentifiers</key><array><string>openemu.system.neogeo</string></array>
 <key>OEGameCorePlayerCount</key><integer>2</integer>
-<key>OEBridgeVersion</key><string>20</string>
+<key>OEBridgeVersion</key><string>22</string>
 </dict></plist>
 PLIST
 

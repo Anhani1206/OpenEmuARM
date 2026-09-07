@@ -27,6 +27,11 @@ import OpenEmuSystem
 
 final class OENeoGeoSystemController: OESystemController {
     override func canHandle(_ file: OEFile) -> OEFileSupport {
-        file.fileExtension == "zip" ? .uncertain : .no
+        switch file.fileExtension.lowercased() {
+        case "neo", "zip":
+            return .uncertain
+        default:
+            return .no
+        }
     }
 }

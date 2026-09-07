@@ -54,14 +54,14 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     private static let wiiSystemAvailabilityMigrationKey = "wiiSystemAvailabilityMigration"
     private static let c64SystemAvailabilityMigrationKey = "c64SystemAvailabilityMigration"
     private static let wiiRVZSystemMigrationKey = "wiiRVZSystemMigration"
-    private static let bundledCoreRefreshRevision = "20260823.1"
+    private static let bundledCoreRefreshRevision = "20260901.1"
     private static let bundledCoreRefreshBundleNames = [
         "4DO", "Mupen64Plus", "MAME", "Stella", "Atari800", "ProSystem",
         "VirtualJaguar", "Mednafen", "JollyCV", "CrabEmu", "blueMSX",
         "Nestopia", "FCEU", "Gambatte", "mGBA", "Dolphin", "Bliss",
         "O2EM", "GenesisPlus", "Flycast", "Picodrive", "SNES9x", "BSNES",
         "VecXGL", "Potator", "DeSmuME", "PPSSPP", "FBNeo", "ARMSX2",
-        "Geolith-RetroArch"
+        "Geolith"
     ]
 
     @IBOutlet weak var fileMenu: NSMenu!
@@ -1416,7 +1416,9 @@ extension AppDelegate: NSMenuDelegate {
             let loadMenu = NSMenu()
             let saveMenu = NSMenu()
             
-            for i in 1..<saveStateSlotCount {
+            // Keep slot 0 available for the standard ⌘S/⌘L shortcuts. The
+            // numbered slots remain available as ⌘1–⌘9 and ⇧⌘1–⇧⌘9.
+            for i in 0..<saveStateSlotCount {
                 
                 let loadTitle = String(format: NSLocalizedString("Slot %ld", comment: "Slotted Quick Load Menu Item"), i)
                 let saveTitle = String(format: NSLocalizedString("Slot %ld", comment: "Slotted Quick Save Menu Item"), i)
@@ -1424,11 +1426,18 @@ extension AppDelegate: NSMenuDelegate {
                 let loadItem = NSMenuItem(title: loadTitle, action: #selector(OEGameDocument.quickLoad(_:)), keyEquivalent: "")
                 let saveItem = NSMenuItem(title: saveTitle, action: #selector(OEGameDocument.quickSave(_:)), keyEquivalent: "")
                 
-                let keyEquivalent = "\(i)"
-                loadItem.keyEquivalent = keyEquivalent
-                loadItem.keyEquivalentModifierMask = [.shift, .command]
-                saveItem.keyEquivalent = keyEquivalent
-                saveItem.keyEquivalentModifierMask = [.command]
+                if i == 0 {
+                    loadItem.keyEquivalent = "l"
+                    loadItem.keyEquivalentModifierMask = [.command]
+                    saveItem.keyEquivalent = "s"
+                    saveItem.keyEquivalentModifierMask = [.command]
+                } else {
+                    let keyEquivalent = "\(i)"
+                    loadItem.keyEquivalent = keyEquivalent
+                    loadItem.keyEquivalentModifierMask = [.shift, .command]
+                    saveItem.keyEquivalent = keyEquivalent
+                    saveItem.keyEquivalentModifierMask = [.command]
+                }
                 
                 loadItem.representedObject = i
                 saveItem.representedObject = i

@@ -1,7 +1,7 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
-#include <zstd.h>
+#include "../../../ext/zstd/lib/zstd.h"
 
 #include "zlib.h"
 

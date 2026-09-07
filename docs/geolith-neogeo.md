@@ -1,6 +1,6 @@
 # Geolith no Neo Geo
 
-O OpenEmu reconhece o Geolith como core RetroArch do sistema Neo Geo. O FBNeo continua sendo o core padrão; o Geolith aparece como uma opção adicional em Preferências → Cores → Neo Geo quando os arquivos do core estão instalados.
+O OpenEmu reconhece o Geolith como core do sistema Neo Geo. O FBNeo continua sendo o core padrão; o Geolith aparece como uma opção adicional em Preferências → Cores → Neo Geo.
 
 O plugin Libretro é adicionado pelo menu de Cores e não oferece uma ação de remoção no OpenEmu. O arquivo original do core continua sendo administrado pelo RetroArch.
 
@@ -11,13 +11,17 @@ Instale estes dois arquivos nas pastas do RetroArch:
 - `~/Library/Application Support/RetroArch/cores/geolith_libretro.dylib`
 - `~/Library/Application Support/RetroArch/info/geolith_libretro.info`
 
-O arquivo `.info` deve declarar `corename = "Geolith"` e `systemid = "neogeo"`. Ao reabrir as Preferências, a opção **Geolith (RetroArch)** será associada à biblioteca Neo Geo.
+O arquivo `.info` deve declarar `corename = "Geolith"` e `systemid = "neogeo"`. Ao reabrir as Preferências, a opção **Geolith** será associada à biblioteca Neo Geo.
 
 ## BIOS e jogos
 
 O Geolith aceita jogos de cartucho no formato `.neo`. A documentação oficial lista `.neo` como a extensão suportada pelo core.
 
 O menu **Play With…** só apresenta o Geolith para jogos `.neo`. ROMs `.zip` de conjuntos FBNeo continuam sendo executadas pelo FBNeo.
+
+Na versão Release de 06/09/2026, as referências genéricas do RetroArch foram
+removidas da preferência de cores do Neo Geo. A lista agora mostra apenas
+**FBNeo** e **Geolith**, sem alterar os demais sistemas.
 
 As BIOS reconhecidas pelo OpenEmu são:
 
@@ -30,7 +34,9 @@ No desenvolvimento, o Geolith continua sendo um core externo do ecossistema
 Libretro. Para uma distribuição Release, `Scripts/build-geolith-openemu-arm64.sh`
 baixa o repositório oficial, compila a variante otimizada arm64 e cria um
 plugin portátil dentro do app. Assim, a versão distribuída não depende de uma
-instalação local do RetroArch.
+instalação local do RetroArch. O bundle usa o nome `Geolith.oecoreplugin` para
+ser tratado pelo OpenEmu como core empacotado, e não como stub externo
+`*-RetroArch`.
 
 ## Correção aplicada em 25/08/2026
 

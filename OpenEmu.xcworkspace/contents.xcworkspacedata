@@ -77,7 +77,7 @@
       location = "group:Potator-Core/Potator.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:PPSSPP/PPSSPP.xcodeproj">
+      location = "group:PPSSPP/PPSSPP-Core/PPSSPP.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:ProSystem/ProSystem.xcodeproj">
@@ -96,5 +96,8 @@
    </FileRef>
    <FileRef
       location = "group:VirtualC64-Core/VirtualC64.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Dolphin/Dolphin.xcodeproj">
    </FileRef>
 </Workspace>

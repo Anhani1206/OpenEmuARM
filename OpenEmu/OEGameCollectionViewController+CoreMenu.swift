@@ -67,6 +67,18 @@ extension OEGameCollectionViewController {
                 }
                 return !plugin.displayName.localizedCaseInsensitiveContains("fbneo")
             }
+            let geolithPlugins = plugins.filter {
+                $0.displayName.localizedCaseInsensitiveContains("geolith")
+            }
+            if geolithPlugins.count > 1 {
+                let preferred = geolithPlugins.first(where: {
+                    $0.bundleIdentifier == "org.openemu.Geolith"
+                }) ?? geolithPlugins[0]
+                plugins.removeAll {
+                    $0.displayName.localizedCaseInsensitiveContains("geolith")
+                }
+                plugins.append(preferred)
+            }
         }
         guard plugins.count > 1 else { return nil }
         plugins.sort {

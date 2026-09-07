@@ -276,6 +276,31 @@ extension MainWindowController: LibraryControllerDelegate {
         }
         return core
     }
+
+    private func automaticNeoGeoCore(for game: OEDBGame?) -> OECorePlugin? {
+        guard let game,
+              game.system?.systemIdentifier == "openemu.system.neogeo",
+              let rom = game.defaultROM
+        else {
+            return nil
+        }
+
+        let extensionName = rom.url?.pathExtension.lowercased()
+            ?? rom.fileName.map { URL(fileURLWithPath: $0).pathExtension.lowercased() }
+            ?? ""
+
+        let bundleIdentifier: String
+        switch extensionName {
+        case "neo":
+            bundleIdentifier = "org.openemu.Geolith"
+        case "zip":
+            bundleIdentifier = "org.openemu.FBNeo"
+        default:
+            return nil
+        }
+
+        return OECorePlugin.corePlugin(bundleIdentifier: bundleIdentifier)
+    }
     
     private func rememberCore(_ core: OECorePlugin, for game: OEDBGame) {
         UserDefaults.standard.set(
@@ -295,7 +320,11 @@ extension MainWindowController: LibraryControllerDelegate {
         let defaults = UserDefaults.standard
         let openInSeparateWindow = mainWindowRunsGame || defaults.bool(forKey: OEForcePopoutGameWindowKey)
         let fullScreen = defaults.bool(forKey: OEFullScreenGameWindowKey)
-        let selectedCore = core ?? preferredCore(for: game)
+        // Neo Geo cartridge format is authoritative. A previous per-game
+        // choice must not make a .neo image fall back to FBNeo (or a .zip
+        // arcade set fall back to Geolith). An explicitly requested core from
+        // “Play With…” still takes precedence.
+        let selectedCore = core ?? automaticNeoGeoCore(for: game) ?? preferredCore(for: game)
         
         var openWithSaveState = state != nil
         let state = state != nil ? state : game?.autosaveForLastPlayedRom

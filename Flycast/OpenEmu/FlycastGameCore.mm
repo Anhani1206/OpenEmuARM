@@ -341,7 +341,14 @@ __weak FlycastGameCore *_current;
         NSError *err = nil;
         [[NSFileManager defaultManager] removeItemAtPath:dst error:nil];
         [[NSFileManager defaultManager] copyItemAtPath:fileName toPath:dst error:&err];
-        if (!err) dc_loadstate(0);
+        if (!err) {
+            // Flycast's own UI stops the emulator before deserializing a state.
+            // Loading while the SH4/render threads are running can leave the
+            // emulation state inconsistent and crash OpenEmuHelperApp.
+            emu.stop();
+            dc_loadstate(0);
+            emu.start();
+        }
         block(err == nil, err);
     } @catch (NSException *e) {
         NSError *error = [NSError errorWithDomain:OEGameCoreErrorDomain

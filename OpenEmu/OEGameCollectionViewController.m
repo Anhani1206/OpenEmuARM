@@ -51,6 +51,7 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
 - (NSMenu *)OE_saveStateMenuForGame:(OEDBGame *)game;
 - (NSMenu *)OE_ratingMenuForGames:(NSArray *)games;
 - (NSMenu *)OE_collectionsMenuForGames:(NSArray *)games;
+- (void)setSaturnCartridge:(NSMenuItem *)sender;
 
 @property (strong) NSDate *listViewSelectionChangeDate;
 @property (readonly) OEArrayController *gamesController;
@@ -736,6 +737,31 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
             [menu addItem:coreMenuItem];
         }
 
+        if ([[game.system systemIdentifier] isEqualToString:@"openemu.system.saturn"]) {
+            NSMenu *cartridgeMenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Saturn Cartridge", @"Sega Saturn cartridge selection")];
+            NSString *romMD5 = [[game defaultROM] valueForKey:@"md5"];
+            NSString *preferenceKey = romMD5.length > 0 ? [NSString stringWithFormat:@"openemu.saturn.cartridge.%@", romMD5.lowercaseString] : nil;
+            NSString *selected = preferenceKey != nil ? [[NSUserDefaults standardUserDefaults] stringForKey:preferenceKey] : nil;
+            if (![selected isEqualToString:@"extram1"] && ![selected isEqualToString:@"extram4"])
+                selected = @"auto";
+
+            NSArray *cartridgeOptions = @[
+                @{ @"title": NSLocalizedString(@"Auto Detect", @"Saturn cartridge automatic detection"), @"value": @"auto" },
+                @{ @"title": NSLocalizedString(@"Extended RAM (1 MB)", @"Saturn 1 MB cartridge"), @"value": @"extram1" },
+                @{ @"title": NSLocalizedString(@"Extended RAM (4 MB)", @"Saturn 4 MB cartridge"), @"value": @"extram4" },
+            ];
+            for (NSDictionary *option in cartridgeOptions) {
+                NSMenuItem *optionItem = [[NSMenuItem alloc] initWithTitle:option[@"title"] action:@selector(setSaturnCartridge:) keyEquivalent:@""];
+                optionItem.representedObject = @{ @"md5": romMD5 ?: @"", @"value": option[@"value"] };
+                optionItem.state = [selected isEqualToString:option[@"value"]] ? NSControlStateValueOn : NSControlStateValueOff;
+                optionItem.enabled = romMD5.length > 0;
+                [cartridgeMenu addItem:optionItem];
+            }
+            NSMenuItem *cartridgeMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Saturn Cartridge", @"Sega Saturn cartridge selection") action:NULL keyEquivalent:@""];
+            cartridgeMenuItem.submenu = cartridgeMenu;
+            [menu addItem:cartridgeMenuItem];
+        }
+
         if([self OE_isGenesisGame:game] && ![self OE_isSonicKnucklesGame:game])
         {
             NSMenuItem *lockOnMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Play locked on to Sonic & Knuckles", @"Launch a Genesis game using Sonic & Knuckles lock-on technology") action:@selector(startSelectedGameLockedOnToSonicKnuckles:) keyEquivalent:@""];
@@ -850,6 +876,18 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
     
     [menu setAutoenablesItems:YES];
     return menu;
+}
+
+- (void)setSaturnCartridge:(NSMenuItem *)sender
+{
+    NSDictionary *selection = sender.representedObject;
+    NSString *romMD5 = selection[@"md5"];
+    NSString *cartridge = selection[@"value"];
+    if (romMD5.length == 0 || cartridge.length == 0)
+        return;
+
+    NSString *preferenceKey = [NSString stringWithFormat:@"openemu.saturn.cartridge.%@", romMD5.lowercaseString];
+    [[NSUserDefaults standardUserDefaults] setObject:cartridge forKey:preferenceKey];
 }
 
 

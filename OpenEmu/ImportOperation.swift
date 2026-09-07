@@ -645,22 +645,31 @@ final class ImportOperation: Operation, NSCopying, @unchecked Sendable {
             return
         }
         
-        // disable multi-rom archives
-        if archive.numberOfEntries() > 1 {
+        // Ignore directory entries and metadata files when deciding whether an
+        // archive contains multiple ROMs. ZIP files created by macOS often
+        // contain an extra folder or __MACOSX entry beside the actual ROM.
+        let playableEntries = (0 ..< archive.numberOfEntries()).filter { index in
+            guard !archive.entryIsDirectory(index),
+                  !archive.entryIsEncrypted(index),
+                  !archive.entryIsArchive(index),
+                  !(archive.entryHasSize(index) && archive.size(ofEntry: index) == 0)
+            else { return false }
+
+            let name = (archive.name(ofEntry: index) as? String ?? "")
+            let filename = (name as NSString).lastPathComponent
+            return !filename.isEmpty && !filename.hasPrefix(".") && filename != "__MACOSX"
+        }
+
+        // Disable multi-ROM archives, but allow a single ROM wrapped with
+        // harmless directory/metadata entries to be extracted and detected by
+        // its real extension (for example, a Master System .sms inside .zip).
+        if playableEntries.count > 1 {
             // Check if archive contains known extensions, otherwise is assumed Arcade.
             isDisallowedArchiveWithMultipleFiles = shouldDisallowArchive(archive)
             return
         }
-        
-        for i in  0 ..< archive.numberOfEntries() {
-            if archive.entryHasSize(i) && archive.size(ofEntry: i) == 0 ||
-               archive.entryIsEncrypted(i) ||
-               archive.entryIsDirectory(i) ||
-               archive.entryIsArchive(i)
-            {
-                DLog("Entry \(i) is either empty, or a directory or encrypted or iteself an archive")
-                continue
-            }
+
+        for i in playableEntries {
             
             let folder = ArchiveHelper.temporaryDirectoryForDecompressionOfFile(at: url)
             var extractionDst = folder.appendingPathComponent(archive.name(ofEntry: i))

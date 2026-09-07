@@ -1997,6 +1997,8 @@ RETRO_API size_t retro_serialize_size(void)
 
 RETRO_API bool retro_serialize(void* data, size_t size)
 {
+	OpenEmuMetalBridge::DebugLog("[ARMSX2-libretro] retro_serialize requested: vm=%d buffer=%zu.",
+		VMManager::HasValidVM() ? 1 : 0, size);
 	if (!VMManager::HasValidVM())
 		return false;
 
@@ -2031,6 +2033,8 @@ RETRO_API bool retro_serialize(void* data, size_t size)
 
 	if (!ok || sizeof(u64) + buffer.size() > size)
 	{
+		OpenEmuMetalBridge::DebugLog("[ARMSX2-libretro] retro_serialize failed: ok=%d zip=%zu buffer=%zu.",
+			ok ? 1 : 0, buffer.size(), size);
 		if (ok)
 			log_cb(RETRO_LOG_ERROR, "State (8+%zu bytes) exceeds serialize buffer (%zu).\n", buffer.size(), size);
 		return false;
@@ -2042,11 +2046,14 @@ RETRO_API bool retro_serialize(void* data, size_t size)
 	const u64 zip_len = buffer.size();
 	std::memcpy(data, &zip_len, sizeof(zip_len));
 	std::memcpy(static_cast<u8*>(data) + sizeof(zip_len), buffer.data(), buffer.size());
+	OpenEmuMetalBridge::DebugLog("[ARMSX2-libretro] retro_serialize succeeded: zip=%zu.", buffer.size());
 	return true;
 }
 
 RETRO_API bool retro_unserialize(const void* data, size_t size)
 {
+	OpenEmuMetalBridge::DebugLog("[ARMSX2-libretro] retro_unserialize requested: vm=%d buffer=%zu.",
+		VMManager::HasValidVM() ? 1 : 0, size);
 	if (!VMManager::HasValidVM() || size < sizeof(u64))
 		return false;
 

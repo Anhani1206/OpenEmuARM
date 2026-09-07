@@ -31,9 +31,9 @@ make -C "$FBNEO_ROOT/src/burner/libretro" \
     SUBSET=all \
     INCLUDE_CHD_SUPPORT=1 \
     CHD_LIBRETRO=1 \
-    UNIVERSAL=1 \
+    UNIVERSAL=0 \
     ARCHFLAGS="-arch arm64" \
-    -j"$(sysctl -n hw.ncpu 2>/dev/null || echo 4)"
+    -j"${CORE_JOBS:-4}"
 
 LIBRETRO="$FBNEO_ROOT/src/burner/libretro/fbneo_all_libretro.dylib"
 [[ -f "$LIBRETRO" ]] || { echo "error: FBNeo dylib was not produced" >&2; exit 1; }
@@ -49,6 +49,10 @@ xcrun clang++ -dynamiclib -fobjc-arc -std=c++17 \
     "$REPO_ROOT/FBNeo/FBNeoGameCore.mm" \
     -framework Cocoa -framework OpenEmuBase \
     -o "$PLUGIN/Contents/MacOS/FBNeo"
+
+# The wrapper is loaded from inside the app bundle, not from the build
+# directory. Replace the temporary output path with a portable install name.
+install_name_tool -id "@rpath/FBNeo" "$PLUGIN/Contents/MacOS/FBNeo"
 
 cp "$REPO_ROOT/FBNeo/Info.plist" "$PLUGIN/Contents/Info.plist"
 cp "$LIBRETRO" "$PLUGIN/Contents/Resources/fbneo_libretro.dylib"

@@ -197,7 +197,8 @@ fi
 
 BUILD_LOG=$(mktemp -t verify_build.XXXXXX)
 XCODEBUILD_ARGS=(-workspace "$WORKSPACE" -scheme "$SCHEME"
-                 -configuration "$CONFIG" -destination 'platform=macOS,arch=arm64')
+                 -configuration "$CONFIG" -destination 'platform=macOS,arch=arm64'
+                 ARCHS=arm64 ONLY_ACTIVE_ARCH=YES)
 if [ "$WORKTREE" -eq 1 ]; then
   XCODEBUILD_ARGS+=(-derivedDataPath "$BUILD_DIR_OVERRIDE")
   info "worktree mode — building to $BUILD_DIR_OVERRIDE"

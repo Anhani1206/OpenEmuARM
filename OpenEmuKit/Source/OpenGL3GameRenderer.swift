@@ -140,7 +140,7 @@ final class OpenGL3GameRenderer: BaseOpenGLGameRenderer {
         // After this, it'll skip checking the semaphore until resumed.
         renderingThreadCanProceed.signal()
     }
-    
+
     override func didExecuteFrame() {
         if alternateContext != nil {
             // Wait for the rendering thread to complete this frame, but use a

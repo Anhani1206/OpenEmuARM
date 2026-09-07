@@ -63,7 +63,7 @@
 			</dict>
 			<dict>
 				<key>OEControlListKeyLabelKey</key>
-				<string>Swap Joysticks</string>
+				<string>Virtual Keyboard</string>
 				<key>OEControlListKeyNameKey</key>
 				<string>OEC64SwapJoysticks</string>
 			</dict>

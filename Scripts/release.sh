@@ -136,6 +136,8 @@ xcodebuild archive \
   -scheme OpenEmu \
   -configuration Release \
   -destination generic/platform=macOS \
+  ARCHS=arm64 \
+  ONLY_ACTIVE_ARCH=YES \
   -archivePath "$ARCHIVE_PATH" \
   CODE_SIGN_IDENTITY="$IDENTITY" \
   CODE_SIGN_STYLE=Manual \
@@ -196,6 +198,8 @@ stage_xcode_core() {
     -configuration Release \
     -derivedDataPath "$derived_data" \
     -destination 'platform=macOS,arch=arm64' \
+    ARCHS=arm64 \
+    ONLY_ACTIVE_ARCH=YES \
     "${build_setting_args[@]}" build > "$build_log" 2>&1 || build_status=$?
   cat "$build_log"
 
@@ -240,7 +244,8 @@ xcodebuild \
   -scheme OpenEmuBase \
   -configuration Release \
   -derivedDataPath "$OPENEMU_SDK_DERIVED_DATA" \
-  -destination 'platform=macOS,arch=arm64' build
+  -destination 'platform=macOS,arch=arm64' \
+  ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build
 
 OPENEMU_BASE_PRODUCTS="$OPENEMU_SDK_DERIVED_DATA/Build/Products/Release"
 [ -d "$OPENEMU_BASE_PRODUCTS/OpenEmuBase.framework" ] \
@@ -379,8 +384,8 @@ GEOLITH_DERIVED_DATA="${GEOLITH_DERIVED_DATA:-/tmp/OpenEmu-Geolith-DD}"
 OPENEMU_LIBRETRO_BRIDGE="$APP_IN_ARCHIVE/Contents/PlugIns/OpenEmuLibretroBridge.oecoreplugin/Contents/MacOS/OpenEmuLibretroBridge" \
   DERIVED_DATA="$GEOLITH_DERIVED_DATA" \
   "$SCRIPT_DIR/build-geolith-openemu-arm64.sh"
-GEOLITH_SOURCE="$GEOLITH_DERIVED_DATA/Build/Products/Release/Geolith-RetroArch.oecoreplugin"
-GEOLITH_DESTINATION="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/Geolith-RetroArch.oecoreplugin"
+GEOLITH_SOURCE="$GEOLITH_DERIVED_DATA/Build/Products/Release/Geolith.oecoreplugin"
+GEOLITH_DESTINATION="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/Geolith.oecoreplugin"
 
 [ -d "$GEOLITH_SOURCE" ] || die "Geolith Release core was not produced."
 rm -rf "$GEOLITH_DESTINATION"

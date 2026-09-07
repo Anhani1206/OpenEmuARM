@@ -633,7 +633,7 @@ final class OEGameDocument: NSDocument {
             return
         }
         
-        saveState(name: OEDBSaveState.autosaveName) {
+        saveState(name: OEDBSaveState.autosaveName) { _ in
             self.emulationStatus = .terminating
             // TODO: #567 and #568 need to be fixed first
             //removeDeviceNotificationObservers()
@@ -885,6 +885,18 @@ final class OEGameDocument: NSDocument {
                 }
                 return !plugin.displayName.localizedCaseInsensitiveContains("fbneo") &&
                     !plugin.displayName.localizedCaseInsensitiveContains("finalburn neo")
+            }
+            let geolithPlugins = validPlugins.filter {
+                $0.displayName.localizedCaseInsensitiveContains("geolith")
+            }
+            if geolithPlugins.count > 1 {
+                let preferred = geolithPlugins.first(where: {
+                    $0.bundleIdentifier == "org.openemu.Geolith"
+                }) ?? geolithPlugins[0]
+                validPlugins.removeAll {
+                    $0.displayName.localizedCaseInsensitiveContains("geolith")
+                }
+                validPlugins.append(preferred)
             }
         }
         if systemIdentifier == "openemu.system.3do" {
@@ -2357,26 +2369,41 @@ final class OEGameDocument: NSDocument {
         if let obj = sender?.representedObject as? Int {
             slot = obj
         }
+
+        NSLog("[OpenEmu] quickSave requested: slot=%d supports=%d status=%ld manager=%d.",
+              slot,
+              supportsSaveStates ? 1 : 0,
+              emulationStatus.rawValue,
+              gameCoreManager != nil ? 1 : 0)
         
         let name = OEDBSaveState.nameOfQuickSave(inSlot: slot)
         let didPauseEmulation = pauseEmulationIfNeeded()
         
-        saveState(name: name) {
+        saveState(name: name) { success in
             if didPauseEmulation {
                 self.isEmulationPaused = false
             }
-            self.gameViewController.showQuickSaveNotification()
+            if success {
+                self.gameViewController.showQuickSaveNotification()
+            }
         }
     }
     
-    private func saveState(name stateName: String, completionHandler handler: (() -> Void)? = nil) {
-        guard
-            supportsSaveStates,
-            emulationStatus.rawValue > EmulationStatus.starting.rawValue,
-            let rom = rom,
-            let core = corePlugin
-        else {
-            handler?()
+    private func saveState(name stateName: String, completionHandler handler: ((Bool) -> Void)? = nil) {
+        guard supportsSaveStates else {
+            NSLog("[OpenEmu] saveState skipped: save states are not supported (lockOnROM=%d).",
+                  lockOnROMURL != nil ? 1 : 0)
+            handler?(false)
+            return
+        }
+        guard emulationStatus.rawValue > EmulationStatus.starting.rawValue else {
+            NSLog("[OpenEmu] saveState skipped: emulation status=%ld.", emulationStatus.rawValue)
+            handler?(false)
+            return
+        }
+        guard let rom = rom, let core = corePlugin else {
+            NSLog("[OpenEmu] saveState skipped: ROM or core is unavailable.")
+            handler?(false)
             return
         }
         
@@ -2390,9 +2417,14 @@ final class OEGameDocument: NSDocument {
         SentryService.addBreadcrumb(message: "Save state written: \(stateName)", category: "savestate")
         gameCoreManager?.saveStateToFile(at: temporaryStateFileURL) { success, error in
             if !success {
-                handler?()
+                NSLog("[OpenEmu] saveState failed for '%@': %@.",
+                      stateName,
+                      error?.localizedDescription ?? "unknown error")
+                handler?(false)
                 return
             }
+
+            NSLog("[OpenEmu] saveState core data written for '%@'.", stateName)
             
             // Re-fetch rom in mainThreadContext for both branches — self.rom may be from a
             // different NSManagedObjectContext, and calling saveState(withName:) on a
@@ -2414,7 +2446,7 @@ final class OEGameDocument: NSDocument {
             }
             
             guard let state = saveState else {
-                handler?()
+                handler?(false)
                 return
             }
 
@@ -2444,7 +2476,7 @@ final class OEGameDocument: NSDocument {
                         try convertedData?.write(to: state.screenshotURL, options: .atomic)
                     } catch {
                     }
-                    handler?()
+                    handler?(true)
                 }
             }
         }

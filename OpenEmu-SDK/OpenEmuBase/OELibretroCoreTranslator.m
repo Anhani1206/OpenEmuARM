@@ -61,7 +61,7 @@
 #define RETRO_ENVIRONMENT_SET_ROTATION 1
 #endif
 
-NSString * const OELibretroBridgeVersion = @"20";
+NSString * const OELibretroBridgeVersion = @"22";
 
 
 @interface OELibretroCoreTranslator () <OELibretroInputReceiver>
@@ -2037,6 +2037,7 @@ static const uint8_t OEC64ButtonToLibretro[] = {
     RETRO_DEVICE_ID_JOYPAD_RIGHT, // OEC64JoystickRight = 3
     RETRO_DEVICE_ID_JOYPAD_B,     // OEC64Fire          = 4
     RETRO_DEVICE_ID_JOYPAD_A,     // OEC64Jump          = 5
+    RETRO_DEVICE_ID_JOYPAD_SELECT, // OEC64SwapJoysticks (legacy name) = 6; opens VICE virtual keyboard
 };
 
 - (void)didPushC64Button:(NSInteger)button forPlayer:(NSUInteger)player {
@@ -2127,6 +2128,8 @@ static unsigned OERetroKeyForMacVirtualKey(NSInteger keycode) {
         case 124: return 275;  // Right
         case 125: return 274;  // Down
         case 126: return 273;  // Up
+        case 59:  return 306;  // Left Control
+        case 62:  return 305;  // Right Control — VICE joyport switch
         default: break;
     }
 
@@ -2156,12 +2159,12 @@ static unsigned OERetroKeyForMacVirtualKey(NSInteger keycode) {
     }
 }
 
-- (void)keyDown:(NSEvent *)event {
-    [self didPressKey:(NSInteger)event.keyCode forPlayer:1];
+- (void)keyDown:(NSUInteger)keyCode {
+    [self didPressKey:(NSInteger)keyCode forPlayer:1];
 }
 
-- (void)keyUp:(NSEvent *)event {
-    [self didReleaseKey:(NSInteger)event.keyCode forPlayer:1];
+- (void)keyUp:(NSUInteger)keyCode {
+    [self didReleaseKey:(NSInteger)keyCode forPlayer:1];
 }
 
 #pragma mark - Speed Control

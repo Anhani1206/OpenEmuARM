@@ -287,6 +287,13 @@ final class PrefCoresController: NSViewController {
             let retroArchForSystem = allRetroArch.filter { raCore in
                 guard raCore.systemIDs.contains(sysID) else { return false }
 
+                // Neo Geo has the bundled FBNeo and Geolith cores. Do not list
+                // generic RetroArch alternatives here; they appear as duplicate
+                // FinalBurn Neo / Geolith entries in Preferences.
+                if sysID == "openemu.system.neogeo" {
+                    return false
+                }
+
                 if sysID == "openemu.system.arcade" {
                     let name = raCore.coreName.lowercased()
                     if (name.contains("finalburn neo") || name.contains("fbneo")) &&

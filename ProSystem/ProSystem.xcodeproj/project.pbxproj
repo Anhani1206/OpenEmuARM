@@ -411,8 +411,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = x86_64;
 				EXPORTED_SYMBOLS_FILE = "";
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/core\"",
@@ -432,8 +434,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = x86_64;
 				EXPORTED_SYMBOLS_FILE = "";
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/core\"",

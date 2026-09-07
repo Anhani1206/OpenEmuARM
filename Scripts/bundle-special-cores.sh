@@ -70,8 +70,8 @@ GEOLITH_DERIVED_DATA="${GEOLITH_DERIVED_DATA:-/tmp/OpenEmu-Geolith-DD}"
 OPENEMU_LIBRETRO_BRIDGE="$BRIDGE" DERIVED_DATA="$GEOLITH_DERIVED_DATA" \
     "$SCRIPT_DIR/build-geolith-openemu-arm64.sh"
 stage_core \
-    "$GEOLITH_DERIVED_DATA/Build/Products/Release/Geolith-RetroArch.oecoreplugin" \
-    "$PLUGINS/Geolith-RetroArch.oecoreplugin"
+    "$GEOLITH_DERIVED_DATA/Build/Products/Release/Geolith.oecoreplugin" \
+    "$PLUGINS/Geolith.oecoreplugin"
 
 codesign --force --deep --sign - "$APP"
 codesign --verify --deep --strict "$APP" \

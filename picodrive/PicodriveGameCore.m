@@ -33,7 +33,7 @@
 #include "pico/pico_int.h"
 #include "pico/state.h"
 #include "pico/patch.h"
-#include "../common/input_pico.h"
+#include "platform/common/input_pico.h"
 
 static int16_t ALIGNED(4) soundBuffer[2 * 44100 / 50];
 

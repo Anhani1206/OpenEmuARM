@@ -497,6 +497,18 @@ final class GameControlsBar: NSWindow {
                 }
                 return !plugin.displayName.localizedCaseInsensitiveContains("fbneo")
             }
+            let geolithPlugins = corePlugins.filter {
+                $0.displayName.localizedCaseInsensitiveContains("geolith")
+            }
+            if geolithPlugins.count > 1 {
+                let preferred = geolithPlugins.first(where: {
+                    $0.bundleIdentifier == "org.openemu.Geolith"
+                }) ?? geolithPlugins[0]
+                corePlugins.removeAll {
+                    $0.displayName.localizedCaseInsensitiveContains("geolith")
+                }
+                corePlugins.append(preferred)
+            }
         }
         if systemIdentifier == "openemu.system.3do" {
             corePlugins.removeAll { $0.bundleIdentifier == "org.openemu.Opera" }

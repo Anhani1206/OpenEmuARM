@@ -1,6 +1,7 @@
 #import <OpenEmuBase/OERingBuffer.h>
 #import <OpenGL/gl.h>
 #import "JaguarGameCore.h"
+#import "state.h"
 #import "jaguar.h"
 #import "file.h"
 #import "jagbios.h"
@@ -151,6 +152,39 @@ static JaguarGameCore *current;
 - (NSTimeInterval)frameInterval
 {
     return 60;
+}
+
+#pragma mark - Save States
+
+- (NSData *)serializeStateWithError:(NSError **)outError
+{
+    self.pauseEmulation = YES;
+    const size_t stateSize = JaguarStateSize();
+    NSMutableData *state = [NSMutableData dataWithLength:stateSize];
+    const BOOL success = state != nil && JaguarStateSave(state.mutableBytes, state.length);
+    self.pauseEmulation = NO;
+    if (!success) {
+        if (outError) {
+            *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
+                                             code:OEGameCoreCouldNotSaveStateError
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Jaguar could not save the current state."}];
+        }
+        return nil;
+    }
+    return state;
+}
+
+- (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
+{
+    self.pauseEmulation = YES;
+    const BOOL success = state != nil && JaguarStateLoad(state.bytes, state.length);
+    self.pauseEmulation = NO;
+    if (!success && outError) {
+        *outError = [NSError errorWithDomain:OEGameCoreErrorDomain
+                                         code:OEGameCoreCouldNotLoadStateError
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Jaguar could not load this state."}];
+    }
+    return success;
 }
 
 - (NSUInteger)channelCount

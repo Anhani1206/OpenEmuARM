@@ -13,7 +13,7 @@ Gambatte, mGBA, Dolphin, Bliss, O2EM, GenesisPlus, Flycast, Picodrive,
 SNES9x, BSNES, VecXGL, Potator, DeSmuME e PPSSPP.
 
 Também são incluídos os cores adicionados ao fork: ARMSX2, FBNeo e
-Geolith-RetroArch e VICE para Commodore 64. O VICE é compilado em ARM64 e
+Geolith e VICE para Commodore 64. O VICE é compilado em ARM64 e
 copiado como um bundle relativo com os dados da máquina embutidos; portanto o
 usuário não precisa instalar RetroArch, baixar o core ou acessar Appcasts.
 Pokémon Mini permanece excluído por decisão do projeto.
@@ -51,6 +51,16 @@ notarização.
 
 ## Verificação antes da distribuição
 
+### Teste rápido de uma alteração do app com cores existentes
+
+Uma Debug gerada pelo alvo principal pode não conter os bundles em
+`Contents/PlugIns/Cores/`; ela não deve ser usada para testar o carregamento de
+um core. Para testar uma alteração do app sem recompilar os cores, use uma
+cópia temporária do executável Debug junto com os cores de uma build funcional.
+Essa cópia é apenas para validação local e não é um artefato de distribuição.
+
+O pacote Release completo continua sendo gerado somente pelo fluxo abaixo.
+
 ```sh
 ./Scripts/release.sh <versão>
 ```
@@ -84,3 +94,38 @@ Validação realizada em 1º de setembro de 2026:
 
 O archive completo ainda deve ser executado com as credenciais da equipe Apple
 antes da notarização.
+
+## Correção de assinatura do ARMSX2 — 6 de setembro de 2026
+
+Durante a montagem do app Release completo, o ARMSX2 falhava na validação
+porque `install_name_tool` altera as bibliotecas Homebrew copiadas para dentro
+do plugin e invalida as assinaturas anteriores. O script agora assina primeiro
+cada dylib interno e depois assina o bundle inteiro.
+
+Validação da montagem atual:
+
+- app: `/tmp/OpenEmuARM-complete.app`;
+- cores incorporados: 35 plugins, incluindo os três stubs RetroArch do Arcade;
+- 4DO, Dolphin, Geolith, FBNeo, ARMSX2, VICE e Mupen64Plus presentes;
+- `codesign --verify --deep --strict`: aprovado;
+- executáveis distribuídos: somente arm64.
+
+### Dependências indiretas do ARMSX2 — 6 de setembro de 2026
+
+Foi identificado que uma montagem podia funcionar no Mac de desenvolvimento
+e falhar em outro Mac mesmo com a BIOS correta. O motivo era que algumas
+bibliotecas do ARMSX2 ainda apontavam para caminhos do Homebrew fora do app,
+e `libsharpyuv.0.dylib` era carregada por `libwebp` através de `@rpath` sem
+estar incluída no plugin.
+
+O empacotamento agora:
+
+- inclui `libsharpyuv.0.dylib`;
+- reescreve também as dependências das bibliotecas internas, não apenas as do
+  `armsx2_libretro.dylib`;
+- rejeita a montagem se restar referência a `/opt/homebrew`, `/usr/local` ou
+  uma dependência `@rpath` não resolvida;
+- preserva o escopo no `ARMSX2.oecoreplugin`, sem alterar outros cores.
+
+O teste de validação foi executado com sucesso em uma cópia do plugin:
+assinatura profunda válida e nenhuma dependência externa restante.

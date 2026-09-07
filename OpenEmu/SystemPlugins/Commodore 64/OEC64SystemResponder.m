@@ -38,26 +38,29 @@
 - (void)HIDKeyDown:(OEHIDEvent *)theEvent
 {
     [super HIDKeyDown:theEvent];
-    [self.client keyDown:theEvent.keycode];
+    // Space is the keyboard binding shown for the virtual keyboard control.
+    // VICE expects that control as libretro Select, not as a C64 Space key.
+    if (theEvent.keycode == 49) {
+        [self.client didPushC64Button:OEC64SwapJoysticks forPlayer:1];
+    } else {
+        [self.client keyDown:theEvent.keycode];
+    }
 }
 
 - (void)HIDKeyUp:(OEHIDEvent *)theEvent
 {
     [super HIDKeyUp:theEvent];
-    [self.client keyUp:theEvent.keycode];
+    if (theEvent.keycode == 49) {
+        [self.client didReleaseC64Button:OEC64SwapJoysticks forPlayer:1];
+    } else {
+        [self.client keyUp:theEvent.keycode];
+    }
 }
 
 - (void)pressEmulatorKey:(OESystemKey *)aKey
 {
     OEC64Button button = (OEC64Button)aKey.key;
-    
-    switch(button)
-    {
-        case OEC64SwapJoysticks : [self.client swapJoysticks]; break;
-        default :
-            [self.client didPushC64Button:button forPlayer:aKey.player];
-            break;
-    }
+    [self.client didPushC64Button:button forPlayer:aKey.player];
 }
 
 - (void)releaseEmulatorKey:(OESystemKey *)aKey

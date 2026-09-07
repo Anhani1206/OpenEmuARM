@@ -254,6 +254,16 @@ static uint32_t mednafen_rc_read_memory(uint32_t address, uint8_t *buffer,
     MDFNI_SetSetting("ss.bios_na_eu", [[biosPath stringByAppendingPathComponent:@"mpr-17933"] stringByAppendingPathExtension:@"bin"].fileSystemRepresentation); // NA/EU SS BIOS
     MDFNI_SetSetting("filesys.path_sav", batterySavesDirectory.fileSystemRepresentation); // Memcards
 
+    // Keep Saturn cartridge selection automatic unless the user selected a
+    // specific cartridge in the per-game menu previously.
+    if ([_mednafenCoreModule isEqualToString:@"ss"]) {
+        NSString *preferenceKey = [NSString stringWithFormat:@"openemu.saturn.cartridge.%@", self.ROMMD5.lowercaseString];
+        NSString *cartridge = [[NSUserDefaults standardUserDefaults] stringForKey:preferenceKey];
+        if (![cartridge isEqualToString:@"extram1"] && ![cartridge isEqualToString:@"extram4"])
+            cartridge = @"auto";
+        MDFNI_SetSetting("ss.cart", cartridge.UTF8String);
+    }
+
     // VB defaults. dox http://mednafen.sourceforge.net/documentation/09x/vb.html
     MDFNI_SetSetting("vb.disable_parallax", "1");       // Disable parallax for BG and OBJ rendering
     MDFNI_SetSetting("vb.anaglyph.preset", "disabled"); // Disable anaglyph preset
@@ -3814,14 +3824,14 @@ static uint32_t mednafen_rc_read_memory(uint32_t address, uint8_t *buffer,
 
 // Map OE button order to Mednafen button order
 const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 };
-const int NGPMap[]  = { 0, 1, 2, 3, 4, 5, 6 };
+const int NGPMap[]  = { 0, 1, 2, 3, 5, 6, 4 };
 const int PCEMap[]  = { 4, 6, 7, 5, 0, 1, 8, 9, 10, 11, 3, 2, 12 };
 const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 23, 23, 21, 21, 19, 19, 17, 17 };
 const int SSMap[]   = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11 };
 const int SS3DMap[] = { 0, 1, 2, 3, 6, 4, 5, 10, 9, 8, 20, 18, 7, 12, 15, 15, 13, 13, 20, 18};
 const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
-const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
+const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 10, 9, 8, 11 };
 
 - (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player
 {

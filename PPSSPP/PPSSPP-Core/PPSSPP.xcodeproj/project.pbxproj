@@ -68,8 +68,8 @@
 		5528DD0F2978B9B7009E0F03 /* ManagedTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5528DD0D2978B9AF009E0F03 /* ManagedTexture.cpp */; };
 		552C9542258D6367000C6942 /* thin3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87E4F3C11C249AF300110A77 /* thin3d.cpp */; };
 		552C9568258D6416000C6942 /* thin3d_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87E4F3C41C249AF400110A77 /* thin3d_gl.cpp */; };
-		552C95E5258D6810000C6942 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87E4F2B91C249AF200110A77 /* buffer.cpp */; };
-		552C95E6258D6810000C6942 /* timeutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87E4F2D11C249AF300110A77 /* timeutil.cpp */; };
+		552C95E5258D6810000C6942 /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87E4F2B91C249AF200110A77 /* Buffer.cpp */; };
+		552C95E6258D6810000C6942 /* TimeUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87E4F2D11C249AF300110A77 /* TimeUtil.cpp */; };
 		552C9620258D6A0F000C6942 /* ThreadPools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFA8341785B3C200647A96 /* ThreadPools.cpp */; };
 		552C9657258D6AA2000C6942 /* KeyMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFA8191785B3C200647A96 /* KeyMap.cpp */; };
 		552C970C258D6C80000C6942 /* gl3stub.c in Sources */ = {isa = PBXBuildFile; fileRef = 87E4F3731C249AF300110A77 /* gl3stub.c */; };
@@ -145,7 +145,6 @@
 		552CEF9427154C15009D87A5 /* hist.h in Headers */ = {isa = PBXBuildFile; fileRef = 552CEF3027154C15009D87A5 /* hist.h */; };
 		552CEF9527154C15009D87A5 /* zstd_ldm.h in Headers */ = {isa = PBXBuildFile; fileRef = 552CEF3127154C15009D87A5 /* zstd_ldm.h */; };
 		552CEF9627154C15009D87A5 /* zstd_ldm_geartab.h in Headers */ = {isa = PBXBuildFile; fileRef = 552CEF3227154C15009D87A5 /* zstd_ldm_geartab.h */; };
-		AA552CEF0127154C15009D87 /* zstd_preSplit.c in Sources */ = {isa = PBXBuildFile; fileRef = AA552CEF0027154C15009D87 /* zstd_preSplit.c */; };
 		552CEF9727154C15009D87A5 /* zstd_compress_superblock.c in Sources */ = {isa = PBXBuildFile; fileRef = 552CEF3327154C15009D87A5 /* zstd_compress_superblock.c */; };
 		552CEF9827154C15009D87A5 /* zstd_lazy.h in Headers */ = {isa = PBXBuildFile; fileRef = 552CEF3427154C15009D87A5 /* zstd_lazy.h */; };
 		552CEF9927154C15009D87A5 /* zstdmt_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 552CEF3527154C15009D87A5 /* zstdmt_compress.c */; };
@@ -778,6 +777,7 @@
 		8CC8067518C27CC500AB1339 /* CompReplace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CC8067418C27CC500AB1339 /* CompReplace.cpp */; };
 		8CD63AFC178DCEC60039164C /* sceCcc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD63AFA178DCEC60039164C /* sceCcc.cpp */; };
 		8CD63B07178DD0710039164C /* HDRemaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD63B05178DD0700039164C /* HDRemaster.cpp */; };
+		AA552CEF0127154C15009D87 /* zstd_preSplit.c in Sources */ = {isa = PBXBuildFile; fileRef = AA552CEF0027154C15009D87 /* zstd_preSplit.c */; };
 		DD836DDB2980785100912FB9 /* hlslParseables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD836DCB2980785100912FB9 /* hlslParseables.cpp */; };
 		DD836DDC2980785100912FB9 /* hlslTokenStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD836DCC2980785100912FB9 /* hlslTokenStream.cpp */; };
 		DD836DDD2980785100912FB9 /* hlslParseHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD836DCF2980785100912FB9 /* hlslParseHelper.cpp */; };
@@ -1314,7 +1314,6 @@
 		552CEF4027154C15009D87A5 /* zstd_lazy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zstd_lazy.c; sourceTree = "<group>"; };
 		552CEF4127154C15009D87A5 /* zstdmt_compress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zstdmt_compress.h; sourceTree = "<group>"; };
 		552CEF4227154C15009D87A5 /* zstd_compress_superblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zstd_compress_superblock.h; sourceTree = "<group>"; };
-		AA552CEF0027154C15009D87 /* zstd_preSplit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zstd_preSplit.c; sourceTree = "<group>"; };
 		552CEF4327154C15009D87A5 /* zstd_compress_literals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zstd_compress_literals.c; sourceTree = "<group>"; };
 		552CEF4427154C15009D87A5 /* huf_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = huf_compress.c; sourceTree = "<group>"; };
 		552CEF4527154C15009D87A5 /* zstd_opt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zstd_opt.c; sourceTree = "<group>"; };
@@ -1695,10 +1694,10 @@
 		87E0513C1B102D4000E870E1 /* sceAdler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sceAdler.h; sourceTree = "<group>"; };
 		87E0513E1B102D7400E870E1 /* sceSfmt19937.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sceSfmt19937.cpp; sourceTree = "<group>"; };
 		87E0513F1B102D7400E870E1 /* sceSfmt19937.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sceSfmt19937.h; sourceTree = "<group>"; };
-		87E4F2B91C249AF200110A77 /* buffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = buffer.cpp; sourceTree = "<group>"; };
-		87E4F2BA1C249AF200110A77 /* buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
-		87E4F2D11C249AF300110A77 /* timeutil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = timeutil.cpp; sourceTree = "<group>"; };
-		87E4F2D21C249AF300110A77 /* timeutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = timeutil.h; sourceTree = "<group>"; };
+		87E4F2B91C249AF200110A77 /* Buffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Buffer.cpp; sourceTree = "<group>"; };
+		87E4F2BA1C249AF200110A77 /* Buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
+		87E4F2D11C249AF300110A77 /* TimeUtil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimeUtil.cpp; sourceTree = "<group>"; };
+		87E4F2D21C249AF300110A77 /* TimeUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeUtil.h; sourceTree = "<group>"; };
 		87E4F2D91C249AF300110A77 /* city.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = city.cpp; sourceTree = "<group>"; };
 		87E4F2DA1C249AF300110A77 /* city.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = city.h; sourceTree = "<group>"; };
 		87E4F2DB1C249AF300110A77 /* citycrc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = citycrc.h; sourceTree = "<group>"; };
@@ -2339,6 +2338,7 @@
 		8CD63AFA178DCEC60039164C /* sceCcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sceCcc.cpp; sourceTree = "<group>"; };
 		8CD63B05178DD0700039164C /* HDRemaster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HDRemaster.cpp; sourceTree = "<group>"; };
 		8CD63B06178DD0700039164C /* HDRemaster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HDRemaster.h; sourceTree = "<group>"; };
+		AA552CEF0027154C15009D87 /* zstd_preSplit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zstd_preSplit.c; sourceTree = "<group>"; };
 		DD836DCB2980785100912FB9 /* hlslParseables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hlslParseables.cpp; sourceTree = "<group>"; };
 		DD836DCC2980785100912FB9 /* hlslTokenStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hlslTokenStream.cpp; sourceTree = "<group>"; };
 		DD836DCD2980785100912FB9 /* pch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pch.h; sourceTree = "<group>"; };
@@ -5543,8 +5543,8 @@
 				8CAFA7EB1785B3C200647A96 /* ArmEmitter.h */,
 				EEE2D66324AE3942009BBE09 /* BitScan.h */,
 				8C43DCFC1A8203D000C46968 /* BitSet.h */,
-				87E4F2B91C249AF200110A77 /* buffer.cpp */,
-				87E4F2BA1C249AF200110A77 /* buffer.h */,
+				87E4F2B91C249AF200110A77 /* Buffer.cpp */,
+				87E4F2BA1C249AF200110A77 /* Buffer.h */,
 				8C43DCFD1A8203E100C46968 /* CodeBlock.h */,
 				8CAFA7F41785B3C200647A96 /* Common.h */,
 				8CAFA7F71785B3C200647A96 /* CommonFuncs.h */,
@@ -5594,8 +5594,8 @@
 				87E4F3C51C249AF400110A77 /* Thread */,
 				8CAFA8361785B3C200647A96 /* Thunk.cpp */,
 				8CAFA8371785B3C200647A96 /* Thunk.h */,
-				87E4F2D11C249AF300110A77 /* timeutil.cpp */,
-				87E4F2D21C249AF300110A77 /* timeutil.h */,
+				87E4F2D11C249AF300110A77 /* TimeUtil.cpp */,
+				87E4F2D21C249AF300110A77 /* TimeUtil.h */,
 				5572E1A7296423E40071474C /* VR */,
 				8CAFA83B1785B3C200647A96 /* x64Analyzer.cpp */,
 				8CAFA83C1785B3C200647A96 /* x64Analyzer.h */,
@@ -9221,7 +9221,7 @@
 				552C9946258D7906000C6942 /* Parsers.cpp in Sources */,
 				552CEFEF27154EC0009D87A5 /* ParallelLoop.cpp in Sources */,
 				552CEFF027154EC0009D87A5 /* ThreadManager.cpp in Sources */,
-				552C95E6258D6810000C6942 /* timeutil.cpp in Sources */,
+				552C95E6258D6810000C6942 /* TimeUtil.cpp in Sources */,
 				8CAFC0DA1785B41D00647A96 /* x64Emitter.cpp in Sources */,
 				5572E2F829642EE00071474C /* VRInput.cpp in Sources */,
 				552CF005271555EB009D87A5 /* NetBuffer.cpp in Sources */,
@@ -9230,7 +9230,7 @@
 				8CAFC0F61785B4D900647A96 /* LogManager.cpp in Sources */,
 				DDE9D273297F140F00DDAB21 /* Statistics.cpp in Sources */,
 				552C985D258D7226000C6942 /* InputState.cpp in Sources */,
-				552C95E5258D6810000C6942 /* buffer.cpp in Sources */,
+				552C95E5258D6810000C6942 /* Buffer.cpp in Sources */,
 				552C9568258D6416000C6942 /* thin3d_gl.cpp in Sources */,
 				EE8DD25422400490005E1AF5 /* OSVersion.cpp in Sources */,
 				8CAFC0FC1785B4D900647A96 /* MemoryUtil.cpp in Sources */,
@@ -10112,6 +10112,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -10180,9 +10181,8 @@
 				);
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/ppsspp/ffmpeg/macosx/universal/lib\"";
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				ONLY_ACTIVE_ARCH = NO;
-				ARCHS = arm64;
 				OTHER_CFLAGS = (
 					"-D_DEBUG",
 					"-fno-strict-aliasing",
@@ -10209,6 +10209,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -10277,8 +10278,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/ppsspp/ffmpeg/macosx/universal/lib\"";
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				ARCHS = arm64;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = (
 					"-D_NDEBUG",
 					"-fno-strict-aliasing",
@@ -10314,6 +10314,10 @@
 					"\"$(SRCROOT)/ppsspp/ext/libpng17\"",
 					"\"$(SRCROOT)/ppsspp/ext/zstd/lib\"",
 					"\"$(SRCROOT)/ppsspp/ext/openxr\"",
+					"$(SRCROOT)/ppsspp/ext/armips/ext/filesystem/include",
+					"$(SRCROOT)/ppsspp/ext/armips",
+					"$(SRCROOT)/ppsspp/ext/openxr/include",
+					"$(SRCROOT)/ppsspp/ext/armips/ext/tinyformat",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -10332,6 +10336,10 @@
 					"\"$(SRCROOT)/ppsspp/ext/libpng17\"",
 					"\"$(SRCROOT)/ppsspp/ext/zstd/lib\"",
 					"\"$(SRCROOT)/ppsspp/ext/openxr\"",
+					"$(SRCROOT)/ppsspp/ext/openxr/include",
+					"$(SRCROOT)/ppsspp/ext/armips",
+					"$(SRCROOT)/ppsspp/ext/armips/ext/filesystem/include",
+					"$(SRCROOT)/ppsspp/ext/armips/ext/tinyformat",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

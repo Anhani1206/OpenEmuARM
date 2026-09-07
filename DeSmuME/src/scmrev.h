@@ -1,7 +1,7 @@
 // REVISION TRACKING
 // This file is auto-generated.
 // Do not commit this file to the code repository!
-#define SCR_REV_STR "8f8d7ebf905d0278d0f29c90bcd3e159f4b065a7"
-#define SCM_DESC_STR "8f8d7ebf"
-#define SCM_BRANCH_STR "fix-3do-mupen-scaling"
+#define SCR_REV_STR "02718c4116efb363581acf9f7af08e6403c893c4"
+#define SCM_DESC_STR "02718c41"
+#define SCM_BRANCH_STR "release/2.0.0"
 #define SCM_IS_MASTER 0

@@ -21,7 +21,7 @@
 
 This is a community-maintained fork of OpenEmu for M-series Macs. The app runs on 26.0+ (Tahoe) and has been tested on macOS 27 (Golden Gate).
 
-### Recent Updates OpenEmuARM 2.0
+### Recent Updates OpenEmuARM 2.0.1
 
 
 - Expanded the bundled core package so the native cores are available without an initial download.

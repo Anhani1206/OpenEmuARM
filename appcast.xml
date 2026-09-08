@@ -1,11 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>OpenEmu-Silicon Changelog</title>
+    <title>OpenEmuARM Changelog</title>
     <link>https://github.com/Anhani1206/OpenEmuARM/releases</link>
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
-                                                        <item>
+                                                            <item>
+      <title>OpenEmuARM 2.0.1</title>
+      <description>
+        <![CDATA[
+        <h2>OpenEmuARM 2.0.1</h2>
+        <p># OpenEmuARM 2.0.1</p>
+        <h3>Fixes</h3>
+        <ul>
+        <li>Renamed the macOS application menu from `OpenEmu` to `OpenEmuARM`.</li>
+        <li>Renamed the About item to `About OpenEmuARM`.</li>
+        <li>Updated the displayed application name to `OpenEmuARM` without changing the bundle identifier or technical file paths.</li>
+        </ul>
+        <h3>Update channel</h3>
+        <ul>
+        <li>Enabled automatic Sparkle update checks.</li>
+        <li>Switched the application update feed to the OpenEmuARM GitHub appcast.</li>
+        </ul>
+        ]]>
+      </description>
+      <pubDate>Tue, 08 Sep 2026 00:00:00 +0000</pubDate>
+      <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+      <enclosure
+        url="https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.0.1/OpenEmuARM.dmg"
+        sparkle:version="23"
+        sparkle:shortVersionString="2.0.1"
+        sparkle:edSignature="SVY7ogcuGH6+yUd5MluBzEOyPluUZ6WS/5pbtGM79EvOuivJz+M4Lc/grc4w8OQAf22YVRULp3YrFxEsYkUsAQ=="
+        length="206618817"
+        type="application/octet-stream"/>
+    </item>
+<item>
       <title>OpenEmu-Silicon 1.2.4</title>
       <description>
         <![CDATA[

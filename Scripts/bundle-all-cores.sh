@@ -73,6 +73,9 @@ stage_xcode_core() {
             "MACOSX_DEPLOYMENT_TARGET=12.0"
             "EXCLUDED_SOURCE_FILE_NAMES=gl3stub.c"
         )
+    elif [ "$bundle" = "Dolphin" ]; then
+        # Xcode 26 no longer accepts Dolphin's upstream 11.5 deployment target.
+        build_args+=("MACOSX_DEPLOYMENT_TARGET=12.0")
     elif [ "$bundle" = "Mupen64Plus" ]; then
         build_args+=("HEADER_SEARCH_PATHS=$REPO_ROOT/OpenEmu-SDK $REPO_ROOT/OpenEmuKit/Source $REPO_ROOT/Vendor/rcheevos/include $REPO_ROOT/Mupen64Plus/GLideN64/src $REPO_ROOT/Mupen64Plus/GLideN64/src/inc $REPO_ROOT/Mupen64Plus/GLideN64/src/osal $REPO_ROOT/Mupen64Plus/GLideN64/src/xxHash $REPO_ROOT/Mupen64Plus/mupen64plus-core/src $REPO_ROOT/Mupen64Plus/mupen64plus-core/subprojects/md5 $REPO_ROOT/Mupen64Plus/mupen64plus-core/subprojects/minizip $REPO_ROOT/Mupen64Plus/mupen64plus-core/subprojects/xxhash $REPO_ROOT/Mupen64Plus/angrylion-rdp-plus/src $REPO_ROOT/Mupen64Plus/angrylion-rdp-plus/src/plugin/mupen64plus $REPO_ROOT/Mupen64Plus/Compatibility $REPO_ROOT/Mupen64Plus/Compatibility/SDL")
     elif [ "$bundle" = "VecXGL" ]; then

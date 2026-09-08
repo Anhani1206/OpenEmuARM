@@ -183,9 +183,8 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
             RAHardcoreEnabledKey: true,
         ])
         
-        // App updates are paused until a stable public update channel is ready.
-        // Keep the menu item in the interface so it can be re-enabled later.
-        UserDefaults.standard.set(false, forKey: "SUEnableAutomaticChecks")
+        // Check the OpenEmuARM appcast automatically when the app launches.
+        UserDefaults.standard.set(true, forKey: "SUEnableAutomaticChecks")
 
         // Bundled portable cores must be refreshed before OECorePlugin is
         // registered, otherwise stale Application Support copies take priority.

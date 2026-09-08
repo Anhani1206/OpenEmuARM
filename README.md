@@ -33,6 +33,8 @@ FBNeo for .zip ROMs.
 - Update alerts now show the number of available updates, each core name, and the new version.
 - Kept optional cores available for installation on demand.
 - Updated the application, About screen, and disk image branding to OpenEmuARM.
+- Enabled automatic Sparkle update checks.
+Switched the application update feed to the OpenEmuARM GitHub appcast.
 
 ---
 

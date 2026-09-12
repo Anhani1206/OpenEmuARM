@@ -52,6 +52,6 @@ symlinks = {"Applications": "/Applications"}
 #   left  pedestal centre  (240, 340)
 #   right cartridge centre (720, 340)
 icon_locations = {
-    "OpenEmuARM.app": (240, 340),
+    "OpenEmu.app": (240, 340),
     "Applications": (720, 340),
 }

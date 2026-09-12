@@ -24,6 +24,10 @@
 
 import Cocoa
 
+extension Notification.Name {
+    static let OEShowHardcoreIconPreferenceDidChange = Notification.Name("OEShowHardcoreIconPreferenceDidChange")
+}
+
 // MARK: - Achievement Banner
 
 final class OEAchievementBannerView: NSView {
@@ -557,8 +561,9 @@ final class OERetroAchievementsIndicatorStackView: NSStackView {
 
 @IBDesignable
 final class OEGameLayerNotificationView: NSImageView {
-    
+
     static let OEShowNotificationsKey = "OEShowNotifications"
+    static let OEShowHardcoreIconKey = "OEShowHardcoreIcon"
     
     public var disableNotifications: Bool = false
     
@@ -602,6 +607,31 @@ final class OEGameLayerNotificationView: NSImageView {
     private func setup() {
         self.wantsLayer = true
         self.layerContentsRedrawPolicy = .onSetNeedsDisplay
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(hardcoreIconPreferenceDidChange),
+            name: .OEShowHardcoreIconPreferenceDidChange,
+            object: nil
+        )
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc private func hardcoreIconPreferenceDidChange() {
+        let shouldShow = UserDefaults.standard.bool(forKey: Self.OEShowHardcoreIconKey)
+        if shouldShow {
+            let wasActive = isHardcoreMode
+            isHardcoreMode = false
+            if wasActive {
+                showHardcore(enabled: true)
+            }
+        } else {
+            isHardcoreMode = false
+            layer?.removeAllAnimations()
+            layer?.opacity = 0
+        }
     }
     
     // MARK: - Notifications
@@ -621,6 +651,15 @@ final class OEGameLayerNotificationView: NSImageView {
     }
 
     @objc public func showHardcore(enabled: Bool) {
+        guard UserDefaults.standard.bool(forKey: Self.OEShowHardcoreIconKey) else {
+            isHardcoreMode = false
+            layer?.removeAllAnimations()
+            layer?.opacity = 0
+            if enabled {
+                postAccessibilityNotification(announcement: NSLocalizedString("Hardcore Mode", tableName: "ControlLabels", comment: ""))
+            }
+            return
+        }
         performNotification(img: hardcoreImage, enabled: enabled, state: &isHardcoreMode)
         if enabled {
             postAccessibilityNotification(announcement: NSLocalizedString("Hardcore Mode", tableName: "ControlLabels", comment: ""))

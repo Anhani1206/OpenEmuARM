@@ -265,11 +265,11 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
                 if normalized.contains("neogeo") || normalized.contains("neo geo") {
                     return "FinalBurn Neo (Neo Geo)"
                 }
-                return normalized == "fbneo" ? "FBNeo" : "FinalBurn Neo"
+                return "FinalBurn Neo"
             }
             return name
                 .replacingOccurrences(of: " (RetroArch)", with: "")
-                .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+                .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMSet 0.78)")
         }
 
         plugins.sort { displayName(for: $0).localizedStandardCompare(displayName(for: $1)) == .orderedAscending }

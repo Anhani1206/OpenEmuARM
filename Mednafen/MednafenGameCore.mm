@@ -61,6 +61,8 @@ extern "C" uint8_t *MDFNNGP_GetRAMPointer(void);
 extern "C" uint8_t *MDFNPCE_GetCDRAMPointer(void);
 extern "C" uint8_t *MDFNPCE_GetSysCardRAMPointer(void);
 extern "C" uint8_t *MDFNPCE_GetSaveRAMPointer(void);
+extern "C" uint8_t *MDFNWS_GetROMPointer(void);
+extern "C" uint32_t MDFNWS_GetROMSize(void);
 
 #ifdef DEBUG
     #error "Cores should not be compiled in DEBUG! Follow the guide https://github.com/OpenEmu/OpenEmu/wiki/Compiling-From-Source-Guide"
@@ -114,6 +116,8 @@ namespace MDFN_IEN_VB
     NSString *_romPath;
     int _rcConsole;
     NSMutableDictionary<NSString *, NSNumber *> *_cheatList;
+    // WonderSwan ROM-patch cheats only: retain original bytes so disabling a cheat can revert them.
+    NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, NSNumber *> *> *_romPatchBackups;
     BOOL _isSystemPCECD;
     // Owned C-string copy of the active console module name (e.g. "psx", "pce").
     // Read from the RA memory-reader trampoline on the bridge's serial queue
@@ -4270,8 +4274,20 @@ namespace Mednafen { void MDFN_FlushGameCheats(int nosave); }
     code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
     if (!_cheatList) _cheatList = [NSMutableDictionary dictionary];
-    if (enabled) _cheatList[code] = @YES;
-    else [_cheatList removeObjectForKey:code];
+    if (enabled) {
+        _cheatList[code] = @YES;
+    } else {
+        [_cheatList removeObjectForKey:code];
+        NSMutableDictionary<NSNumber *, NSNumber *> *backups = _romPatchBackups[code];
+        if (backups) {
+            uint8_t *rom = MDFNWS_GetROMPointer();
+            if (rom) {
+                for (NSNumber *offset in backups)
+                    rom[offset.unsignedIntValue] = backups[offset].unsignedCharValue;
+            }
+            [_romPatchBackups removeObjectForKey:code];
+        }
+    }
 
     Mednafen::MDFN_FlushGameCheats(1);
     for (NSString *key in _cheatList) {
@@ -4301,6 +4317,25 @@ namespace Mednafen { void MDFN_FlushGameCheats(int nosave); }
                 } else {
                     patch.val = val;
                     patch.length = 2;
+                }
+                // WonderSwan ROM patches use the GameHacking.org 0x04000000 address marker.
+                // ROM is not registered as a Mednafen memory-patcher page, so patch it directly.
+                if ([_mednafenCoreModule isEqualToString:@"wswan"] && (patch.addr & 0x04000000)) {
+                    uint32_t romOffset = patch.addr & 0x03FFFFFF;
+                    uint8_t *rom = MDFNWS_GetROMPointer();
+                    uint32_t romSize = MDFNWS_GetROMSize();
+                    if (rom && romOffset < romSize) {
+                        if (!_romPatchBackups) _romPatchBackups = [NSMutableDictionary dictionary];
+                        NSMutableDictionary<NSNumber *, NSNumber *> *backups = _romPatchBackups[key];
+                        if (!backups) {
+                            backups = [NSMutableDictionary dictionary];
+                            _romPatchBackups[key] = backups;
+                        }
+                        NSNumber *offset = @(romOffset);
+                        if (!backups[offset]) backups[offset] = @(rom[romOffset]);
+                        rom[romOffset] = (uint8_t)(val & 0xFF);
+                    }
+                    continue;
                 }
                 Mednafen::MDFNI_AddCheat(patch);
             }

@@ -35,6 +35,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		77EDB2A930501FCD0006B05D /* OERetroAchievementsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = OE0MGBA0FILEREF000000002 /* OERetroAchievementsTransport.m */; };
 		8701D2AA1D19D36700E8A7D8 /* mGBAGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8701D2A91D19D36600E8A7D8 /* mGBAGameCore.m */; };
 		8701D6EE1D19D78800E8A7D8 /* arm.c in Sources */ = {isa = PBXBuildFile; fileRef = 8701D2AD1D19D4A900E8A7D8 /* arm.c */; };
 		8701D6EF1D19D7B300E8A7D8 /* decoder-arm.c in Sources */ = {isa = PBXBuildFile; fileRef = 8701D2AF1D19D4A900E8A7D8 /* decoder-arm.c */; };
@@ -118,7 +119,6 @@
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		94AE2EFA17B0C1330018DFBB /* OpenEmuBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94AE2EF917B0C1330018DFBB /* OpenEmuBase.framework */; };
 		OE0MGBA0BUILDFILE000000001 /* rcheevos_build.c in Sources */ = {isa = PBXBuildFile; fileRef = OE0MGBA0FILEREF000000001 /* rcheevos_build.c */; settings = {COMPILER_FLAGS = "-DRC_NO_THREADS=1 -DRC_CLIENT_SUPPORTS_HASH=1"; }; };
-		OE0MGBA0BUILDFILE000000002 /* OERetroAchievementsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = OE0MGBA0FILEREF000000002 /* OERetroAchievementsTransport.m */; };
 		OE0MGBA0BUILDFILE000000003 /* OERetroAchievementsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = OE0MGBA0FILEREF000000003 /* OERetroAchievementsBridge.m */; };
 /* End PBXBuildFile section */
 
@@ -783,6 +783,7 @@
 				8701D6F81D19D94200E8A7D8 /* codebreaker.c in Sources */,
 				8701D6F91D19D94600E8A7D8 /* gameshark.c in Sources */,
 				8701D6FA1D19D94A00E8A7D8 /* parv3.c in Sources */,
+				77EDB2A930501FCD0006B05D /* OERetroAchievementsTransport.m in Sources */,
 				8701D6FB1D19D94E00E8A7D8 /* cheats.c in Sources */,
 				87D380A21D924C9900FC657D /* core.c in Sources */,
 				87D380E61D925C9900FC657D /* config.c in Sources */,
@@ -833,7 +834,6 @@
 				8701D7181D19E75700E8A7D8 /* vfs.c in Sources */,
 				87D380E01D92536600FC657D /* audio.c in Sources */,
 				OE0MGBA0BUILDFILE000000001 /* rcheevos_build.c in Sources */,
-				OE0MGBA0BUILDFILE000000002 /* OERetroAchievementsTransport.m in Sources */,
 				OE0MGBA0BUILDFILE000000003 /* OERetroAchievementsBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

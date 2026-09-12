@@ -39,6 +39,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" image="about_background" id="804"/>
                             </imageView>
+                            <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Loki-about-image">
+                                <rect key="frame" x="300" y="2" width="94" height="80"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="center" imageScaling="proportionallyDown" image="loki_about" id="Loki-about-cell"/>
+                            </imageView>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="796">
                                 <rect key="frame" x="17" y="184" width="366" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -157,10 +162,10 @@
                 <application id="INy-Cz-wMr" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="jZB-nW-7Ql">
                         <items>
-                            <menuItem title="OpenEmu" id="975">
-                                <menu key="submenu" title="OpenEmu" systemMenu="apple" id="1013">
+                            <menuItem title="OpenEmuARM" id="975">
+                                <menu key="submenu" title="OpenEmuARM" systemMenu="apple" id="1013">
                                     <items>
-                                        <menuItem title="About OpenEmu" id="1017">
+                                        <menuItem title="About OpenEmuARM" id="1017">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="localizeTitle" value="YES"/>

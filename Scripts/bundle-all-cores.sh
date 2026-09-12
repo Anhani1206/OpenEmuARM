@@ -18,6 +18,14 @@ APP="$OUTPUT_APP"
 PLUGINS="$APP/Contents/PlugIns/Cores"
 BRIDGE="$APP/Contents/PlugIns/OpenEmuLibretroBridge.oecoreplugin/Contents/MacOS/OpenEmuLibretroBridge"
 DERIVED_ROOT="${CORE_DERIVED_DATA_ROOT:-/tmp/OpenEmu-All-Cores-DD}"
+# The three bundled Arcade RetroArch cores are prebuilt distribution plugins.
+# Keep them outside the source tree and point this variable at an app that
+# contains the known-good bundles from the previous release.
+ARCADE_RETROARCH_SOURCE_APP="${ARCADE_RETROARCH_SOURCE_APP:-/tmp/openemu-release/OpenEmuARM.app}"
+# Optional directory containing release bundles for the seven cores updated
+# for OpenEmuARM 2.1. When set, only these named bundles are replaced in the
+# assembled app; every other core continues to come from the local build.
+UPDATED_CORE_BUNDLE_DIR="${UPDATED_CORE_BUNDLE_DIR:-}"
 
 [ -d "$ARCHIVE" ] || die "archive not found: $ARCHIVE"
 [ -d "$SOURCE_APP" ] || die "OpenEmu.app not found in archive: $SOURCE_APP"
@@ -38,6 +46,37 @@ stage_core() {
     codesign --force --deep --sign - "$destination"
     codesign --verify --deep --strict "$destination" || die "codesign failed: $name"
     echo "staged: $name"
+}
+
+stage_prebuilt_core() {
+    local source="$1"
+    local destination="$PLUGINS/$(basename "$source")"
+    [ -d "$source" ] || die "prebuilt core was not found: $source"
+    rm -rf "$destination"
+    ditto "$source" "$destination"
+    stamp_core "$destination"
+    codesign --force --deep --sign - "$destination"
+    codesign --verify --deep --strict "$destination" || die "codesign failed: $(basename "$source")"
+    echo "staged: $(basename "$source")"
+}
+
+stage_arcade_retroarch_cores() {
+    local source_root="$ARCADE_RETROARCH_SOURCE_APP/Contents/PlugIns/Cores"
+    [ -d "$source_root" ] || die "Arcade RetroArch source app not found: $ARCADE_RETROARCH_SOURCE_APP"
+    stage_prebuilt_core "$source_root/MAME 2003 (0.78)-RetroArch.oecoreplugin"
+    stage_prebuilt_core "$source_root/MAME 2003-Plus-RetroArch.oecoreplugin"
+    stage_prebuilt_core "$source_root/MAME 2010 (0.139)-RetroArch.oecoreplugin"
+}
+
+stage_updated_core() {
+    local name="$1"
+    local zip="$UPDATED_CORE_BUNDLE_DIR/$name.oecoreplugin.zip"
+    local unpacked="$DERIVED_ROOT/updated-$name"
+    [ -f "$zip" ] || die "updated core bundle was not found: $zip"
+    rm -rf "$unpacked"
+    mkdir -p "$unpacked"
+    unzip -q "$zip" -d "$unpacked"
+    stage_prebuilt_core "$unpacked/$name.oecoreplugin"
 }
 
 stamp_core() {
@@ -140,6 +179,16 @@ for spec in "${CORE_SPECS[@]}"; do
     fi
     stage_core "$DERIVED_ROOT/$bundle/Build/Products/Release/$bundle.oecoreplugin" "$bundle"
 done
+
+echo "staging: Arcade RetroArch cores"
+stage_arcade_retroarch_cores
+
+if [ -n "$UPDATED_CORE_BUNDLE_DIR" ]; then
+    echo "staging: OpenEmuARM 2.1 updated core bundles"
+    for updated_core in Dolphin DeSmuME GenesisPlus mGBA Mednafen PPSSPP Nestopia; do
+        stage_updated_core "$updated_core"
+    done
+fi
 
 echo "building: ARMSX2"
 CONFIGURATION=Release DERIVED_DATA="$DERIVED_ROOT/ARMSX2" "$SCRIPT_DIR/build-armsx2-libretro-arm64.sh"

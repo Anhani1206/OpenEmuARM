@@ -354,7 +354,7 @@ final class GameControlsBar: NSWindow {
         }
         
         // cheats
-        if gameViewController.supportsCheats {
+        if gameViewController.supportsCheats || gameViewController.document.supportsOnlineCheats {
             item = NSMenuItem()
             item.title = NSLocalizedString("Select Cheat", comment: "")
             item.submenu = cheatsMenu
@@ -430,13 +430,19 @@ final class GameControlsBar: NSWindow {
         if hardcoreOn { menu.autoenablesItems = false }
 
         let item = NSMenuItem(title: NSLocalizedString("Add Cheat…", comment: ""), action: #selector(OEGameDocument.addCheat(_:)), keyEquivalent: "")
-        if hardcoreOn { item.isEnabled = false }
+        if hardcoreOn || !gameViewController.supportsCheats { item.isEnabled = false }
         menu.addItem(item)
 
         if gameViewController.supportsCheatSearch {
             let searchItem = NSMenuItem(title: NSLocalizedString("Cheat Search…", comment: ""), action: #selector(OEGameDocument.openCheatSearch(_:)), keyEquivalent: "")
             if hardcoreOn { searchItem.isEnabled = false }
             menu.addItem(searchItem)
+        }
+
+        if gameViewController.document.supportsOnlineCheats {
+            let browseItem = NSMenuItem(title: NSLocalizedString("Browse Online Cheats…", comment: "Open online cheat browser"), action: #selector(OEGameDocument.browseOnlineCheats(_:)), keyEquivalent: "")
+            if hardcoreOn { browseItem.isEnabled = false }
+            menu.addItem(browseItem)
         }
 
         let cheats = gameViewController.document.cheats
@@ -457,7 +463,7 @@ final class GameControlsBar: NSWindow {
                 if hardcoreOn { toggleItem.isEnabled = false }
                 submenu.addItem(toggleItem)
 
-                if cheat.isUserAdded {
+                if cheat.cheatSource == nil {
                     submenu.addItem(.separator())
 
                     let editItem = NSMenuItem(title: NSLocalizedString("Edit…", comment: "Cheat submenu edit"), action: #selector(OEGameDocument.editCheat(_:)), keyEquivalent: "")
@@ -526,20 +532,20 @@ final class GameControlsBar: NSWindow {
             let normalizedName = plugin.displayName.lowercased()
             if systemIdentifier == "openemu.system.arcade" {
                 if normalizedName.contains("fbneo") {
-                    return "FBNeo"
+                    return "FinalBurn Neo"
                 }
             } else if systemIdentifier == "openemu.system.neogeo" {
                 if normalizedName.contains("geolith") {
                     return "Geolith"
                 }
                 if normalizedName.contains("fbneo") {
-                    return "FBNeo"
+                    return "FinalBurn Neo"
                 }
             }
 
             return plugin.displayName
                 .replacingOccurrences(of: " (RetroArch)", with: "")
-                .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+                .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMSet 0.78)")
         }
         
         corePlugins.sort {

@@ -1,11 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>OpenEmu-Silicon Changelog</title>
+    <title>OpenEmuARM Changelog</title>
     <link>https://github.com/Anhani1206/OpenEmuARM/releases</link>
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
-                                                        <item>
+                                                                <item>
+      <title>OpenEmuARM 2.1.0</title>
+      <description>
+        <![CDATA[
+        <h2>OpenEmuARM 2.1.0</h2>
+        <p># What's New in OpenEmuARM 2.1</p>
+        <h3>Libretro Cheat Database</h3>
+        <ul>
+        <li>Inspired by the work of [@leocck](https://github.com/leocck) in the [OpenEmu-Silicon repository](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon), who added extensive cheat-related features to OpenEmu, including cheat code search, browsing, and the Browse Online Cheats window backed by the Libretro Cheat Database, with per-code status feedback, personal notes, and duplicate cleanup (thanks [@leocck](https://github.com/leocck); see [OpenEmu-Silicon PR #687](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon/pull/687) and [PR #715](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon/pull/715)).</li>
+        <li>Added an online cheat browser for supported systems and validated cores.</li>
+        <li>Integrated the Libretro Cheat Database (`.cht`) as an online provider.</li>
+        <li>Added Libretro metadata lookup using ROM hashes, serial numbers, and game names where appropriate.</li>
+        <li>Added local caching so previously downloaded cheats remain available when the network is unavailable.</li>
+        <li>Added support for refreshing cached cheat files.</li>
+        <li>Added cheat code normalization, deduplication, and core-specific format validation.</li>
+        <li>Preserved the existing bundled OpenEmu XML cheat database as a fallback provider.</li>
+        <li>Added filtering by cheat name and user feedback states: Working, Not Working, and Not set.</li>
+        <li>Added local persistence for imported cheats, feedback, and user notes.</li>
+        <li>Restricted the online browser to the validated system/core matrix.</li>
+        <li>Added the expanded Mednafen coverage inspired by [OpenEmu-Silicon PR #725](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon/pull/725): Atari Lynx, Neo Geo Pocket/Color, PC Engine/TurboGrafx-16, PC Engine CD/TurboGrafx-CD, PC-FX, Sega Saturn, Virtual Boy, and WonderSwan/Color.</li>
+        <li>Added raw provider-code retention in the local cache and feedback records so normalized codes can still be correlated with their original Libretro entries.</li>
+        <li>Added validation and normalization for Saturn, PC Engine, and Virtual Boy cheat formats, plus direct WonderSwan ROM-patch handling with restoration when a cheat is disabled.</li>
+        <li>Made the online cheat menu available for supported cores that expose online cheats even when their native cheat-code capability is disabled; native “Add Cheat…” remains unavailable in that case.</li>
+        <li>The implementation is based on the work in the separate [OpenEmu-Silicon repository](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon); PR #725 is cited as the upstream reference and is not a commit in this repository.</li>
+        </ul>
+        <p>### Validated systems and cores</p>
+        <ul>
+        <li>Atari 2600 — Stella</li>
+        <li>ColecoVision — CrabEmu</li>
+        <li>Famicom Disk System — Nestopia</li>
+        <li>Game Boy — Gambatte</li>
+        <li>Game Boy Color — Gambatte</li>
+        <li>Game Boy Advance — mGBA</li>
+        <li>Game Gear — GenesisPlus</li>
+        <li>Genesis / Mega Drive — GenesisPlus</li>
+        <li>Master System — GenesisPlus and CrabEmu</li>
+        <li>NES / Famicom — FCEU and Nestopia</li>
+        <li>Nintendo 64 — Mupen64Plus</li>
+        <li>Nintendo DS — DeSmuME</li>
+        <li>PlayStation — Mednafen</li>
+        <li>Sega CD — GenesisPlus</li>
+        <li>SG-1000 — GenesisPlus</li>
+        <li>SNES — BSNES and SNES9x</li>
+        <li>Atari Lynx — Mednafen</li>
+        <li>Neo Geo Pocket / Color — Mednafen</li>
+        <li>PC Engine / TurboGrafx-16 — Mednafen</li>
+        <li>PC Engine CD / TurboGrafx-CD — Mednafen</li>
+        <li>PC-FX — Mednafen</li>
+        <li>Sega Saturn — Mednafen</li>
+        <li>Virtual Boy — Mednafen</li>
+        <li>WonderSwan / Color — Mednafen</li>
+        </ul>
+        <h3>Fixes</h3>
+        <ul>
+        <li>Fixed bundled core plugins silently failing after their update-feed address was migrated by re-signing the updated plugin bundle.</li>
+        <li>Fixed RetroAchievements sign-in for valid usernames and passwords.</li>
+        <li>Improved large-library opening and scrolling by retaining fetch/prefetch and coalesced artwork-refresh paths.</li>
+        <li>Fixed overlapping labels in the Controls preferences layout.</li>
+        <li>Fixed Atari Jaguar's default aspect ratio so games render in landscape.</li>
+        <li>Fixed long failed-import alerts by constraining their height and making the message body scrollable.</li>
+        <li>Replaced the deprecated library toolbar search field with the OpenEmu search field implementation.</li>
+        <li>Added the RetroAchievements hardcore shield visibility preference without disabling other HUD notifications.</li>
+        <li>Fixed an issue where the PlayStation 1 window changed from the selected 2x scale to Fit to Window when the game changed resolution.</li>
+        <li>The automatic resize triggered by the PlayStation startup logo is now distinguished from a manual window resize.</li>
+        <li>The selected integral scale is preserved when the core changes its video resolution.</li>
+        <li>Kept the automatically resized PlayStation window inside the visible screen area when a resolution change occurs near a screen edge.</li>
+        </ul>
+        <h3>Bundled core updates</h3>
+        <ul>
+        <li>Updated the bundled Dolphin core.</li>
+        <li>Updated the bundled DeSmuME core.</li>
+        <li>Updated the bundled GenesisPlus core.</li>
+        <li>Updated the bundled mGBA core.</li>
+        <li>Updated the bundled Mednafen core.</li>
+        <li>Updated the bundled PPSSPP core.</li>
+        <li>Updated the bundled Nestopia core.</li>
+        <li>Kept all bundled cores inside the application package, including the Apple Silicon ARMSX2 bundle.</li>
+        <li>Expanded the Arcade package to include the three validated RetroArch core plugins.</li>
+        </ul>
+        <h3>Update channel</h3>
+        <ul>
+        <li>The app now uses the OpenEmuARM appcast hosted at `https://raw.githubusercontent.com/Anhani1206/OpenEmuARM/main/appcast.xml`.</li>
+        <li>Automatic Sparkle checks are enabled so users can be notified about new releases when the app launches.</li>
+        <li>Existing OpenEmuARM 2.0.0 installations still require a one-time 2.0.1 migration build, because the already-installed 2.0.0 binary still contains the old upstream appcast URL.</li>
+        <li>The 2.0.1 migration build must be published before 2.1.0 so the normal update path is `2.0.0 → 2.0.1 → 2.1.0`.</li>
+        </ul>
+        ]]>
+      </description>
+      <pubDate>Sat, 12 Sep 2026 10:17:02 +0000</pubDate>
+      <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+      <enclosure
+        url="https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.1.0/OpenEmuARM.dmg"
+        sparkle:version="23"
+        sparkle:shortVersionString="2.1.0"
+        sparkle:edSignature="AkcouKqCQDgWldmh52VThdWUQ4MvK8lrVqt2lfr8gaKEdDNE0+KZUJq9SiHNe5zYsU46RXpofypx9sWxa1+4Dw=="
+        length="214508346"
+        type="application/octet-stream"/>
+    </item>
+<item>
+      <title>OpenEmuARM 2.1.0</title>
+      <description>
+        <![CDATA[
+        <h2>OpenEmuARM 2.1.0</h2>
+        <p># What's New in OpenEmuARM 2.1</p>
+        <h3>Libretro Cheat Database</h3>
+        <ul>
+        <li>Inspired by the work of [@leocck](https://github.com/leocck) in the [OpenEmu-Silicon repository](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon), who added extensive cheat-related features to OpenEmu, including cheat code search, browsing, and the Browse Online Cheats window backed by the Libretro Cheat Database, with per-code status feedback, personal notes, and duplicate cleanup (thanks [@leocck](https://github.com/leocck); see [OpenEmu-Silicon PR #687](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon/pull/687) and [PR #715](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon/pull/715)).</li>
+        <li>Added an online cheat browser for supported systems and validated cores.</li>
+        <li>Integrated the Libretro Cheat Database (`.cht`) as an online provider.</li>
+        <li>Added Libretro metadata lookup using ROM hashes, serial numbers, and game names where appropriate.</li>
+        <li>Added local caching so previously downloaded cheats remain available when the network is unavailable.</li>
+        <li>Added support for refreshing cached cheat files.</li>
+        <li>Added cheat code normalization, deduplication, and core-specific format validation.</li>
+        <li>Preserved the existing bundled OpenEmu XML cheat database as a fallback provider.</li>
+        <li>Added filtering by cheat name and user feedback states: Working, Not Working, and Not set.</li>
+        <li>Added local persistence for imported cheats, feedback, and user notes.</li>
+        <li>Restricted the online browser to the validated system/core matrix.</li>
+        <li>Added the expanded Mednafen coverage inspired by [OpenEmu-Silicon PR #725](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon/pull/725): Atari Lynx, Neo Geo Pocket/Color, PC Engine/TurboGrafx-16, PC Engine CD/TurboGrafx-CD, PC-FX, Sega Saturn, Virtual Boy, and WonderSwan/Color.</li>
+        <li>Added raw provider-code retention in the local cache and feedback records so normalized codes can still be correlated with their original Libretro entries.</li>
+        <li>Added validation and normalization for Saturn, PC Engine, and Virtual Boy cheat formats, plus direct WonderSwan ROM-patch handling with restoration when a cheat is disabled.</li>
+        <li>Made the online cheat menu available for supported cores that expose online cheats even when their native cheat-code capability is disabled; native “Add Cheat…” remains unavailable in that case.</li>
+        <li>The implementation is based on the work in the separate [OpenEmu-Silicon repository](https://github.com/OpenEmu-Silicon/OpenEmu-Silicon); PR #725 is cited as the upstream reference and is not a commit in this repository.</li>
+        </ul>
+        <p>### Validated systems and cores</p>
+        <ul>
+        <li>Atari 2600 — Stella</li>
+        <li>ColecoVision — CrabEmu</li>
+        <li>Famicom Disk System — Nestopia</li>
+        <li>Game Boy — Gambatte</li>
+        <li>Game Boy Color — Gambatte</li>
+        <li>Game Boy Advance — mGBA</li>
+        <li>Game Gear — GenesisPlus</li>
+        <li>Genesis / Mega Drive — GenesisPlus</li>
+        <li>Master System — GenesisPlus and CrabEmu</li>
+        <li>NES / Famicom — FCEU and Nestopia</li>
+        <li>Nintendo 64 — Mupen64Plus</li>
+        <li>Nintendo DS — DeSmuME</li>
+        <li>PlayStation — Mednafen</li>
+        <li>Sega CD — GenesisPlus</li>
+        <li>SG-1000 — GenesisPlus</li>
+        <li>SNES — BSNES and SNES9x</li>
+        <li>Atari Lynx — Mednafen</li>
+        <li>Neo Geo Pocket / Color — Mednafen</li>
+        <li>PC Engine / TurboGrafx-16 — Mednafen</li>
+        <li>PC Engine CD / TurboGrafx-CD — Mednafen</li>
+        <li>PC-FX — Mednafen</li>
+        <li>Sega Saturn — Mednafen</li>
+        <li>Virtual Boy — Mednafen</li>
+        <li>WonderSwan / Color — Mednafen</li>
+        </ul>
+        <h3>Fixes</h3>
+        <ul>
+        <li>Fixed bundled core plugins silently failing after their update-feed address was migrated by re-signing the updated plugin bundle.</li>
+        <li>Fixed RetroAchievements sign-in for valid usernames and passwords.</li>
+        <li>Improved large-library opening and scrolling by retaining fetch/prefetch and coalesced artwork-refresh paths.</li>
+        <li>Fixed overlapping labels in the Controls preferences layout.</li>
+        <li>Fixed Atari Jaguar's default aspect ratio so games render in landscape.</li>
+        <li>Fixed long failed-import alerts by constraining their height and making the message body scrollable.</li>
+        <li>Replaced the deprecated library toolbar search field with the OpenEmu search field implementation.</li>
+        <li>Added the RetroAchievements hardcore shield visibility preference without disabling other HUD notifications.</li>
+        <li>Fixed an issue where the PlayStation 1 window changed from the selected 2x scale to Fit to Window when the game changed resolution.</li>
+        <li>The automatic resize triggered by the PlayStation startup logo is now distinguished from a manual window resize.</li>
+        <li>The selected integral scale is preserved when the core changes its video resolution.</li>
+        <li>Kept the automatically resized PlayStation window inside the visible screen area when a resolution change occurs near a screen edge.</li>
+        </ul>
+        <h3>Bundled core updates</h3>
+        <ul>
+        <li>Updated the bundled Dolphin core.</li>
+        <li>Updated the bundled DeSmuME core.</li>
+        <li>Updated the bundled GenesisPlus core.</li>
+        <li>Updated the bundled mGBA core.</li>
+        <li>Updated the bundled Mednafen core.</li>
+        <li>Updated the bundled PPSSPP core.</li>
+        <li>Updated the bundled Nestopia core.</li>
+        <li>Kept all bundled cores inside the application package, including the Apple Silicon ARMSX2 bundle.</li>
+        <li>Expanded the Arcade package to include the three validated RetroArch core plugins.</li>
+        </ul>
+        <h3>Update channel</h3>
+        <ul>
+        <li>The app now uses the OpenEmuARM appcast hosted at `https://raw.githubusercontent.com/Anhani1206/OpenEmuARM/main/appcast.xml`.</li>
+        <li>Automatic Sparkle checks are enabled so users can be notified about new releases when the app launches.</li>
+        <li>Existing OpenEmuARM 2.0.0 installations still require a one-time 2.0.1 migration build, because the already-installed 2.0.0 binary still contains the old upstream appcast URL.</li>
+        <li>The 2.0.1 migration build must be published before 2.1.0 so the normal update path is `2.0.0 → 2.0.1 → 2.1.0`.</li>
+        </ul>
+        ]]>
+      </description>
+      <pubDate>Sat, 12 Sep 2026 10:17:02 +0000</pubDate>
+      <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+      <enclosure
+        url="https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.1.0/OpenEmuARM.dmg"
+        sparkle:version="23"
+        sparkle:shortVersionString="2.1.0"
+        sparkle:edSignature="AkcouKqCQDgWldmh52VThdWUQ4MvK8lrVqt2lfr8gaKEdDNE0+KZUJq9SiHNe5zYsU46RXpofypx9sWxa1+4Dw=="
+        length="214508346"
+        type="application/octet-stream"/>
+    </item>
+<item>
       <title>OpenEmu-Silicon 1.2.4</title>
       <description>
         <![CDATA[

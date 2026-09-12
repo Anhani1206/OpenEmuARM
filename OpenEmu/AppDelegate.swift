@@ -176,6 +176,7 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
             OEForcePopoutGameWindowKey: true,
             OEPopoutGameWindowIntegerScalingOnlyKey: true,
             OEGameLayerNotificationView.OEShowNotificationsKey : true,
+            OEGameLayerNotificationView.OEShowHardcoreIconKey : true,
             OEAppearance.Application.key: OEAppearance.Application.dark.rawValue,
             OEAppearance.HUDBar.key: OEAppearance.HUDBar.vibrant.rawValue,
             OEAppearance.ControlsPrefs.key: OEAppearance.ControlsPrefs.wood.rawValue,
@@ -183,9 +184,8 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
             RAHardcoreEnabledKey: true,
         ])
         
-        // App updates are paused until a stable public update channel is ready.
-        // Keep the menu item in the interface so it can be re-enabled later.
-        UserDefaults.standard.set(false, forKey: "SUEnableAutomaticChecks")
+        // Check the OpenEmuARM appcast automatically when the app launches.
+        UserDefaults.standard.set(true, forKey: "SUEnableAutomaticChecks")
 
         // Bundled portable cores must be refreshed before OECorePlugin is
         // registered, otherwise stale Application Support copies take priority.
@@ -645,9 +645,9 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     ///
     /// Staleness is detected by prefix: any URL that doesn't start with
     /// `canonicalPrefix` is rewritten to `<prefix><lowercased-bundle-suffix>.xml`.
-    /// Only the plist is touched — the binary's signature is undisturbed and
-    /// the host's `disable-library-validation` entitlement covers any plugin
-    /// signature drift, so re-codesigning is not required.
+    /// Because Info.plist is covered by the bundle seal, every changed plugin
+    /// is re-signed immediately. If that re-sign fails, the original plist is
+    /// restored so the plugin remains loadable and can be retried next launch.
     fileprivate func refreshStaleCoreFeedURLs() {
         let canonicalPrefix = "https://raw.githubusercontent.com/Anhani1206/OpenEmuARM/main/Appcasts/"
         feedURLRefreshReport = ([], [])
@@ -694,6 +694,17 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
                 plist["SUFeedURL"] = canonical
                 let newData = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
                 try newData.write(to: plistURL)
+
+                guard Self.resealPluginSignature(at: plugin) else {
+                    // Keep the original plist when re-signing fails. Otherwise
+                    // this plugin would be left with a broken code signature,
+                    // and the next launch would incorrectly treat it as fixed.
+                    try? data.write(to: plistURL)
+                    failed.append((plugin.lastPathComponent, "re-sign failed after SUFeedURL rewrite"))
+                    os_log(.error, log: .default, "SUFeedURL refresh: re-sign failed for %{public}@ — reverted plist so it retries next launch", plugin.lastPathComponent)
+                    continue
+                }
+
                 refreshed.append(plugin.deletingPathExtension().lastPathComponent)
                 os_log(.info, log: .default, "SUFeedURL refresh: rewrote %{public}@ to %{public}@", plugin.lastPathComponent, canonical)
             } catch {
@@ -704,6 +715,31 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
 
         feedURLRefreshReport = (refreshed, failed)
         os_log(.info, log: .default, "SUFeedURL refresh summary: refreshed=%{public}d failed=%{public}d", refreshed.count, failed.count)
+    }
+
+    /// Re-seals a plugin after its Info.plist was changed in place. The app's
+    /// library-validation entitlement allows the ad-hoc signature used here;
+    /// untouched Developer ID-signed plugins are never modified.
+    @discardableResult
+    private static func resealPluginSignature(at pluginURL: URL) -> Bool {
+        let sign = Process()
+        sign.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
+        sign.arguments = ["--force", "--sign", "-", pluginURL.path]
+        sign.standardOutput = FileHandle.nullDevice
+        sign.standardError = FileHandle.nullDevice
+
+        do {
+            try sign.run()
+            sign.waitUntilExit()
+            if sign.terminationStatus != 0 {
+                os_log(.error, log: .default, "Re-sign after SUFeedURL refresh failed (status %d) for %{public}@", sign.terminationStatus, pluginURL.lastPathComponent)
+                return false
+            }
+            return true
+        } catch {
+            os_log(.error, log: .default, "Failed to launch codesign after SUFeedURL refresh for %{public}@: %{public}@", pluginURL.lastPathComponent, error.localizedDescription)
+            return false
+        }
     }
 
     /// One-shot diagnostic written at startup so we can see what core plugins

@@ -284,6 +284,10 @@ final class PrefCoresController: NSViewController {
                 systemName: value.name,
                 cores: value.cores.sorted { $0.name < $1.name }
             )
+            let hasBundledFinalBurnNeo = sysID == "openemu.system.arcade" && value.cores.contains { core in
+                core.name.localizedCaseInsensitiveContains("fbneo") ||
+                    core.name.localizedCaseInsensitiveContains("finalburn neo")
+            }
             let retroArchForSystem = allRetroArch.filter { raCore in
                 guard raCore.systemIDs.contains(sysID) else { return false }
 
@@ -296,6 +300,12 @@ final class PrefCoresController: NSViewController {
 
                 if sysID == "openemu.system.arcade" {
                     let name = raCore.coreName.lowercased()
+                    // The bundled FBNeo plugin is the canonical Arcade entry.
+                    // Do not show a second RetroArch FinalBurn Neo option beside it.
+                    if hasBundledFinalBurnNeo &&
+                        (name.contains("finalburn neo") || name.contains("fbneo")) {
+                        return false
+                    }
                     if (name.contains("finalburn neo") || name.contains("fbneo")) &&
                         (name.contains("neogeo") || name.contains("neo geo")) {
                         return false
@@ -366,6 +376,15 @@ final class PrefCoresController: NSViewController {
             .split(separator: " ")
             .map { $0.prefix(1).uppercased() + $0.dropFirst() }
             .joined(separator: " ")
+    }
+
+    private func coreDisplayName(_ core: CoreDownload, systemIdentifier: String) -> String {
+        guard systemIdentifier == "openemu.system.arcade" else { return core.name }
+        if core.name.localizedCaseInsensitiveContains("fbneo") ||
+            core.name.localizedCaseInsensitiveContains("finalburn neo") {
+            return "FinalBurn Neo"
+        }
+        return core.name
     }
 
     // MARK: - Actions
@@ -484,7 +503,8 @@ extension PrefCoresController: NSTableViewDelegate {
                 let supportsRA = OECorePlugin
                     .corePlugin(bundleIdentifier: core.bundleIdentifier)?
                     .supportsRetroAchievements(forSystemIdentifier: entry.systemIdentifier) ?? false
-                cell.textField?.stringValue = supportsRA ? "\(core.name) 🏆" : core.name
+                let name = coreDisplayName(core, systemIdentifier: entry.systemIdentifier)
+                cell.textField?.stringValue = supportsRA ? "\(name) 🏆" : name
                 cell.textField?.textColor = .labelColor
                 cell.toolTip = supportsRA
                     ? NSLocalizedString("This core supports RetroAchievements for this system.",
@@ -582,7 +602,8 @@ extension PrefCoresController: NSTableViewDelegate {
                 let supportsRA = OECorePlugin
                     .corePlugin(bundleIdentifier: core.bundleIdentifier)?
                     .supportsRetroAchievements(forSystemIdentifier: entry.systemIdentifier) ?? false
-                let itemTitle = supportsRA ? "\(core.name) 🏆" : core.name
+                let name = coreDisplayName(core, systemIdentifier: entry.systemIdentifier)
+                let itemTitle = supportsRA ? "\(name) 🏆" : name
                 let item = makeItem(itemTitle, row: row, kind: .selectCore(bundleID: core.bundleIdentifier))
                 item.state = core.bundleIdentifier.caseInsensitiveCompare(activeID ?? "") == .orderedSame ? .on : .off
                 menu.addItem(item)
@@ -621,14 +642,15 @@ extension PrefCoresController: NSTableViewDelegate {
             if core.isDownloading {
                 titleLabel = "Downloading…"
             } else if core.canBeInstalled {
-                titleLabel = "Install \(core.name)"
+                titleLabel = "Install \(coreDisplayName(core, systemIdentifier: entry.systemIdentifier))"
             } else if core.hasUpdate {
-                titleLabel = "⬆ \(core.name)"
+                titleLabel = "⬆ \(coreDisplayName(core, systemIdentifier: entry.systemIdentifier))"
             } else {
                 let supportsRA = OECorePlugin
                     .corePlugin(bundleIdentifier: core.bundleIdentifier)?
                     .supportsRetroAchievements(forSystemIdentifier: entry.systemIdentifier) ?? false
-                titleLabel = supportsRA ? "\(core.name) 🏆" : core.name
+                let name = coreDisplayName(core, systemIdentifier: entry.systemIdentifier)
+                titleLabel = supportsRA ? "\(name) 🏆" : name
             }
         } else {
             titleLabel = NSLocalizedString("No Core", comment: "")
@@ -761,7 +783,7 @@ extension PrefCoresController {
         }
         return name
             .replacingOccurrences(of: " (RetroArch)", with: "")
-            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMSet 0.78)")
     }
 
     private func scanRetroArchCores() -> [RetroArchCore] {

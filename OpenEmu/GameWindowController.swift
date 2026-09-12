@@ -59,6 +59,8 @@ final class GameWindowController: NSWindowController {
     private var adaptiveSyncWasEnabled = false
     
     private var isSnapResizing = false
+    /// Prevents core resolution changes from being mistaken for a manual resize.
+    private var isAutomaticallyResizingForScreenChange = false
     private var snapDelegate: OEIntegralWindowResizingDelegate
     
     /// State prior to entering full screen
@@ -69,7 +71,7 @@ final class GameWindowController: NSWindowController {
     
     override init(window: NSWindow?) {
         snapDelegate = OEIntegralWindowResizingDelegate()
-        
+
         let screenFrame = NSScreen.screens.first?.frame ?? .zero
         screenshotWindow = ScreenshotWindow(screenFrame: screenFrame)
         
@@ -528,9 +530,36 @@ extension GameWindowController: GameIntegralScalingDelegate {
             if currentScale != Self.fitToWindowScale {
                 var newWindowFrame = window.frame
                 newWindowFrame.size = windowSize(forGameViewIntegralScale: currentScale)
-                newWindowFrame.origin.x = round(window.frame.midX - newWindowFrame.size.width / 2)
-                newWindowFrame.origin.y = round(window.frame.midY - newWindowFrame.size.height / 2)
-                window.setFrame(newWindowFrame, display: true, animate: true)
+                // Preserve the user's current position while the core changes resolution.
+                // Re-centering here makes the window visibly jump, especially when the startup
+                // logo and gameplay use different frame sizes.
+                newWindowFrame.origin = window.frame.origin
+
+                // Resolution changes can happen while the window is already close to a screen
+                // edge. Keep the automatically resized window fully visible instead of preserving
+                // an origin that leaves part of it off-screen.
+                let visibleFrame = window.screen?.visibleFrame ?? .zero
+                if visibleFrame != .zero {
+                    if newWindowFrame.width <= visibleFrame.width {
+                        newWindowFrame.origin.x = min(max(newWindowFrame.origin.x, visibleFrame.minX),
+                                                      visibleFrame.maxX - newWindowFrame.width)
+                    } else {
+                        newWindowFrame.origin.x = visibleFrame.midX - newWindowFrame.width / 2
+                    }
+                    if newWindowFrame.height <= visibleFrame.height {
+                        newWindowFrame.origin.y = min(max(newWindowFrame.origin.y, visibleFrame.minY),
+                                                      visibleFrame.maxY - newWindowFrame.height)
+                    } else {
+                        newWindowFrame.origin.y = visibleFrame.midY - newWindowFrame.height / 2
+                    }
+                }
+                isAutomaticallyResizingForScreenChange = true
+                // Apply the resolution resize immediately; animating it makes the window appear
+                // to slide across the screen while the core switches from its boot logo to gameplay.
+                window.setFrame(newWindowFrame, display: true, animate: false)
+                DispatchQueue.main.async { [weak self] in
+                    self?.isAutomaticallyResizingForScreenChange = false
+                }
             }
         } else if fullScreenStatus == .fullScreen {
             let gv = gameDocument.gameViewController
@@ -613,6 +642,10 @@ extension GameWindowController: NSWindowDelegate {
             return snapDelegate.windowWillResize(sender, to: frameSize)
         }
         
+        if isAutomaticallyResizingForScreenChange {
+            return frameSize
+        }
+
         windowedIntegralScale = Self.fitToWindowScale
         
         return frameSize

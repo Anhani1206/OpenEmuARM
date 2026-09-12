@@ -39,6 +39,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" image="about_background" id="804"/>
                             </imageView>
+                            <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Loki-about-image">
+                                <rect key="frame" x="300" y="2" width="94" height="80"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="center" imageScaling="proportionallyDown" image="loki_about" id="Loki-about-cell"/>
+                            </imageView>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="796">
                                 <rect key="frame" x="17" y="184" width="366" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>

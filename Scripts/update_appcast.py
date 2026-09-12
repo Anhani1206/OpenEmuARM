@@ -72,10 +72,10 @@ def main():
         notes_html = '<p>TODO: add release notes before publishing.</p>'
 
     new_item = f"""    <item>
-      <title>OpenEmu-Silicon {version}</title>
+      <title>OpenEmuARM {version}</title>
       <description>
         <![CDATA[
-        <h2>OpenEmu-Silicon {version}</h2>
+        <h2>OpenEmuARM {version}</h2>
         {notes_html}
         ]]>
       </description>

@@ -222,6 +222,7 @@ static INLINE uint8 ReadMem(uint32 A)
  }
 }
 
+
 static void ws_CheckDMA(void)
 {
  if(DMAControl & 0x80)
@@ -896,3 +897,6 @@ void WSwan_MemoryStateAction(StateMem *sm, const unsigned load, const bool data_
 }
 
 }
+
+extern "C" uint8_t *MDFNWS_GetROMPointer(void) { return MDFN_IEN_WSWAN::wsCartROM; }
+extern "C" uint32_t MDFNWS_GetROMSize(void) { return MDFN_IEN_WSWAN::rom_size; }

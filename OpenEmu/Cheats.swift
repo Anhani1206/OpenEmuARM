@@ -118,11 +118,35 @@ final class Cheat: Codable {
     let type: String
     var name: String
     var isEnabled = false
-    var isUserAdded = false
+    var cheatSource: String?
+    var isCompatibleWithCore = true
 
-    init(code: String, type: String, name: String) {
+    private enum CodingKeys: String, CodingKey {
+        case code, type, name, isEnabled, cheatSource
+    }
+
+    init(code: String, type: String, name: String, cheatSource: String? = nil) {
         self.code = code
         self.type = type
         self.name = name
+        self.cheatSource = cheatSource
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        code = try c.decode(String.self, forKey: .code)
+        type = try c.decode(String.self, forKey: .type)
+        name = try c.decode(String.self, forKey: .name)
+        isEnabled = try c.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? false
+        cheatSource = try c.decodeIfPresent(String.self, forKey: .cheatSource)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(code, forKey: .code)
+        try c.encode(type, forKey: .type)
+        try c.encode(name, forKey: .name)
+        try c.encode(isEnabled, forKey: .isEnabled)
+        try c.encodeIfPresent(cheatSource, forKey: .cheatSource)
     }
 }

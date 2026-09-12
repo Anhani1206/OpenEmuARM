@@ -163,6 +163,7 @@ final class OEGameDocument: NSDocument {
     
     private var gameCoreManager: GameCoreManager?
     private var cheatSearchWindowController: CheatSearchWindowController?
+    private var browseOnlineCheatsWindowController: BrowseOnlineCheatsWindowController?
     private var retroAchievementsWindowController: NSWindowController?
     @objc dynamic private(set) var retroAchievementsSessionInfo: [String: Any]?
     private var retroAchievementsSuppressedUnlockIDs = Set<UInt32>()
@@ -664,6 +665,8 @@ final class OEGameDocument: NSDocument {
 
                 self.cheatSearchWindowController?.close()
                 self.cheatSearchWindowController = nil
+                self.browseOnlineCheatsWindowController?.close()
+                self.browseOnlineCheatsWindowController = nil
                 
                 if let lastPlayStartDate = self.lastPlayStartDate {
                     self.rom.addTimeIntervalToPlayTime(abs(lastPlayStartDate.timeIntervalSinceNow))
@@ -1682,6 +1685,12 @@ final class OEGameDocument: NSDocument {
         corePlugin.supportsCheatSearch(forSystemIdentifier: systemPlugin.systemIdentifier)
     }
 
+    var supportsOnlineCheats: Bool {
+        guard let systemPlugin, let corePlugin else { return false }
+        return CheatDatabaseService.shared.supports(systemIdentifier: systemPlugin.systemIdentifier,
+                                                    coreIdentifier: corePlugin.bundleIdentifier)
+    }
+
     func fetchReadableMemoryRegions(completionHandler block: @escaping ([OEMemoryRegionDescriptor]) -> Void) {
         gameCoreManager?.readableMemoryRegionDescriptors(completionHandler: block)
     }
@@ -1693,9 +1702,35 @@ final class OEGameDocument: NSDocument {
         cheatSearchWindowController?.showWindow(self)
     }
 
+    @IBAction func browseOnlineCheats(_ sender: Any?) {
+        if browseOnlineCheatsWindowController == nil {
+            browseOnlineCheatsWindowController = BrowseOnlineCheatsWindowController(document: self)
+        }
+        browseOnlineCheatsWindowController?.showWindow(self)
+    }
+
+    func addImportedCheat(code: String, name: String, providerName: String) {
+        let cheat = Cheat(code: code, type: OECheatTypeGameShark, name: name, cheatSource: providerName)
+        cheat.isEnabled = true
+        setCheat(cheat)
+        cheats.append(cheat)
+        saveUserCheats()
+    }
+
+    func removeImportedCheat(code: String) {
+        let key = CheatFeedbackService.key(for: code)
+        guard let index = cheats.firstIndex(where: { $0.cheatSource != nil && CheatFeedbackService.key(for: $0.code) == key }) else { return }
+        let cheat = cheats[index]
+        if cheat.isEnabled {
+            gameCoreManager?.setCheat(cheat.code, withType: cheat.type, enabled: false)
+        }
+        cheats.remove(at: index)
+        saveUserCheats()
+    }
+
     func addCheatFromSearch(code: String, type: String, name: String, enabled: Bool) {
         let cheat = Cheat(code: code, type: type, name: name)
-        cheat.isUserAdded = true
+        cheat.cheatSource = nil
         if enabled {
             cheat.isEnabled = true
             setCheat(cheat)
@@ -1734,7 +1769,7 @@ final class OEGameDocument: NSDocument {
 
     private func saveUserCheats() {
         guard let url = userCheatsFileURL else { return }
-        let userCheats = cheats.filter(\.isUserAdded)
+        let userCheats = cheats.filter { $0.cheatSource == nil }
         if let data = try? JSONEncoder().encode(userCheats) {
             try? data.write(to: url, options: .atomic)
         }
@@ -1798,7 +1833,7 @@ final class OEGameDocument: NSDocument {
             }
 
             let cheat = Cheat(code: code, type: "GameShark", name: name)
-            cheat.isUserAdded = true
+            cheat.cheatSource = nil
 
             if shouldEnable {
                 cheat.isEnabled = true
@@ -2003,7 +2038,7 @@ final class OEGameDocument: NSDocument {
 
         cheat.isEnabled.toggle()
         setCheat(cheat)
-        if cheat.isUserAdded { saveUserCheats() }
+        if cheat.cheatSource == nil { saveUserCheats() }
     }
 
     /// expects `sender.representedObject` to be a `Cheat` object
@@ -2036,7 +2071,7 @@ final class OEGameDocument: NSDocument {
 
             let edited = Cheat(code: newCode, type: cheat.type, name: alert.otherStringValue)
             edited.isEnabled = cheat.isEnabled
-            edited.isUserAdded = true
+            edited.cheatSource = nil
 
             if cheat.isEnabled {
                 gameCoreManager?.setCheat(cheat.code, withType: cheat.type, enabled: false)

@@ -12,14 +12,16 @@
   <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/Anhani1206/OpenEmuARM/blob/540858c62f8c0471a01924830d9efcdb086996e8/Screenshot%202026-08-20%20at%2014.20.33.png" />
 </p>
 
-
----
-
 ## Current Status
 
 **Actively maintained. Runs natively on Apple Silicon (no Rosetta required).**
 
 This is a community-maintained fork of OpenEmu for M-series Macs. The app runs on 26.0+ (Tahoe) and has been tested on macOS 27 (Golden Gate).
+
+Download: Get the latest signed DMG from the Releases page. The app is notarized — no Gatekeeper workaround needed.
+Download
+
+Get the latest build from the Releases page.
 
 ### Recent Updates OpenEmuARM 2.0.1
 

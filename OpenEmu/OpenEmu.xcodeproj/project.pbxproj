@@ -8594,7 +8594,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = OpenEmu;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
@@ -8640,7 +8640,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = OpenEmu;
 				SWIFT_OBJC_BRIDGING_HEADER = "OpenEmu-Bridging-Header.h";

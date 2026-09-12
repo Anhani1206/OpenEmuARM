@@ -12,32 +12,38 @@
   <img width="2276" height="1550" alt="OpenEmu Library" src="https://github.com/Anhani1206/OpenEmuARM/blob/540858c62f8c0471a01924830d9efcdb086996e8/Screenshot%202026-08-20%20at%2014.20.33.png" />
 </p>
 
+---
+
 ## Current Status
 
 **Actively maintained. Runs natively on Apple Silicon (no Rosetta required).**
 
 This is a community-maintained fork of OpenEmu for M-series Macs. The app runs on 26.0+ (Tahoe) and has been tested on macOS 27 (Golden Gate).
 
+---
+
 ### Download
 
-Get the latest signed DMG from the [Releases page](https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.1.0/OpenEmuARM.dmg). The app is notarized — no Gatekeeper workaround needed.
+Get the latest signed DMG from the [Releases page](https://github.com/Anhani1206/OpenEmuARM/releases). The app is notarized — no Gatekeeper workaround needed.
 Download
 
+---
 
-### Recent Updates OpenEmuARM 2.0.1
+### Recent Updates OpenEmuARM 2.1
 
-
-- Expanded the bundled core package so the native cores are available without an initial download.
-- Added Commodore 64 support through the VICE core.
-- Added Neo Geo support with both core options:
-Geolith for .neo ROMs.
-FBNeo for .zip ROMs.
-- Added automatic core update checking when the Preferences → Cores window is opened.
-- Update alerts now show the number of available updates, each core name, and the new version.
-- Kept optional cores available for installation on demand.
-- Updated the application, About screen, and disk image branding to OpenEmuARM.
-- Enabled automatic Sparkle update checks.
-Switched the application update feed to the OpenEmuARM GitHub appcast.
+- Libretro Cheat Database integration. Inspired by the work of @leocck in the OpenEmu-Silicon repository.
+- Fixed bundled core plugins silently failing after their update-feed address was migrated by re-signing the updated plugin bundle.
+- Fixed RetroAchievements sign-in for valid usernames and passwords.
+- Improved large-library opening and scrolling by retaining fetch/prefetch and coalesced artwork-refresh paths.
+- Fixed overlapping labels in the Controls preferences layout.
+- Fixed Atari Jaguar's default aspect ratio so games render in landscape.
+- Fixed long failed-import alerts by constraining their height and making the message body scrollable.
+- Replaced the deprecated library toolbar search field with the OpenEmu search field implementation.
+- Added the RetroAchievements hardcore shield visibility preference without disabling other HUD notifications.
+- Fixed an issue where the PlayStation 1 window changed from the selected 2x scale to Fit to Window when the game changed resolution.
+- The automatic resize triggered by the PlayStation startup logo is now distinguished from a manual window resize.
+- The selected integral scale is preserved when the core changes its video resolution.
+- Kept the automatically resized PlayStation window inside the visible screen area when a resolution change occurs near a screen edge.
 
 ---
 

@@ -231,7 +231,7 @@ if grep -q "status: Accepted" "$NOTARIZE_LOG"; then
   echo "=== Creating styled DMG ==="
   # Stage the stapled app to a non-temp path so hdiutil is not blocked by TCC.
   # Use ditto (not cp -R) to preserve extended attributes and code-seal xattrs.
-  STAGED_APP="$REPO_ROOT/Releases/OpenEmu.app"
+  STAGED_APP="$REPO_ROOT/Releases/OpenEmuARM.app"
   rm -rf "$STAGED_APP"
   ditto "$APP" "$STAGED_APP"
   "$SCRIPT_DIR/make-dmg.sh" "$STAGED_APP" "$DMG" \

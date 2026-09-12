@@ -5,9 +5,9 @@
   macOS Finder draws its own title bar, status bar, real app icons, and filenames
   on top of this image.  Everything macOS provides has been removed:
     • No .window / .titlebar / .statusbar wrappers
-    • No .app-icon <img> (macOS draws OpenEmu.app at 25%, 50%)
+    • No .app-icon <img> (macOS draws OpenEmuARM.app at 25%, 50%)
     • No .cartridge element (macOS draws the standard Applications folder icon at 75%, 50%)
-    • No .label / filename text (macOS draws "OpenEmu" and "Applications" below each icon)
+    • No .label / filename text (macOS draws "OpenEmuARM" and "Applications" below each icon)
     • No <script> / drag-and-drop handlers
 
   What remains: retro-grid base, gradient glows, scanlines, corner marks,
@@ -16,7 +16,7 @@
   the drag hint at the bottom.
 
   Icon positions (1× logical points, icon size 144 px, centre coords):
-    OpenEmu.app  — x=240, y=340
+    OpenEmuARM.app  — x=240, y=340
     Applications — x=720, y=340
   Arrow runs from x=332 (right of left icon + 20 px gap)
               to x=628 (left of right icon − 20 px gap) at y=340.

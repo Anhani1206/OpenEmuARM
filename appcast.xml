@@ -5,7 +5,29 @@
     <link>https://github.com/Anhani1206/OpenEmuARM/releases</link>
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
-                                                                <item>
+                                                                    <item>
+      <title>OpenEmuARM 2.1.1</title>
+      <description>
+        <![CDATA[
+        <h2>OpenEmuARM 2.1.1</h2>
+        <p># What's New in OpenEmuARM 2.1.1</p>
+        <h3>Fix</h3>
+        <ul>
+        <li>Fixed the application build number so Sparkle correctly recognizes OpenEmuARM 2.1.1 as newer than OpenEmuARM 2.0.1 and offers the update to users.</li>
+        </ul>
+        ]]>
+      </description>
+      <pubDate>Sat, 12 Sep 2026 11:33:03 +0000</pubDate>
+      <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+      <enclosure
+        url="https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.1.1/OpenEmuARM.dmg"
+        sparkle:version="24"
+        sparkle:shortVersionString="2.1.1"
+        sparkle:edSignature="M+xRwEG0DIx30hFhjVA9VhDz2QIy3drLdR7N3wx7zuFEewSQXQqIT5G+U7xDnn0zczzVRLlFdXC8wpawpZ3VCA=="
+        length="214507380"
+        type="application/octet-stream"/>
+    </item>
+<item>
       <title>OpenEmuARM 2.1.0</title>
       <description>
         <![CDATA[

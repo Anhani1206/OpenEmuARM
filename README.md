@@ -31,7 +31,7 @@ Download
 
 ### Recent Updates OpenEmuARM 2.1
 
-- Libretro Cheat Database integration. Inspired by the work of @leocck in the OpenEmu-Silicon repository.
+- Libretro Cheat Database integration. Inspired by the work of [@leocck](https://github.com/leocck) in the OpenEmu-Silicon repository.
 - Fixed bundled core plugins silently failing after their update-feed address was migrated by re-signing the updated plugin bundle.
 - Fixed RetroAchievements sign-in for valid usernames and passwords.
 - Improved large-library opening and scrolling by retaining fetch/prefetch and coalesced artwork-refresh paths.

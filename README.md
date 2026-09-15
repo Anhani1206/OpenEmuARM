@@ -55,7 +55,7 @@ Download
 
 ## Supported Systems
 
-> **Full details — working status, known issues, in-progress cores, and what's planned — are on the [Supported Systems](https://github.com/nickybmon/OpenEmu-Silicon/wiki/Supported-Systems) wiki page.**
+> **Full details — working status, known issues, in-progress cores, and what's planned — are on the [Supported Systems](https://github.com/anhani1206/OpenEmuARM/wiki/Supported-Systems) wiki page.**
 
 Quick summary: 30+ systems work today, including NES, SNES, Game Boy, GBA, N64, Nintendo DS, PlayStation, Playstation 2, Dreamcast, GameCube/Wii, and more. A handful have known issues (PSP, Saturn, Game Boy Color categorization). 
 

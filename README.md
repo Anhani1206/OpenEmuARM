@@ -100,9 +100,9 @@ The vast majority of the code in this repo is still from the original developers
 
 | Doc | What's in it |
 |-----|-------------|
-| [Wiki](https://github.com/nickybmon/OpenEmu-Silicon/wiki) | User guides: getting started, BIOS files, importing, CD games, controllers, troubleshooting |
-| [Migrating from OpenEmu](https://github.com/nickybmon/OpenEmu-Silicon/wiki/Migrating-from-OpenEmu) | Switching from the original OpenEmu: what carries over, what doesn't, and how to back up |
-| [Supported Systems](https://github.com/nickybmon/OpenEmu-Silicon/wiki/Supported-Systems) | Every system: working status, known issues, in-progress cores, what's planned, and BIOS requirements |
+| [Wiki](https://github.com/anhani1206/OpenEmuARM/wiki) | User guides: getting started, BIOS files, importing, CD games, controllers, troubleshooting |
+| [Migrating from OpenEmu](https://github.com/anhani1206/OpenEmuARM/wiki/Migrating-from-OpenEmu) | Switching from the original OpenEmu: what carries over, what doesn't, and how to back up |
+| [Supported Systems](https://github.com/anhani1206/OpenEmuARM/wiki/Supported-Systems) | Every system: working status, known issues, in-progress cores, what's planned, and BIOS requirements |
 | [Dolphin GameCube and Wii troubleshooting](docs/dolphin-gamecube-troubleshooting.md) | Diagnose and replace a stale Dolphin debug/libretro wrapper; verify Wii game formats and controls |
 | [Neo Geo with FBNeo](docs/fbneo-neogeo.md) | Install the optional FBNeo libretro core, its matching ROM set, and `neogeo.zip` BIOS |
 | [Game display preferences](docs/game-display-preferences.md) | Per-game shader and integer-scaling persistence |

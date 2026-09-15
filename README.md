@@ -63,7 +63,7 @@ Quick summary: 30+ systems work today, including NES, SNES, Game Boy, GBA, N64, 
 
 ## Known Issues
 
-- **Save state compatibility** — Save states from certain older cores are incompatible with current ARM64 builds and will crash if loaded. On launch, the app detects these and shows a warning dialog. **Back up your save states before your first launch** — see [Migrating from OpenEmu](https://github.com/nickybmon/OpenEmu-Silicon/wiki/Migrating-from-OpenEmu) for the full list and instructions.
+- **Save state compatibility** — Save states from certain older cores are incompatible with current ARM64 builds and will crash if loaded. On launch, the app detects these and shows a warning dialog. **Back up your save states before your first launch** — see [Migrating from OpenEmu](https://github.com/anhani1206/OpenEmuARM/wiki/Migrating-from-OpenEmu) for the full list and instructions.
 - Input Monitoring permission may need to be granted manually in System Settings → Privacy & Security.
 - A few cores have quirks on Apple Silicon still being investigated (see open issues).
 

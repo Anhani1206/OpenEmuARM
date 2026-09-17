@@ -14,6 +14,23 @@
 
 ---
 
+## Project Notice
+
+This project is developed as a personal hobby in my free time.
+
+It is completely free to use and is not intended for commercial purposes. I do not make money from this project, nor do I receive any financial compensation for its development, maintenance, or distribution.
+
+I maintain this project because I enjoy working on it and because I hope it can be useful to others in the community.
+
+Since this is a hobby project maintained in my spare time, updates, bug fixes, new features, and support are provided on a best-effort basis and may not follow a fixed schedule.
+
+There are no commercial commitments or guarantees regarding continued development, compatibility, availability, or support.
+
+Contributions, suggestions, bug reports, and constructive feedback are always welcome.
+
+Thank you for using and supporting the project.
+
+
 ## Current Status
 
 **Actively maintained. Runs natively on Apple Silicon (no Rosetta required).**

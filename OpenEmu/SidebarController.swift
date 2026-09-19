@@ -690,7 +690,7 @@ extension SidebarController: NSMenuDelegate {
                     } else {
                         coreName = core.displayName
                             .replacingOccurrences(of: " (RetroArch)", with: "")
-                            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+                            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMSet 0.78)")
                     }
                     let coreIdentifier = core.bundleIdentifier
                     

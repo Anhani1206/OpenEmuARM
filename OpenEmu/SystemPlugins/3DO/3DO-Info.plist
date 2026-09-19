@@ -123,6 +123,8 @@
 	<key>OEFileSuffixes</key>
 	<array>
 		<string>cue</string>
+		<string>iso</string>
+		<string>chd</string>
 	</array>
 	<key>OEGenericControlNamesKey</key>
 	<array>

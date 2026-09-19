@@ -30,6 +30,15 @@ ditto "$SOURCE_APP" "$OUTPUT_APP"
 
 mkdir -p "$PLUGINS"
 
+echo "Building Opera (3DO CHD)..."
+SRCROOT="$REPO_ROOT/OpenEmu" \
+TARGET_BUILD_DIR="$(dirname "$APP")" \
+WRAPPER_NAME="$(basename "$APP")" \
+DERIVED_FILES_DIR="${DERIVED_FILES_DIR:-/tmp/OpenEmu-Opera-Release}" \
+BUILT_PRODUCTS_DIR="$APP/Contents/PlugIns" \
+    "$SCRIPT_DIR/build-opera-bundled.sh"
+[ -d "$PLUGINS/Opera-RetroArch.oecoreplugin" ] || die "Opera core was not produced"
+
 stage_core() {
     local source="$1"
     local destination="$2"

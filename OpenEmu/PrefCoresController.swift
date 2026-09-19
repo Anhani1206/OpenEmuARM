@@ -253,7 +253,26 @@ final class PrefCoresController: NSViewController {
             updateBanner.isHidden = false
         }
         var map: [String: (name: String, cores: [CoreDownload])] = [:]
-        for core in CoreUpdater.shared.coreList where !core.bundleIdentifier.hasSuffix("-RetroArch") {
+        var bundledCores: [CoreDownload] = []
+        if let builtInPluginsURL = Bundle.main.builtInPlugInsURL {
+            bundledCores = OECorePlugin.allPlugins
+                .filter { $0.url.isSubpath(of: builtInPluginsURL) }
+                // The native FBNeo core is the canonical FinalBurn option in
+                // Preferences. Keep the bundled RetroArch variant available
+                // to the runtime, but do not present it as a duplicate core.
+                .filter { $0.bundleIdentifier.caseInsensitiveCompare("org.openemu.FinalBurn Neo-RetroArch") != .orderedSame }
+                .map { CoreDownload(plugin: $0) }
+        }
+
+        var availableCores = CoreUpdater.shared.coreList
+            .filter { !$0.bundleIdentifier.hasSuffix("-RetroArch") }
+        for bundledCore in bundledCores
+            where !availableCores.contains(where: { $0.bundleIdentifier == bundledCore.bundleIdentifier })
+        {
+            availableCores.append(bundledCore)
+        }
+
+        for core in availableCores {
             for sysID in core.systemIdentifiers {
                 guard !OEDBSystem.isHiddenSystemIdentifier(sysID) else { continue }
                 // Keep Neo Geo limited to the tested FBNeo core and Geolith.
@@ -300,6 +319,11 @@ final class PrefCoresController: NSViewController {
 
                 if sysID == "openemu.system.arcade" {
                     let name = raCore.coreName.lowercased()
+                    // FBNeo is already bundled natively and must not appear a
+                    // second time as the RetroArch variant.
+                    if name.contains("finalburn neo") || name.contains("fbneo") {
+                        return false
+                    }
                     // The bundled FBNeo plugin is the canonical Arcade entry.
                     // Do not show a second RetroArch FinalBurn Neo option beside it.
                     if hasBundledFinalBurnNeo &&
@@ -319,13 +343,21 @@ final class PrefCoresController: NSViewController {
                     .lowercased()
                     .filter { $0.isLetter || $0.isNumber }
                 let isMAME2003 = normalizedRAName.contains("mame2003")
+                let isMAME2010 = normalizedRAName.contains("mame2010")
                 let hasOfficialMAME2003 = value.cores.contains { core in
                     let normalizedName = core.name
                         .lowercased()
                         .filter { $0.isLetter || $0.isNumber }
                     return normalizedName.contains("mame2003")
                 }
-                return !(isMAME2003 && hasOfficialMAME2003)
+                let hasOfficialMAME2010 = value.cores.contains { core in
+                    let normalizedName = core.name
+                        .lowercased()
+                        .filter { $0.isLetter || $0.isNumber }
+                    return normalizedName.contains("mame2010")
+                }
+                return !(isMAME2003 && hasOfficialMAME2003) &&
+                    !(isMAME2010 && hasOfficialMAME2010)
             }
             entry.retroArchCores = deduplicatedRetroArchCores(retroArchForSystem)
             return entry
@@ -385,6 +417,8 @@ final class PrefCoresController: NSViewController {
             return "FinalBurn Neo"
         }
         return core.name
+            .replacingOccurrences(of: " (RetroArch)", with: "")
+            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMSet 0.78)")
     }
 
     // MARK: - Actions

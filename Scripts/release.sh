@@ -237,6 +237,22 @@ stage_xcode_core() {
 [ -d "$APP_IN_ARCHIVE" ] || die "OpenEmu.app not found inside archive."
 [ -d "$PS2_SYSTEM_PLUGIN" ] || die "PlayStation 2 system plugin is missing from archive."
 
+step "Bundling Opera core"
+# Opera is built by the OpenEmu application Run Script during normal Debug
+# builds, but release archives must stage it explicitly as well. This keeps
+# 3DO CHD support available in the offline final app.
+OPERA_DERIVED_FILES="${OPERA_DERIVED_FILES:-/tmp/OpenEmu-Opera-Release}"
+SRCROOT="$REPO_ROOT/OpenEmu" \
+TARGET_BUILD_DIR="$ARCHIVE_PATH/Products/Applications" \
+WRAPPER_NAME="OpenEmu.app" \
+DERIVED_FILES_DIR="$OPERA_DERIVED_FILES" \
+BUILT_PRODUCTS_DIR="$APP_IN_ARCHIVE/Contents/PlugIns" \
+  "$SCRIPT_DIR/build-opera-bundled.sh"
+
+OPERA_DESTINATION="$APP_IN_ARCHIVE/Contents/PlugIns/Cores/Opera-RetroArch.oecoreplugin"
+[ -d "$OPERA_DESTINATION" ] || die "Opera Release core was not produced."
+echo "OK: Opera core staged in archive"
+
 step "Bundling 4DO core"
 OPENEMU_SDK_DERIVED_DATA="${OPENEMU_SDK_DERIVED_DATA:-/tmp/OpenEmu-SDK-Release-DD}"
 xcodebuild \

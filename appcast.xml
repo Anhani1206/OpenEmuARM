@@ -5,7 +5,40 @@
     <link>https://github.com/Anhani1206/OpenEmuARM/releases</link>
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
-                                                                    <item>
+                                                                        <item>
+      <title>OpenEmuARM 2.1.2</title>
+      <description>
+        <![CDATA[
+        <h2>OpenEmuARM 2.1.2</h2>
+        <h3>What's New in 2.1.2</h3>
+        <ul>
+        <li><strong>3DO Opera core</strong> — added the Opera libretro core as an embedded Apple Silicon core for 3DO games.</li>
+        <li><strong>3DO disc images</strong> — `.chd` files are now accepted and can be launched through Opera; native 4DO continues to support `.cue/.bin` and `.iso` images.</li>
+        <li><strong>Core selection</strong> — 3DO games can be launched with a specific core through <strong>Play With…</strong>, and the running game can switch cores through <strong>Select Core</strong> in the game controls menu.</li>
+        <li><strong>Core Preferences</strong> — embedded cores, including Opera, are now shown in Preferences → Cores alongside the other available cores.</li>
+        <li><strong>Core list cleanup</strong> — the bundled RetroArch FinalBurn Neo variant is kept available internally but no longer appears as a duplicate beside the native FBNeo core.</li>
+        <li><strong>Online cheats browser</strong> — added a compact <strong>More…</strong> button to browse all matching cheats in groups of 100 instead of stopping at the first 100 results.</li>
+        <li><strong>Release installer</strong> — the final app keeps the 2.1.1-style background and Loki tribute, and now explicitly bundles Opera together with the other release cores.</li>
+        <li><strong>Embedded core set</strong> — the release package contains 36 cores, including Opera; PokeMini is not included in this release.</li>
+        </ul>
+        <h3>Notes</h3>
+        <ul>
+        <li>Switching cores restarts the game and discards the current unsaved progress. Save states are core-specific.</li>
+        <li>Opera is bundled with the application and does not require a separate RetroArch installation.</li>
+        </ul>
+        ]]>
+      </description>
+      <pubDate>Sat, 19 Sep 2026 09:58:00 +0000</pubDate>
+      <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+      <enclosure
+        url="https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.1.2/OpenEmuARM.dmg"
+        sparkle:version="25"
+        sparkle:shortVersionString="2.1.2"
+        sparkle:edSignature="0GJ8NZW+OrOV/3sKaRcdaMhYsDq4r5R/fAGzu9eHP4vyCre2YgzKU2DRDOK3dRltYnq7Ul1KK0TBcdDV10ikBA=="
+        length="209454154"
+        type="application/octet-stream"/>
+    </item>
+<item>
       <title>OpenEmuARM 2.1.1</title>
       <description>
         <![CDATA[

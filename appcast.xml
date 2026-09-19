@@ -28,14 +28,14 @@
         </ul>
         ]]>
       </description>
-      <pubDate>Sat, 19 Sep 2026 09:58:00 +0000</pubDate>
+      <pubDate>Sat, 19 Sep 2026 16:13:00 +0000</pubDate>
       <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
       <enclosure
         url="https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.1.2/OpenEmuARM.dmg"
         sparkle:version="25"
         sparkle:shortVersionString="2.1.2"
-        sparkle:edSignature="Ue40zdWbBcjojkfIeodMtCTnfW3yHTNJJSnaqV5IZ9J4NplugV4Zge9cmwJ+2Il6QjX11cOIhGAubl11PdvjBg=="
-        length="219261560"
+        sparkle:edSignature="nzEvgU0hC39L5E7Z/uonBxk9tUPRRlr5OY6cZhz+wNaXoMOzxdm26/pVBtC7JVecqjUzrqSiWV+ZL/5I19YYBw=="
+        length="207681737"
         type="application/octet-stream"/>
     </item>
 <item>

@@ -43,7 +43,7 @@ extension OEGameCollectionViewController {
         }
         return name
             .replacingOccurrences(of: " (RetroArch)", with: "")
-            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMset 0.78)")
+            .replacingOccurrences(of: "MAME 2003 (0.78)", with: "MAME 2003 (ROMSet 0.78)")
     }
 
     /// Builds a sorted "Play With…" submenu listing every installed core for the game's system.

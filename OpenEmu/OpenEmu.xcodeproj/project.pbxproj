@@ -6147,7 +6147,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "OUTPUT_DIR=\"${BUILT_PRODUCTS_DIR}\" \\\nOPENEMU_APP=\"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\" \\\n\"${SRCROOT}/../Scripts/build-neogeo-system-plugin.sh\" \"${CONFIGURATION}\"\n";
+			shellScript = "OUTPUT_DIR=\"${BUILT_PRODUCTS_DIR}\" \\\nOPENEMU_APP=\"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\" \\\n\"${SRCROOT}/../Scripts/build-neogeo-system-plugin.sh\" \"${CONFIGURATION}\"\n\"${SRCROOT}/../Scripts/build-opera-bundled.sh\"\n";
 		};
 		8FA5FB93283C5E7D00CC11A8 /* Update Info.plist Build Version */ = {
 			isa = PBXShellScriptBuildPhase;

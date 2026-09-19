@@ -310,7 +310,10 @@ final class OEGameDocument: NSDocument {
     init(game: OEDBGame, core: OECorePlugin?) throws {
         super.init()
         do {
-            try setUpDocument(with: game.defaultROM!, using: core)
+            guard let rom = game.defaultROM ?? game.roms.first else {
+                throw Errors.couldNotLoadROM
+            }
+            try setUpDocument(with: rom, using: core)
         } catch {
             throw error
         }
@@ -324,7 +327,10 @@ final class OEGameDocument: NSDocument {
             lockOnUPMEMURL = upmemNames
                 .map { BIOSFile.biosFolderURL.appendingPathComponent($0) }
                 .first { FileManager.default.isReadableFile(atPath: $0.path) }
-            try setUpDocument(with: game.defaultROM!, using: core)
+            guard let rom = game.defaultROM ?? game.roms.first else {
+                throw Errors.couldNotLoadROM
+            }
+            try setUpDocument(with: rom, using: core)
         } catch {
             throw error
         }

@@ -22,6 +22,10 @@ DERIVED_ROOT="${CORE_DERIVED_DATA_ROOT:-/tmp/OpenEmu-All-Cores-DD}"
 # Keep them outside the source tree and point this variable at an app that
 # contains the known-good bundles from the previous release.
 ARCADE_RETROARCH_SOURCE_APP="${ARCADE_RETROARCH_SOURCE_APP:-/tmp/openemu-release/OpenEmuARM.app}"
+# Optional direct source for the installed RetroArch bundles. This is useful
+# when the previous release app is unavailable but the tested cores already
+# exist in Application Support.
+ARCADE_RETROARCH_CORES_DIR="${ARCADE_RETROARCH_CORES_DIR:-}"
 # Optional directory containing release bundles for the seven cores updated
 # for OpenEmuARM 2.1. When set, only these named bundles are replaced in the
 # assembled app; every other core continues to come from the local build.
@@ -34,6 +38,15 @@ rm -rf "$OUTPUT_APP"
 ditto "$SOURCE_APP" "$OUTPUT_APP"
 [ -x "$BRIDGE" ] || die "OpenEmu libretro bridge not found in archive"
 mkdir -p "$PLUGINS" "$DERIVED_ROOT"
+
+echo "building: Opera"
+SRCROOT="$REPO_ROOT/OpenEmu" \
+TARGET_BUILD_DIR="$(dirname "$APP")" \
+WRAPPER_NAME="$(basename "$APP")" \
+DERIVED_FILES_DIR="$DERIVED_ROOT/Opera" \
+BUILT_PRODUCTS_DIR="$APP/Contents/PlugIns" \
+    "$SCRIPT_DIR/build-opera-bundled.sh"
+[ -d "$PLUGINS/Opera-RetroArch.oecoreplugin" ] || die "Opera core was not produced"
 
 stage_core() {
     local source="$1"
@@ -61,11 +74,29 @@ stage_prebuilt_core() {
 }
 
 stage_arcade_retroarch_cores() {
-    local source_root="$ARCADE_RETROARCH_SOURCE_APP/Contents/PlugIns/Cores"
-    [ -d "$source_root" ] || die "Arcade RetroArch source app not found: $ARCADE_RETROARCH_SOURCE_APP"
-    stage_prebuilt_core "$source_root/MAME 2003 (0.78)-RetroArch.oecoreplugin"
-    stage_prebuilt_core "$source_root/MAME 2003-Plus-RetroArch.oecoreplugin"
-    stage_prebuilt_core "$source_root/MAME 2010 (0.139)-RetroArch.oecoreplugin"
+    local source_root fallback_root
+    if [ -n "$ARCADE_RETROARCH_CORES_DIR" ]; then
+        source_root="$ARCADE_RETROARCH_CORES_DIR"
+    else
+        source_root="$ARCADE_RETROARCH_SOURCE_APP/Contents/PlugIns/Cores"
+    fi
+    fallback_root="$ARCADE_RETROARCH_SOURCE_APP/Contents/PlugIns/Cores"
+    [ -d "$source_root" ] || die "Arcade RetroArch source cores not found: $source_root"
+
+    stage_arcade_core() {
+        local name="$1" source="$source_root/$1"
+        # Installed RetroArch entries can be metadata-only stubs. Prefer the
+        # known-good release bundle when the selected source has no dylib.
+        if ! find "$source/Contents" -type f -name '*.dylib' -print -quit 2>/dev/null | grep -q .; then
+            source="$fallback_root/$name"
+        fi
+        stage_prebuilt_core "$source"
+    }
+
+    stage_arcade_core "MAME 2003 (0.78)-RetroArch.oecoreplugin"
+    stage_arcade_core "MAME 2003-Plus-RetroArch.oecoreplugin"
+    stage_arcade_core "MAME 2010 (0.139)-RetroArch.oecoreplugin"
+    stage_arcade_core "FinalBurn Neo-RetroArch.oecoreplugin"
 }
 
 stage_updated_core() {
@@ -154,7 +185,6 @@ CORE_SPECS=(
   "BSNES|BSNES|BSNES"
   "VecXGL|VecXGL|VecXGL"
   "Potator-Core|Potator|Potator"
-  "PokeMini|PokeMini|PokeMini"
   "DeSmuME/src/frontend/cocoa/DeSmuME (Latest).xcodeproj|DeSmuME|DeSmuME"
   "PPSSPP/PPSSPP-Core|PPSSPP|PPSSPP"
 )

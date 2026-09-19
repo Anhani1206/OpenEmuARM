@@ -527,13 +527,18 @@ extension GameWindowController: GameIntegralScalingDelegate {
         
         if fullScreenStatus == .nonFullScreen {
             let currentScale = windowedIntegralScale
-            if currentScale != Self.fitToWindowScale {
+            // PlayStation BIOS and gameplay commonly report different native
+            // resolutions. Keep the window frame stable for PS1 and let the
+            // game view update its aspect ratio instead of resizing the outer
+            // window during the transition.
+            let keepsWindowFrameStable = gameDocument.systemIdentifier == "openemu.system.psx"
+            if currentScale != Self.fitToWindowScale && !keepsWindowFrameStable {
+                let originalOrigin = window.frame.origin
                 var newWindowFrame = window.frame
                 newWindowFrame.size = windowSize(forGameViewIntegralScale: currentScale)
-                // Preserve the user's current position while the core changes resolution.
-                // Re-centering here makes the window visibly jump, especially when the startup
-                // logo and gameplay use different frame sizes.
-                newWindowFrame.origin = window.frame.origin
+                // Keep the user's window position stable while the core changes resolution.
+                // The PlayStation boot logo and gameplay can use different frame sizes.
+                newWindowFrame.origin = originalOrigin
 
                 // Resolution changes can happen while the window is already close to a screen
                 // edge. Keep the automatically resized window fully visible instead of preserving
@@ -554,11 +559,13 @@ extension GameWindowController: GameIntegralScalingDelegate {
                     }
                 }
                 isAutomaticallyResizingForScreenChange = true
-                // Apply the resolution resize immediately; animating it makes the window appear
-                // to slide across the screen while the core switches from its boot logo to gameplay.
                 window.setFrame(newWindowFrame, display: true, animate: false)
                 DispatchQueue.main.async { [weak self] in
-                    self?.isAutomaticallyResizingForScreenChange = false
+                    guard let self, let window = self.window else { return }
+                    // AppKit can apply another frame adjustment after the resolution callback.
+                    // Restore the origin once the current event cycle has completed.
+                    window.setFrameOrigin(originalOrigin)
+                    self.isAutomaticallyResizingForScreenChange = false
                 }
             }
         } else if fullScreenStatus == .fullScreen {

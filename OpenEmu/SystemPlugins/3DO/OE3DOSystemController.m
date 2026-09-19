@@ -30,7 +30,10 @@
 
 - (OEFileSupport)canHandleFile:(__kindof OEFile *)file
 {
-    if (![file isKindOfClass:[OECUESheet class]])
+    if ([file.fileExtension isEqualToString:@"chd"])
+        return OEFileSupportYes;
+
+    if (![file isKindOfClass:[OECUESheet class]] && ![file.fileExtension isEqualToString:@"iso"])
         return OEFileSupportNo;
 
     // First check if we find these bytes at offset 0x0 found in some dumps
@@ -62,7 +65,10 @@
 
 - (NSString *)headerLookupForFile:(__kindof OEFile *)file
 {
-    if (![file isKindOfClass:[OECUESheet class]])
+    if ([file.fileExtension isEqualToString:@"chd"])
+        return nil;
+
+    if (![file isKindOfClass:[OECUESheet class]] && ![file.fileExtension isEqualToString:@"iso"])
         return nil;
 
     // First check if we find these bytes at offset 0x0 found in some dumps

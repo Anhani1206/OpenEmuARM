@@ -251,36 +251,53 @@ static void writeSaveFile(const char* path)
     romName = [path copy];
     
     NSString *isoPath;
-    NSError *errorCue;
-    
+    NSString *pathExtension = path.pathExtension.lowercaseString;
+
     currentSector = 0;
     sampleCurrent = 0;
     memset(sampleBuffer, 0, sizeof(int16_t) * TEMP_BUFFER_SIZE);
-    
-    NSString *cue = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&errorCue];
-    
-    const char *cueCString = [cue UTF8String];
-    Cd *cd = cue_parse_string(cueCString);
-    NSLog(@"CUE file found and parsed");
-    if (cd_get_ntrack(cd)!=1)
+
+    if ([pathExtension isEqualToString:@"iso"])
     {
-        NSLog(@"Cue file found, but the number of tracks within was not 1.");
-        return NO;
+        isoMode = MODE_MODE1;
+        isoPath = path;
     }
-    
-    Track *track = cd_get_track(cd, 1);
-    isoMode = (TrackMode)track_get_mode(track);
-    
-    if ((isoMode!=MODE_MODE1&&isoMode!=MODE_MODE1_RAW))
+    else
     {
-        NSLog(@"Cue file found, but the track within was not in the right format (should be BINARY and Mode1+2048 or Mode1+2352)");
-        return NO;
+        NSError *errorCue;
+        NSString *cue = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&errorCue];
+        if (cue == nil)
+        {
+            NSLog(@"Could not read CUE file: %@", errorCue);
+            return NO;
+        }
+
+        Cd *cd = cue_parse_string([cue UTF8String]);
+        if (cd == NULL || cd_get_ntrack(cd) != 1)
+        {
+            NSLog(@"CUE file must contain exactly one track.");
+            return NO;
+        }
+
+        Track *track = cd_get_track(cd, 1);
+        isoMode = (TrackMode)track_get_mode(track);
+
+        if ((isoMode != MODE_MODE1 && isoMode != MODE_MODE1_RAW))
+        {
+            NSLog(@"CUE track must be BINARY Mode1+2048 or Mode1+2352.");
+            return NO;
+        }
+
+        NSString *isoTrack = [NSString stringWithUTF8String:track_get_filename(track)];
+        isoPath = [path stringByReplacingOccurrencesOfString:path.lastPathComponent withString:isoTrack];
     }
-    
-    NSString *isoTrack = [NSString stringWithUTF8String:track_get_filename(track)];
-    isoPath = [path stringByReplacingOccurrencesOfString:[path lastPathComponent] withString:isoTrack];
-    
+
     isoStream = [NSFileHandle fileHandleForReadingAtPath:isoPath];
+    if (isoStream == nil)
+    {
+        NSLog(@"Could not open disc image at path: %@", isoPath);
+        return NO;
+    }
     
     uint8_t sectorZero[2048];
     [self readSector:0 toBuffer:sectorZero];

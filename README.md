@@ -46,27 +46,13 @@ Download
 
 ---
 
-### Recent Updates OpenEmuARM 2.1.1
+### Recent Updates OpenEmuARM 2.1.2
 
-- Fixed the application build number so Sparkle correctly recognizes OpenEmuARM 2.1.1 as newer than OpenEmuARM 2.0.1 and offers the update to users.
-
----
-
-### Recent Updates OpenEmuARM 2.1
-
-- Libretro Cheat Database integration. Inspired by the work of [@leocck](https://github.com/leocck) in the [OpenEmu-Silicon repository](https://github.com/OpenEmu-Silicon).
-- Fixed bundled core plugins silently failing after their update-feed address was migrated by re-signing the updated plugin bundle.
-- Fixed RetroAchievements sign-in for valid usernames and passwords.
-- Improved large-library opening and scrolling by retaining fetch/prefetch and coalesced artwork-refresh paths.
-- Fixed overlapping labels in the Controls preferences layout.
-- Fixed Atari Jaguar's default aspect ratio so games render in landscape.
-- Fixed long failed-import alerts by constraining their height and making the message body scrollable.
-- Replaced the deprecated library toolbar search field with the OpenEmu search field implementation.
-- Added the RetroAchievements hardcore shield visibility preference without disabling other HUD notifications.
-- Fixed an issue where the PlayStation 1 window changed from the selected 2x scale to Fit to Window when the game changed resolution.
-- The automatic resize triggered by the PlayStation startup logo is now distinguished from a manual window resize.
-- The selected integral scale is preserved when the core changes its video resolution.
-- Kept the automatically resized PlayStation window inside the visible screen area when a resolution change occurs near a screen edge.
+- Added the Opera libretro core as an embedded Apple Silicon core for 3DO games.
+- Added .chd files are now accepted and can be launched through Opera; native 4DO continues to support .cue/.bin and .iso images.
+- 3DO games can be launched with a specific core through Play With…, and the running game can switch cores through Select Core in the game controls menu.
+- Embedded cores, including Opera, are now shown in Preferences → Cores alongside the other available cores.
+- Added a compact More… button to browse all matching cheats in groups of 100 instead of stopping at the first 100 results.
 
 ---
 

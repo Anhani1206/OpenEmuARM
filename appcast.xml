@@ -5,7 +5,34 @@
     <link>https://github.com/Anhani1206/OpenEmuARM/releases</link>
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
-                                                                        <item>
+                                                                            <item>
+      <title>OpenEmuARM 2.1.3</title>
+      <description>
+        <![CDATA[
+        <h2>OpenEmuARM 2.1.3</h2>
+        <h3>What's New in 2.1.3</h3>
+        <ul>
+        <li>Added Move to System… to the game context menu, allowing a ROM that was detected under the wrong console to be reassigned to the correct system. ROMs already inside the Game Library are moved to the selected system folder; external ROMs are reclassified without being copied or deleted.</li>
+        <li>Improved 3DO ISO detection to support both `CD-ROM` and `CD_ROM` disc-header signatures, allowing fan-made releases such as `MK2 V12.iso` to be imported as 3DO games.</li>
+        <li>Added Help → What's New so the 2.1.3 highlights can be reviewed again after the first launch.</li>
+        </ul>
+        <h3>Fixes</h3>
+        <ul>
+        <li>Fixed Quit Game for ARMSX2/PlayStation 2 so the game window closes after a single confirmation instead of requiring a second click.</li>
+        </ul>
+        ]]>
+      </description>
+      <pubDate>Wed, 23 Sep 2026 14:19:06 +0000</pubDate>
+      <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+      <enclosure
+        url="https://github.com/Anhani1206/OpenEmuARM/releases/download/v2.1.3/OpenEmuARM.dmg"
+        sparkle:version="26"
+        sparkle:shortVersionString="2.1.3"
+        sparkle:edSignature="fdB+2QlgvWyhlboudbVsdt+4b4i4eIfFbtXSoH38LYLEjj9GnROtG/BrdefFxuyMAD4BoSW2r5ElAyWV81OMAw=="
+        length="207879725"
+        type="application/octet-stream"/>
+    </item>
+<item>
       <title>OpenEmuARM 2.1.2</title>
       <description>
         <![CDATA[

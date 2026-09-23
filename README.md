@@ -46,13 +46,12 @@ Download
 
 ---
 
-### Recent Updates OpenEmuARM 2.1.2
+### Recent Updates OpenEmuARM 2.1.3
 
-- Added the Opera libretro core as an embedded Apple Silicon core for 3DO games.
-- Added .chd files are now accepted and can be launched through Opera; native 4DO continues to support .cue/.bin and .iso images.
-- 3DO games can be launched with a specific core through Play With…, and the running game can switch cores through Select Core in the game controls menu.
-- Embedded cores, including Opera, are now shown in Preferences → Cores alongside the other available cores.
-- Added a compact More… button to browse all matching cheats in groups of 100 instead of stopping at the first 100 results.
+- Added Move to System… to the game context menu, allowing a ROM that was detected under the wrong console to be reassigned to the correct system. ROMs already inside the Game Library are moved to the selected system folder; external ROMs are reclassified without being copied or deleted.
+- Improved 3DO ISO detection to support both CD-ROM and CD_ROM disc-header signatures, allowing fan-made releases such as MK2 V12.iso to be imported as 3DO games.
+Added Help → What's New so the 2.1.3 highlights can be reviewed again after the first launch.
+- Fixed Quit Game for ARMSX2/PlayStation 2 so the game window closes after a single confirmation instead of requiring a second click.
 
 ---
 

@@ -9,3 +9,4 @@
 ## Fixes
 
 - Fixed Quit Game for ARMSX2/PlayStation 2 so the game window closes after a single confirmation instead of requiring a second click.
+- Improved PlayStation 1 disc detection for valid fan-made and patched MODE1/MODE2 images whose license signature differs from retail discs, including compatible `.cue/.bin` releases.

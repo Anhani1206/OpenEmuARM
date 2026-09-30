@@ -78,8 +78,8 @@
 	<string>New Smart Collection…</string>
 	<key>Next Display Mode</key>
 	<string>Next Display Mode</string>
-	<key>OpenEmu Web Site</key>
-	<string>OpenEmu Web Site</string>
+	<key>OpenEmuARM Web Site</key>
+	<string>OpenEmuARM Web Site</string>
 	<key>Organize Library…</key>
 	<string>Organize Library…</string>
 	<key>Page Setup…</key>
@@ -90,12 +90,16 @@
 	<string>Preferences…</string>
 	<key>Print…</key>
 	<string>Print…</string>
-	<key>Quit OpenEmu</key>
-	<string>Quit OpenEmu</string>
+	<key>Quit OpenEmuARM</key>
+	<string>Quit OpenEmuARM</string>
 	<key>Redo</key>
 	<string>Redo</string>
 	<key>Release Notes</key>
 	<string>Release Notes</string>
+	<key>What's New</key>
+	<string>What's New</string>
+	<key>Report a Bug</key>
+	<string>Report a Bug</string>
 	<key>Reset Input Monitoring Permission…</key>
 	<string>Reset Input Monitoring Permission…</string>
 	<key>Save State</key>

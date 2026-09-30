@@ -90,12 +90,16 @@
 	<string>Preferências..</string>
 	<key>Print…</key>
 	<string>Imprimir…</string>
-	<key>Quit OpenEmu</key>
-	<string>Quit OpenEmu</string>
+	<key>Quit OpenEmuARM</key>
+	<string>Sair do OpenEmuARM</string>
 	<key>Redo</key>
 	<string>Refazer</string>
 	<key>Release Notes</key>
 	<string>Notas da Versão</string>
+	<key>What's New</key>
+	<string>Novidades</string>
+	<key>Report a Bug</key>
+	<string>Relatar um Bug</string>
 	<key>Save State</key>
 	<string>Salvar Estado</string>
 	<key>Select All</key>

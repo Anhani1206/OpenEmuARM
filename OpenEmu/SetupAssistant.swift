@@ -40,8 +40,21 @@ final class SetupAssistant: NSViewController {
     @IBOutlet private var coreSelectionView: NSView!
     @IBOutlet private var lastStepView: NSView!
     @IBOutlet private var installCoreTableView: NSTableView!
+    @IBOutlet private var backButton: NSButton!
+    @IBOutlet private var nextButton: NSButton!
     
     var completionBlock: (() -> Void)?
+    var showsWhatsNewOnly: Bool
+
+    init(showsWhatsNewOnly: Bool = false) {
+        self.showsWhatsNewOnly = showsWhatsNewOnly
+        super.init(nibName: "SetupAssistant", bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        self.showsWhatsNewOnly = false
+        super.init(coder: coder)
+    }
     
     /// installCoreTableView data source
     private var coresToDownload = [SetupCoreInfo]()
@@ -64,7 +77,13 @@ final class SetupAssistant: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        attemptInitialCoreListUpdate()
+        if showsWhatsNewOnly {
+            backButton.isHidden = true
+            nextButton.isHidden = true
+            switchToView(lastStepView, transitionType: .fade)
+        } else {
+            attemptInitialCoreListUpdate()
+        }
         
         replaceView.wantsLayer = true
         replaceView.animations = ["subviews" : viewTransition]
@@ -72,6 +91,14 @@ final class SetupAssistant: NSViewController {
         setUpFiniteStateMachine()
     }
     
+    override func viewDidAppear() {
+        super.viewDidAppear()
+
+        guard showsWhatsNewOnly, let window = view.window else { return }
+        window.setContentSize(NSSize(width: 560, height: 380))
+        window.center()
+    }
+
     @IBAction private func backEvent(_ sender: Any?) {
         if let state = State(rawValue: fsm.state.rawValue-1) {
             try? fsm.transition(to: state)

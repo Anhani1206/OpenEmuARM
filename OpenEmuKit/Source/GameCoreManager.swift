@@ -200,7 +200,9 @@ extension GameCoreManager: OEGameCoreHelper {
     }
     
     public func stopEmulation(completionHandler handler: @escaping () -> Void) {
+        NSLog("[QuitTrace] GameCoreManager.stopEmulation entered")
         gameCoreHelper!.stopEmulation {
+            NSLog("[QuitTrace] GameCoreManager received helper completion")
             DispatchQueue.main.async {
                 handler()
                 self.stop()

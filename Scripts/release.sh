@@ -75,7 +75,7 @@ gh auth status &>/dev/null || die "gh CLI not authenticated. Run: gh auth login"
 echo "OK: gh CLI authenticated"
 
 CURRENT_BRANCH=$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD)
-RELEASE_BRANCH="chore/release-v$VERSION"
+RELEASE_BRANCH="release/$VERSION"
 if [ "$CURRENT_BRANCH" = "main" ]; then
   echo "OK: on main — will create release branch $RELEASE_BRANCH"
 elif [ "$CURRENT_BRANCH" = "$RELEASE_BRANCH" ]; then
@@ -139,9 +139,10 @@ xcodebuild archive \
   ARCHS=arm64 \
   ONLY_ACTIVE_ARCH=YES \
   -archivePath "$ARCHIVE_PATH" \
+  MARKETING_VERSION="$VERSION" \
+  CURRENT_PROJECT_VERSION="$PLIST_BUILD_VERSION" \
   CODE_SIGN_IDENTITY="$IDENTITY" \
   CODE_SIGN_STYLE=Manual \
-  DEVELOPMENT_TEAM=AJC82Q6789 \
   ENABLE_HARDENED_RUNTIME=YES \
   2>&1 | grep -E "^(Archive|error:|warning:|BUILD)" | tail -20
 

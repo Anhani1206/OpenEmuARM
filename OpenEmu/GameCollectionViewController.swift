@@ -128,6 +128,9 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
                 menu.addItem(withTitle: NSLocalizedString("Show in Finder", comment: ""),
                              action: #selector(showInFinder(_:)),
                              keyEquivalent: "")
+                menu.addItem(withTitle: NSLocalizedString("Show Information…", comment: "Show ROM and core information"),
+                             action: #selector(showInformation(_:)),
+                             keyEquivalent: "")
             }
             
             menu.addItem(.separator())
@@ -157,6 +160,12 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
                               action: nil,
                               keyEquivalent: "")
             item.submenu = collectionsMenu(for: games)
+            menu.addItem(item)
+
+            item = NSMenuItem(title: NSLocalizedString("Move to System…", comment: "Move the selected game to another console system"),
+                              action: nil,
+                              keyEquivalent: "")
+            item.submenu = systemMenu(for: games)
             menu.addItem(item)
             
             menu.addItem(.separator())
@@ -211,6 +220,12 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
                               action: nil,
                               keyEquivalent: "")
             item.submenu = collectionsMenu(for: games)
+            menu.addItem(item)
+
+            item = NSMenuItem(title: NSLocalizedString("Move to System…", comment: "Move the selected games to another console system"),
+                              action: nil,
+                              keyEquivalent: "")
+            item.submenu = systemMenu(for: games)
             menu.addItem(item)
             
             menu.addItem(.separator())
@@ -383,6 +398,31 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
         
         return menu
     }
+
+    private func systemMenu(for games: [OEDBGame]) -> NSMenu {
+        let menu = NSMenu()
+        guard let context = games.first?.managedObjectContext else { return menu }
+
+        let systems = OEDBSystem.enabledSystems(in: context)
+            .filter { $0.plugin != nil }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+
+        for system in systems {
+            let item = NSMenuItem(title: system.name,
+                                  action: #selector(moveSelectedGames(toSystem:)),
+                                  keyEquivalent: "")
+            item.representedObject = system
+            item.state = games.allSatisfy { $0.system == system } ? .on : .off
+            menu.addItem(item)
+        }
+
+        if menu.items.isEmpty {
+            menu.addItem(withTitle: NSLocalizedString("No systems available", comment: ""),
+                         action: nil,
+                         keyEquivalent: "")
+        }
+        return menu
+    }
     
     // MARK: - Actions
     
@@ -390,6 +430,59 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
         let urls = selectedGames.compactMap { $0.defaultROM?.url?.absoluteURL }
         
         NSWorkspace.shared.activateFileViewerSelecting(urls)
+    }
+
+    @objc func showInformation(_ sender: Any?) {
+        guard let game = selectedGames.first,
+              let rom = game.defaultROM else { return }
+
+        let systemName = game.system?.name ?? NSLocalizedString("Unknown", comment: "Unknown game system")
+        let fileURL = rom.url?.absoluteURL
+        let fileName = rom.fileName ?? fileURL?.lastPathComponent ?? NSLocalizedString("Unavailable", comment: "Unavailable metadata")
+        let format = fileURL?.pathExtension.uppercased() ?? NSLocalizedString("Unknown", comment: "Unknown ROM format")
+        let size = rom.fileSize?.int64Value ?? fileURL.flatMap { try? $0.resourceValues(forKeys: [.fileSizeKey]).fileSize }.map(Int64.init)
+        let sizeText = size.map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) }
+            ?? NSLocalizedString("Unavailable", comment: "Unavailable metadata")
+        let checksum = rom.md5HashIfAvailable ?? NSLocalizedString("Not calculated", comment: "Checksum has not been calculated")
+        let serial = rom.serial ?? NSLocalizedString("Unavailable", comment: "Unavailable metadata")
+
+        let availableCores = game.system.map {
+            OECorePlugin.corePlugins(forSystemIdentifier: $0.systemIdentifier)
+                .sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
+        } ?? []
+        let defaultCoreKey = game.system.map { "defaultCore.\($0.systemIdentifier)" }
+        let preferredCoreID = defaultCoreKey.flatMap { UserDefaults.standard.string(forKey: $0) }
+        let preferredCore = availableCores.first { $0.bundleIdentifier.caseInsensitiveCompare(preferredCoreID ?? "") == .orderedSame }
+        let coreText: String
+        if let preferredCore {
+            coreText = String(format: NSLocalizedString("%@ (preferred)\nAvailable: %@", comment: "ROM information core details"),
+                              preferredCore.displayName,
+                              availableCores.map(\.displayName).joined(separator: ", "))
+        } else if availableCores.isEmpty {
+            coreText = NSLocalizedString("Unavailable", comment: "Unavailable metadata")
+        } else {
+            coreText = String(format: NSLocalizedString("Not explicitly selected\nAvailable: %@", comment: "ROM information core details"),
+                              availableCores.map(\.displayName).joined(separator: ", "))
+        }
+
+        let details = [
+            String(format: NSLocalizedString("System: %@", comment: "ROM information field"), systemName),
+            String(format: NSLocalizedString("Format: %@", comment: "ROM information field"), format),
+            String(format: NSLocalizedString("File: %@", comment: "ROM information field"), fileName),
+            String(format: NSLocalizedString("Size: %@", comment: "ROM information field"), sizeText),
+            String(format: NSLocalizedString("Serial: %@", comment: "ROM information field"), serial),
+            String(format: NSLocalizedString("MD5: %@", comment: "ROM information field"), checksum),
+            "",
+            String(format: NSLocalizedString("Core preference: %@", comment: "ROM information field"), coreText),
+            String(format: NSLocalizedString("Location: %@", comment: "ROM information field"), fileURL?.path ?? NSLocalizedString("Unavailable", comment: "Unavailable metadata"))
+        ].joined(separator: "\n")
+
+        let alert = NSAlert()
+        alert.messageText = game.displayName
+        alert.informativeText = details
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: NSLocalizedString("OK", comment: ""))
+        alert.runModal()
     }
     
     @IBAction func copy(_ sender: Any?) {
@@ -458,7 +551,40 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
         
         reloadData()
     }
-    
+
+    @objc func moveSelectedGames(toSystem sender: NSMenuItem) {
+        assert(Thread.isMainThread, "Only call on main thread!")
+        guard let targetSystem = sender.representedObject as? OEDBSystem,
+              let database = targetSystem.managedObjectContext?.libraryDatabase else { return }
+
+        var failures = [String]()
+        for game in selectedGames where game.system != targetSystem {
+            do {
+                try moveGame(game, to: targetSystem, in: database)
+                game.system = targetSystem
+            } catch {
+                failures.append("\(game.displayName): \(error.localizedDescription)")
+            }
+        }
+
+        do {
+            try targetSystem.managedObjectContext?.save()
+        } catch {
+            failures.append(error.localizedDescription)
+        }
+
+        if !failures.isEmpty {
+            let alert = NSAlert()
+            alert.messageText = NSLocalizedString("Could not move all selected games", comment: "")
+            alert.informativeText = failures.joined(separator: "\n")
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: NSLocalizedString("OK", comment: ""))
+            alert.runModal()
+        }
+
+        reloadData()
+    }
+
     @objc func downloadCoverArt(_ sender: Any?) {
         selectedGames.forEach { $0.requestCoverDownload() }
         selectedGames.last?.save()
@@ -595,5 +721,91 @@ extension GameCollectionViewController: CollectionViewExtendedDelegate, NSMenuIt
     func collectionView(_ collectionView: CollectionView, doubleClickForItemAt indexPath: IndexPath) {
         let item = dataSource.item(at: indexPath)
         NSApp.sendAction(#selector(LibraryController.startSelectedGame(_:)), to: nil, from: item)
+    }
+}
+
+private func moveGame(_ game: OEDBGame, to system: OEDBSystem, in database: OELibraryDatabase) throws {
+    guard let libraryFolder = database.romsFolderURL else { return }
+
+    for rom in game.roms {
+        guard let sourceURL = rom.url,
+              sourceURL.isSubpath(of: libraryFolder) else { continue }
+
+        let sourceFile = try OEFile(url: sourceURL)
+        guard sourceFile.allFileURLs.count == 1 else {
+            throw NSError(domain: "OpenEmuLibrary", code: 1, userInfo: [
+                NSLocalizedDescriptionKey: NSLocalizedString("This disc image has referenced files and cannot be moved automatically.", comment: "")
+            ])
+        }
+
+        var destinationFolder = database.romsFolderURL(for: system)
+        let fileName = sourceURL.lastPathComponent
+        let baseName = sourceURL.deletingPathExtension().lastPathComponent
+        if system.plugin?.supportsDiscsWithDescriptorFile == true {
+            destinationFolder = destinationFolder.appendingPathComponent(baseName, isDirectory: true)
+        }
+        try FileManager.default.createDirectory(at: destinationFolder, withIntermediateDirectories: true)
+
+        var destinationURL = destinationFolder.appendingPathComponent(fileName)
+        destinationURL = destinationURL.uniqueURL { count in
+            let name = "\(baseName) \(count).\(sourceURL.pathExtension)"
+            return destinationFolder.appendingPathComponent(name)
+        }
+
+        try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
+        rom.url = destinationURL
+    }
+}
+
+extension OEGameCollectionViewController {
+    @objc(oe_moveToSystemMenuForGames:)
+    func oe_moveToSystemMenu(forGames games: [OEDBGame]) -> NSMenu {
+        let menu = NSMenu()
+        guard let context = games.first?.managedObjectContext else { return menu }
+
+        let systems = OEDBSystem.enabledSystems(in: context)
+            .filter { $0.plugin != nil }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        for system in systems {
+            let item = NSMenuItem(title: system.name,
+                                  action: #selector(oe_moveSelectedGamesToSystem(_:)),
+                                  keyEquivalent: "")
+            item.representedObject = system
+            item.state = games.allSatisfy { $0.system == system } ? .on : .off
+            menu.addItem(item)
+        }
+        return menu
+    }
+
+    @objc(oe_moveSelectedGamesToSystem:)
+    func oe_moveSelectedGamesToSystem(_ sender: NSMenuItem) {
+        guard let targetSystem = sender.representedObject as? OEDBSystem,
+              let database = targetSystem.managedObjectContext?.libraryDatabase else { return }
+
+        var failures = [String]()
+        for game in selectedGames where game.system != targetSystem {
+            do {
+                try moveGame(game, to: targetSystem, in: database)
+                game.system = targetSystem
+            } catch {
+                failures.append("\(game.displayName): \(error.localizedDescription)")
+            }
+        }
+
+        do {
+            try targetSystem.managedObjectContext?.save()
+        } catch {
+            failures.append(error.localizedDescription)
+        }
+
+        if !failures.isEmpty {
+            let alert = NSAlert()
+            alert.messageText = NSLocalizedString("Could not move all selected games", comment: "")
+            alert.informativeText = failures.joined(separator: "\n")
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: NSLocalizedString("OK", comment: ""))
+            alert.runModal()
+        }
+        reloadData()
     }
 }

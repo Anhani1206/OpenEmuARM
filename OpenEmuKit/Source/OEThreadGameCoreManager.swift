@@ -63,8 +63,10 @@ import OpenEmuKitPrivate
     }
     
     public override func stopEmulation(completionHandler handler: @escaping () -> Void) {
+        NSLog("[QuitTrace] ThreadGameCoreManager.stopEmulation entered")
         stopHandler = handler
         gameCoreHelper?.stopEmulation {
+            NSLog("[QuitTrace] ThreadGameCoreManager received helper completion")
             self.stop()
         }
     }

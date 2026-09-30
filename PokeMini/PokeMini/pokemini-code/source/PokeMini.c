@@ -722,7 +722,12 @@ int PokeMini_SaveSSFile(const char *statefile, const char *romfile)
 	PMiniID = PokeMini_ID;
 	fwrite(&PMiniID, 1, 4, fo);	// Write State ID
 	memset(PMiniStr, 0, 128);
-	strcpy(PMiniStr, romfile);
+	// State files reserve 128 bytes for the ROM path. OpenEmu paths can be
+	// longer than that, so truncate safely instead of overflowing the buffer
+	// when a game is closed and the state is saved.
+	if (romfile != NULL) {
+		snprintf(PMiniStr, sizeof(PMiniStr), "%s", romfile);
+	}
 	fwrite(PMiniStr, 1, 128, fo);	// Write ROM related to state
 	StatTime = Endian32((uint32_t)time(NULL));
 	fwrite(&StatTime, 1, 4, fo);	// Write Time

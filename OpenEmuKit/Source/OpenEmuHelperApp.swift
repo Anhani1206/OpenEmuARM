@@ -580,6 +580,8 @@ extension OSLog {
     public func stopEmulation(completionHandler handler: @escaping () -> Void) {
         guard let gameCore = gameCore else { return }
 
+        NSLog("[QuitTrace] Helper stopEmulation entered")
+
         stopRetroAchievementsIdleTimer()
 
         if let observer = _achievementObserver {
@@ -599,7 +601,9 @@ extension OSLog {
             _raUnrecognizedObserver = nil
         }
 
+        NSLog("[QuitTrace] Helper calling gameCore.stopEmulation")
         gameCore.stopEmulation {
+            NSLog("[QuitTrace] Helper received gameCore.stopEmulation completion")
             self._gameAudio.stopAudio()
             gameCore.renderDelegate = nil
             gameCore.audioDelegate = nil

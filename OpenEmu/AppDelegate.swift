@@ -304,18 +304,10 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
 
                 try fileManager.copyItem(at: source, to: staged)
 
-                let signingTask = Process()
-                signingTask.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
-                signingTask.arguments = ["--force", "--deep", "--sign", "-", staged.path]
-                try signingTask.run()
-                signingTask.waitUntilExit()
-
-                guard signingTask.terminationStatus == 0 else {
-                    try? fileManager.removeItem(at: staged)
-                    DLog("Could not sign refreshed bundled core: \(name)")
-                    continue
-                }
-
+                // Preserve the signature embedded in the bundled plugin. A
+                // Developer ID-signed release core must not be replaced with
+                // an ad-hoc signature during first-launch installation;
+                // Gatekeeper rejects that result on newer macOS versions.
                 if fileManager.fileExists(atPath: destination.path) {
                     try fileManager.removeItem(at: destination)
                 }
@@ -1222,6 +1214,17 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
     @IBAction func showOEReleaseNotes(_ sender: AnyObject?) {
         NSWorkspace.shared.open(URL(string: AppDelegate.releaseNotesAddress)!)
     }
+
+    @IBAction func showOEWhatsNew(_ sender: AnyObject?) {
+        mainWindowController.showWhatsNew()
+    }
+
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(showOEWhatsNew(_:)) {
+            return true
+        }
+        return true
+    }
     
     @IBAction func showOEWebSite(_ sender: AnyObject?) {
         NSWorkspace.shared.open(URL(string: AppDelegate.websiteAddress)!)
@@ -1565,6 +1568,17 @@ extension AppDelegate: NSMenuDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Get the “Customize Touch Bar…” menu to display in the View menu.
         NSApp.isAutomaticCustomizeTouchBarMenuItemEnabled = true
+
+        // Keep this item enabled even when the first-responder chain belongs
+        // to a library or game view controller.
+        if let whatsNewItem = helpMenu.items.first(where: {
+            $0.title == NSLocalizedString("What's New", comment: "Help menu item")
+        }) {
+            helpMenu.autoenablesItems = false
+            whatsNewItem.target = self
+            whatsNewItem.action = #selector(showOEWhatsNew(_:))
+            whatsNewItem.isEnabled = true
+        }
         
         let notificationCenter = NotificationCenter.default
         

@@ -158,6 +158,47 @@ stage_xcode_core() {
     stage_core "$source" "$bundle"
 }
 
+stage_pokemini_system_plugin() {
+    local source="$REPO_ROOT/OpenEmu/SystemPlugins/Pokemon mini"
+    local bundle="$APP/Contents/PlugIns/Systems/Pokemon mini.oesystemplugin"
+    local resources="$bundle/Contents/Resources"
+    local executable="$bundle/Contents/MacOS/Pokemon mini"
+    local plist="$bundle/Contents/Info.plist"
+    local asset_plist="$DERIVED_ROOT/PokemonMini-assets.plist"
+
+    [ -d "$source" ] || die "PokeMini system plugin source was not found: $source"
+    rm -rf "$bundle"
+    mkdir -p "$resources" "$(dirname "$executable")"
+
+    clang -bundle -fobjc-arc -fmodules \
+        -arch arm64 -mmacosx-version-min=11.0 \
+        -F"$APP/Contents/Frameworks" \
+        -I"$REPO_ROOT/OpenEmu-SDK" -I"$REPO_ROOT/OpenEmu-SDK/OpenEmuSystem" -I"$source" \
+        "$source/OEPMSystemResponder.m" \
+        -framework OpenEmuSystem -framework Cocoa \
+        -o "$executable"
+
+    cp "$source/Keyboard-Mappings.plist" "$resources/"
+    cp "$source/Controller-Mappings.plist" "$resources/"
+    cp "$source/Controller-Preferences.plist" "$resources/"
+    xcrun actool "$source/Images.xcassets" --compile "$resources" \
+        --platform macosx --minimum-deployment-target 11.0 \
+        --output-partial-info-plist "$asset_plist" >/dev/null
+
+    cp "$source/Pokemon mini-Info.plist" "$plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleExecutable Pokemon mini" "$plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier org.openemu.PokemonMini" "$plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleName Pokemon mini" "$plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundlePackageType BNDL" "$plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleDevelopmentRegion en" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :CFBundleSupportedPlatforms array" "$plist" 2>/dev/null || true
+    /usr/libexec/PlistBuddy -c "Add :CFBundleSupportedPlatforms:0 string MacOSX" "$plist"
+
+    codesign --force --deep --sign - "$bundle"
+    codesign --verify --deep --strict "$bundle" || die "codesign failed: Pokemon mini system plugin"
+    echo "staged system plugin: Pokemon mini"
+}
+
 stage_xcode_core "4DO" "4DO" "4DO"
 stage_xcode_core "Mupen64Plus" "Mupen64Plus" "Mupen64Plus"
 
@@ -178,6 +219,7 @@ CORE_SPECS=(
   "Dolphin|Dolphin|Dolphin"
   "Bliss|Bliss|Bliss"
   "O2EM|O2EM|O2EM"
+  "PokeMini|PokeMini|PokeMini"
   "GenesisPlus|GenesisPlus|GenesisPlus"
   "Flycast|Flycast|Flycast"
   "picodrive|Picodrive|Picodrive"
@@ -240,6 +282,8 @@ echo "building: Geolith"
 OPENEMU_LIBRETRO_BRIDGE="$BRIDGE" DERIVED_DATA="$DERIVED_ROOT/Geolith" \
     "$SCRIPT_DIR/build-geolith-openemu-arm64.sh"
 stage_core "$DERIVED_ROOT/Geolith/Build/Products/Release/Geolith.oecoreplugin" "Geolith"
+
+stage_pokemini_system_plugin
 
 # Some vendored support frameworks ship as universal binaries even when every
 # OpenEmu target is built for arm64. Remove only their unused Intel slice from

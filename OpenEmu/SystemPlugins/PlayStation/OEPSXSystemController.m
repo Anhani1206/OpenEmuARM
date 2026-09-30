@@ -63,7 +63,27 @@
     NSString *dataTrackString = [file readASCIIStringInRange:NSMakeRange(0x24E0, 16)];
     NSLog(@"'%@'", dataTrackString);
 
-    return [dataTrackString isEqualToString:@"  Licensed  by  "] ? OEFileSupportYes : OEFileSupportNo;
+    // Most retail discs contain this license string, but fan-made and patched
+    // releases may replace it while keeping a valid PlayStation filesystem.
+    if([dataTrackString isEqualToString:@"  Licensed  by  "])
+        return OEFileSupportYes;
+
+    // Accept valid MODE1/2048 and MODE2/2352 discs even when the optional
+    // license text is absent. serialLookupForFile validates the ISO9660
+    // volume descriptor and locates SYSTEM.CNF, which avoids accepting an
+    // arbitrary disc image as a PlayStation game.
+    NSString *mode1DataString = [file readASCIIStringInRange:NSMakeRange(0x8001, 5)];
+    NSString *mode2DataString = [file readASCIIStringInRange:NSMakeRange(0x9319, 5)];
+    BOOL hasISO9660Header = [mode1DataString isEqualToString:@"CD001"] || [mode2DataString isEqualToString:@"CD001"];
+
+    if(hasISO9660Header)
+    {
+        NSString *serial = [self serialLookupForFile:file];
+        if(serial != nil && ![serial isEqualToString:@"NO MATCH"])
+            return OEFileSupportYes;
+    }
+
+    return OEFileSupportNo;
 }
 
 - (NSString *)serialLookupForFile:(__kindof OEFile *)file

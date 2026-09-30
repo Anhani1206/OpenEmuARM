@@ -246,6 +246,7 @@
 		6DAB96D7C11047B4AA72206A /* Controller-Mappings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 68416A57049F48B997026285 /* Controller-Mappings.plist */; };
 		7733FED43038F526005F6159 /* CheatSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7733FED23038F526005F6159 /* CheatSearchViewController.swift */; };
 		7733FED63038F531005F6159 /* CheatSearchWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7733FED53038F531005F6159 /* CheatSearchWindowController.swift */; };
+		777FC50D306D251400478824 /* SetupAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777FC50C306D251400478824 /* SetupAssistant.swift */; };
 		779469BB302F3405006A35D6 /* PlayStation 2.oesystemplugin in Copy System Plugins to App Plugins */ = {isa = PBXBuildFile; fileRef = 3DB744BA1BD8BA9E00C23E74 /* PlayStation 2.oesystemplugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		779469C6302F4901006A35D6 /* NeoGeo.oesystemplugin in Copy System Plugins to App Plugins */ = {isa = PBXBuildFile; fileRef = 779469C0302F48A0006A35D6 /* NeoGeo.oesystemplugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		779469CC302F4F7F006A35D6 /* Controller-Preferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 779469CB302F4F7F006A35D6 /* Controller-Preferences.plist */; };
@@ -1369,6 +1370,7 @@
 		7699EC941D6303EC005BC437 /* ca */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ControlLabels.strings; sourceTree = "<group>"; };
 		7733FED23038F526005F6159 /* CheatSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatSearchViewController.swift; sourceTree = "<group>"; };
 		7733FED53038F531005F6159 /* CheatSearchWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatSearchWindowController.swift; sourceTree = "<group>"; };
+		777FC50C306D251400478824 /* SetupAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupAssistant.swift; sourceTree = "<group>"; };
 		779469C0302F48A0006A35D6 /* NeoGeo.oesystemplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NeoGeo.oesystemplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		779469CA302F4E2B006A35D6 /* NeoGeo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NeoGeo-Bridging-Header.h"; sourceTree = "<group>"; };
 		779469CB302F4F7F006A35D6 /* Controller-Preferences.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Controller-Preferences.plist"; sourceTree = "<group>"; };
@@ -2848,6 +2850,7 @@
 				77B16D25304EB13B002558CA /* CheatFeedbackService.swift */,
 				77B16D28304EB187002558CA /* BrowseOnlineCheatsViewController.swift */,
 				77B16D2B304EB18B002558CA /* BrowseOnlineCheatsWindowController.swift */,
+				777FC50C306D251400478824 /* SetupAssistant.swift */,
 			);
 			indentWidth = 4;
 			name = OpenEmu;
@@ -6499,6 +6502,7 @@
 				8F9410C0273A0167004C47CC /* CoreUpdater.swift in Sources */,
 				14FEB8870D5948A1BCD26EEF /* OELibretroMetadata.swift in Sources */,
 				94A4E992179F9D0400AD8C7D /* OEDBScreenshotsMedia.swift in Sources */,
+				777FC50D306D251400478824 /* SetupAssistant.swift in Sources */,
 				94A4E996179FAB9F00AD8C7D /* OEMediaViewController.m in Sources */,
 				8F4AEAC1273594E6005C6246 /* OpenVGDB.swift in Sources */,
 				83E89274197471F8004D4489 /* HomebrewCoverView.swift in Sources */,
@@ -8567,6 +8571,8 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_ENTITLEMENTS = OpenEmu.entitlements;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 27;
+				DEVELOPMENT_TEAM = TNJWN4AX43;
 				EXCLUDED_ARCHS = x86_64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8594,7 +8600,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = OpenEmu;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
@@ -8612,7 +8618,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = OpenEmu;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_ENTITLEMENTS = OpenEmu.entitlements;
+				CURRENT_PROJECT_VERSION = 27;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = TNJWN4AX43;
 				EXCLUDED_ARCHS = x86_64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8640,7 +8648,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = OpenEmu;
 				SWIFT_OBJC_BRIDGING_HEADER = "OpenEmu-Bridging-Header.h";

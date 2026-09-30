@@ -6,7 +6,8 @@ resize behavior to match the upstream OpenEmu-Silicon v1.3.0 approach.
 - Repository: OpenEmuARM
 - Branch: `fix/refresh-v2.1.1-dmg`
 - Existing source file: `OpenEmu/GameWindowController.swift`
-- Scope of the planned change: recenter the window when the core changes the
-  game resolution, while keeping the window inside the visible screen frame.
+- Scope of the planned change: keep the window origin stable when the core
+  changes the game resolution, while keeping the window inside the visible
+  screen frame.
 - Existing unrelated working-tree changes were preserved and are not part of
   this adjustment.

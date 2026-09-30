@@ -13,6 +13,8 @@
                 <outlet property="coreSelectionView" destination="263" id="591"/>
                 <outlet property="installCoreTableView" destination="286" id="561"/>
                 <outlet property="lastStepView" destination="394" id="594"/>
+                <outlet property="backButton" destination="412" id="back-button-outlet"/>
+                <outlet property="nextButton" destination="396" id="next-button-outlet"/>
                 <outlet property="replaceView" destination="265" id="267"/>
                 <outlet property="view" destination="238" id="240"/>
                 <outlet property="welcomeView" destination="295" id="590"/>
@@ -70,7 +72,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="296">
-                    <rect key="frame" x="164" y="102" width="504" height="335"/>
+                    <rect key="frame" x="143" y="102" width="544" height="335"/>
                     <subviews>
                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="298" customClass="BackgroundImageView" customModule="OpenEmu" customModuleProvider="target">
                             <rect key="frame" x="20" y="59" width="462" height="256"/>
@@ -326,7 +328,7 @@ This setup will install the system cores you need to start playing. Cores are mo
                             <subviews>
                                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="400">
                                     <rect key="frame" x="17" y="220" width="62" height="16"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="What’s New in OpenEmuARM 2.1.1" id="401">
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="What’s New in OpenEmuARM 2.1.4" id="401">
                                         <font key="font" metaFont="systemBold"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -338,9 +340,11 @@ This setup will install the system cores you need to start playing. Cores are mo
                                     <rect key="frame" x="17" y="156" width="383" height="56"/>
                                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" state="on" id="402">
                                         <font key="font" metaFont="smallSystem"/>
-                                        <string key="title">OpenEmuARM 2.1.1 is a maintenance update:
+                                        <string key="title">OpenEmuARM 2.1.4
 
-• Fixed the application build number so Sparkle correctly recognizes this release as newer than OpenEmuARM 2.0.1 and offers the update.</string>
+• Improved PlayStation 1 disc detection for valid fan-made and patched MODE1/MODE2 images whose license signature differs from retail discs, including compatible .cue/.bin releases.
+• Added Show Information… to the game context menu, displaying ROM metadata and the preferred and available cores for the detected system.
+• PlayStation 1 games with a valid ISO9660 filesystem and SYSTEM.CNF are now recognized even when the optional retail license text is missing or modified.</string>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
@@ -360,7 +364,7 @@ This setup will install the system cores you need to start playing. Cores are mo
                             </subviews>
                             <constraints>
                                 <constraint firstItem="400" firstAttribute="top" secondItem="397" secondAttribute="top" constant="20" id="0v8-3P-NP7"/>
-                                <constraint firstAttribute="trailing" secondItem="399" secondAttribute="trailing" constant="64" id="2m8-zW-1nU"/>
+                                <constraint firstAttribute="trailing" secondItem="399" secondAttribute="trailing" constant="36" id="2m8-zW-1nU"/>
                                 <constraint firstItem="400" firstAttribute="leading" secondItem="397" secondAttribute="leading" constant="19" id="54H-qT-R4n"/>
                                 <constraint firstItem="399" firstAttribute="top" secondItem="400" secondAttribute="bottom" constant="8" id="Sqm-RN-cOj"/>
                                 <constraint firstItem="398" firstAttribute="top" secondItem="399" secondAttribute="bottom" constant="8" id="bkg-29-h4c"/>
@@ -400,14 +404,14 @@ This setup will install the system cores you need to start playing. Cores are mo
                         <constraint firstAttribute="trailing" secondItem="397" secondAttribute="trailing" constant="22" id="FEJ-Fi-kOV"/>
                         <constraint firstAttribute="height" constant="335" id="GNi-Ja-7nP"/>
                         <constraint firstItem="397" firstAttribute="leading" secondItem="395" secondAttribute="leading" constant="20" id="LYp-BZ-aeX"/>
-                        <constraint firstAttribute="width" constant="504" id="RAL-qi-VTN"/>
+                        <constraint firstAttribute="width" constant="544" id="RAL-qi-VTN"/>
                         <constraint firstItem="397" firstAttribute="top" secondItem="395" secondAttribute="top" constant="20" id="gpM-dK-QMA"/>
                     </constraints>
                 </customView>
             </subviews>
             <constraints>
-                <constraint firstItem="395" firstAttribute="centerX" secondItem="394" secondAttribute="centerX" constant="1" id="8FT-db-VRw"/>
-                <constraint firstAttribute="centerY" secondItem="395" secondAttribute="centerY" multiplier="0.87" constant="-32" id="gJQ-Qo-j14"/>
+                <constraint firstItem="395" firstAttribute="centerX" secondItem="394" secondAttribute="centerX" constant="0" id="8FT-db-VRw"/>
+                <constraint firstAttribute="centerY" secondItem="395" secondAttribute="centerY" multiplier="1" constant="0" id="gJQ-Qo-j14"/>
             </constraints>
             <point key="canvasLocation" x="139" y="1891"/>
         </customView>

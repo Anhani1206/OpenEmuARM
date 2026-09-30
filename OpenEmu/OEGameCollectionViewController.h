@@ -32,6 +32,7 @@ extern NSNotificationName const OEGameCollectionViewControllerDidSetSelectionInd
 
 @interface OEGameCollectionViewController : OECollectionViewController <NSMenuItemValidation, NSViewToolTipOwner>
 - (IBAction)showInFinder:(nullable id)sender;
+- (IBAction)showInformation:(nullable id)sender;
 
 - (void)performSearch:(NSString *)text;
 

@@ -39,6 +39,8 @@ final class MainWindowController: NSWindowController {
     private var shouldUndockGameWindowOnFullScreenExit = false
     private var resumePlayingAfterFullScreenTransition = false
     private var isLaunchingGame = false
+    private var frameBeforeWhatsNew: NSRect?
+    private var whatsNewWindowController: NSWindowController?
     @objc var mainWindowRunsGame = false
     private lazy var libraryController = LibraryController()
     @IBOutlet var placeholderView: NSView!
@@ -187,6 +189,61 @@ final class MainWindowController: NSWindowController {
             currentContentController = setupAssistant
         } else {
             currentContentController = libraryController
+        }
+    }
+
+    func showWhatsNew() {
+        guard !mainWindowRunsGame else { return }
+
+        if let whatsNewWindowController {
+            whatsNewWindowController.window?.makeKeyAndOrderFront(nil)
+            return
+        }
+
+        let whatsNewWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 830, height: 510),
+                                      styleMask: [.titled, .closable],
+                                      backing: .buffered,
+                                      defer: false)
+        whatsNewWindow.title = NSLocalizedString("What's New", comment: "What's New window title")
+        whatsNewWindow.titlebarAppearsTransparent = true
+        whatsNewWindow.styleMask.insert(.fullSizeContentView)
+        whatsNewWindow.isReleasedWhenClosed = false
+
+        let setupAssistant = SetupAssistant(showsWhatsNewOnly: true)
+        setupAssistant.completionBlock = { [weak self, weak whatsNewWindow] in
+            whatsNewWindow?.close()
+            self?.whatsNewWindowController = nil
+            self?.window?.makeKeyAndOrderFront(nil)
+        }
+
+        let controller = NSWindowController(window: whatsNewWindow)
+        controller.contentViewController = setupAssistant
+        whatsNewWindowController = controller
+
+        // SetupAssistant's nib can propose a much larger fitting size. Keep
+        // the What's New window at the same compact size as the launch screen.
+        let whatsNewSize = NSSize(width: 830, height: 510)
+        whatsNewWindow.minSize = whatsNewSize
+        whatsNewWindow.maxSize = whatsNewSize
+        controller.showWindow(nil)
+        whatsNewWindow.setContentSize(whatsNewSize)
+
+        if let mainWindow = window {
+            mainWindow.addChildWindow(whatsNewWindow, ordered: .above)
+            whatsNewWindow.setFrameOrigin(NSPoint(x: mainWindow.frame.midX - whatsNewWindow.frame.width / 2,
+                                                  y: mainWindow.frame.midY - whatsNewWindow.frame.height / 2))
+        } else {
+            whatsNewWindow.center()
+        }
+        whatsNewWindow.makeKeyAndOrderFront(nil)
+    }
+
+    private func showLibrary() {
+        currentContentController = libraryController
+
+        if let frameBeforeWhatsNew {
+            window?.setFrame(frameBeforeWhatsNew, display: true, animate: true)
+            self.frameBeforeWhatsNew = nil
         }
     }
     
@@ -568,6 +625,7 @@ extension MainWindowController: NSWindowDelegate {
     }
     
     func windowShouldClose(_ sender: NSWindow) -> Bool {
+        NSLog("[QuitTrace] Main windowShouldClose. gameDocument=%@", String(describing: gameDocument))
         if currentContentController == libraryController {
             return true
         } else {

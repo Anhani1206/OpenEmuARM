@@ -52,6 +52,8 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
 - (NSMenu *)OE_ratingMenuForGames:(NSArray *)games;
 - (NSMenu *)OE_collectionsMenuForGames:(NSArray *)games;
 - (void)setSaturnCartridge:(NSMenuItem *)sender;
+- (NSMenu *)oe_moveToSystemMenuForGames:(NSArray *)games;
+- (void)oe_moveSelectedGamesToSystem:(NSMenuItem *)sender;
 
 @property (strong) NSDate *listViewSelectionChangeDate;
 @property (readonly) OEArrayController *gamesController;
@@ -794,6 +796,7 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
         if(hasLocalFiles)
         {
             [menu addItemWithTitle:NSLocalizedString(@"Show in Finder", @"") action:@selector(showInFinder:) keyEquivalent:@""];
+            [menu addItemWithTitle:NSLocalizedString(@"Show Information…", @"Show ROM and core information") action:@selector(showInformation:) keyEquivalent:@""];
             //if(hasRemoteFiles)
                 //[menu addItemWithTitle:NSLocalizedString(@"Trash downloaded Files", @"") action:@selector(trashDownloadedFiles:) keyEquivalent:@""];
         }
@@ -816,6 +819,9 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
         NSMenuItem *collectionMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Add to Collection", @"") action:NULL keyEquivalent:@""];
         [collectionMenuItem setSubmenu:[self OE_collectionsMenuForGames:games]];
         [menu addItem:collectionMenuItem];
+        NSMenuItem *moveToSystemMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Move to System…", @"Move the selected game to another console system") action:NULL keyEquivalent:@""];
+        moveToSystemMenuItem.submenu = [self oe_moveToSystemMenuForGames:games];
+        [menu addItem:moveToSystemMenuItem];
         [menu addItem:[NSMenuItem separatorItem]];
         [menu addItemWithTitle:NSLocalizedString(@"Rename Game", @"") action:@selector(beginEditingWithSelectedItem:) keyEquivalent:@""];
         NSString *deleteGameMenuTitle;
@@ -863,6 +869,9 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
         NSMenuItem *collectionMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Add to Collection", @"") action:NULL keyEquivalent:@""];
         [collectionMenuItem setSubmenu:[self OE_collectionsMenuForGames:games]];
         [menu addItem:collectionMenuItem];
+        NSMenuItem *moveToSystemMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Move to System…", @"Move the selected games to another console system") action:NULL keyEquivalent:@""];
+        moveToSystemMenuItem.submenu = [self oe_moveToSystemMenuForGames:games];
+        [menu addItem:moveToSystemMenuItem];
 
         [menu addItem:[NSMenuItem separatorItem]];
         NSString *deleteGameMenuTitle;
@@ -876,6 +885,92 @@ static NSString * const OEGameTableSortDescriptorsKey = @"OEGameTableSortDescrip
     
     [menu setAutoenablesItems:YES];
     return menu;
+}
+
+- (NSMenu *)oe_moveToSystemMenuForGames:(NSArray *)games
+{
+    NSMenu *menu = [[NSMenu alloc] init];
+    OEDBGame *firstGame = [games firstObject];
+    NSManagedObjectContext *context = [firstGame managedObjectContext];
+    if(context == nil) return menu;
+
+    NSArray<OEDBSystem *> *systems = [OEDBSystem enabledSystemsIn:context];
+    systems = [systems filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(OEDBSystem *system, NSDictionary *_) {
+        return system.plugin != nil;
+    }]];
+    systems = [systems sortedArrayUsingComparator:^NSComparisonResult(OEDBSystem *a, OEDBSystem *b) {
+        return [a.name localizedStandardCompare:b.name];
+    }];
+
+    for(OEDBSystem *system in systems) {
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:system.name
+                                                       action:@selector(oe_moveSelectedGamesToSystem:)
+                                                keyEquivalent:@""];
+        item.representedObject = system;
+        BOOL allAlreadyUseSystem = YES;
+        for(OEDBGame *game in games) {
+            if(game.system != system) { allAlreadyUseSystem = NO; break; }
+        }
+        item.state = allAlreadyUseSystem ? NSControlStateValueOn : NSControlStateValueOff;
+        [menu addItem:item];
+    }
+    return menu;
+}
+
+- (void)oe_moveSelectedGamesToSystem:(NSMenuItem *)sender
+{
+    OEDBSystem *targetSystem = sender.representedObject;
+    OELibraryDatabase *database = [OELibraryDatabase defaultDatabase];
+    if(targetSystem == nil || database == nil) return;
+
+    NSURL *libraryFolder = database.romsFolderURL;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSMutableArray<NSString *> *failures = [NSMutableArray array];
+
+    for(OEDBGame *game in self.selectedGames) {
+        if(game.system == targetSystem) continue;
+        BOOL moved = YES;
+        for(OEDBRom *rom in game.roms) {
+            NSURL *sourceURL = rom.URL;
+            if(sourceURL == nil || libraryFolder == nil || ![sourceURL.path hasPrefix:libraryFolder.path]) continue;
+
+            NSURL *destinationFolder = [database romsFolderURLFor:targetSystem];
+            [fileManager createDirectoryAtURL:destinationFolder withIntermediateDirectories:YES attributes:nil error:nil];
+            NSURL *destinationURL = [destinationFolder URLByAppendingPathComponent:sourceURL.lastPathComponent];
+            if([fileManager fileExistsAtPath:destinationURL.path]) {
+                NSString *base = sourceURL.URLByDeletingPathExtension.lastPathComponent;
+                NSString *ext = sourceURL.pathExtension;
+                NSInteger suffix = 1;
+                do {
+                    NSString *name = ext.length ? [NSString stringWithFormat:@"%@ %ld.%@", base, (long)suffix, ext] : [NSString stringWithFormat:@"%@ %ld", base, (long)suffix];
+                    destinationURL = [destinationFolder URLByAppendingPathComponent:name];
+                    suffix++;
+                } while([fileManager fileExistsAtPath:destinationURL.path]);
+            }
+            NSError *error = nil;
+            if(![fileManager moveItemAtURL:sourceURL toURL:destinationURL error:&error]) {
+                moved = NO;
+                [failures addObject:[NSString stringWithFormat:@"%@ — %@", game.displayName, error.localizedDescription]];
+                break;
+            }
+            rom.URL = destinationURL;
+        }
+        if(moved) game.system = targetSystem;
+    }
+
+    NSError *saveError = nil;
+    if(![targetSystem.managedObjectContext save:&saveError] && saveError != nil)
+        [failures addObject:saveError.localizedDescription];
+
+    if(failures.count > 0) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Could not move all selected games", @"");
+        alert.informativeText = [failures componentsJoinedByString:@"\n"];
+        alert.alertStyle = NSAlertStyleWarning;
+        [alert addButtonWithTitle:NSLocalizedString(@"OK", @"")];
+        [alert runModal];
+    }
+    [self reloadData];
 }
 
 - (void)setSaturnCartridge:(NSMenuItem *)sender

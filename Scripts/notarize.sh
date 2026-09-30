@@ -76,6 +76,22 @@ echo "Credentials OK."
 echo ""
 echo "=== Re-signing all binaries with Developer ID + hardened runtime ==="
 
+# Older RetroArch wrappers use display names (including spaces and
+# parentheses) as CFBundleIdentifier values. Normalize those identifiers
+# before signing so codesign can seal every wrapper consistently.
+normalize_retroarch_identifiers() {
+  while IFS= read -r bundle; do
+    local name slug plist
+    name="$(basename "$bundle" .oecoreplugin)"
+    slug="$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/--*/-/g; s/^-//; s/-$//')"
+    plist="$bundle/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier org.openemu.retroarch.$slug" "$plist"
+    echo "  normalized RetroArch identifier: $name"
+  done < <(find "$APP/Contents/PlugIns/Cores" -type d -name '*-RetroArch.oecoreplugin' -print)
+}
+
+normalize_retroarch_identifiers
+
 sign() {
   local item="$1"; shift
   [ -e "$item" ] || return 0

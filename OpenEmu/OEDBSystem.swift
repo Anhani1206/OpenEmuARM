@@ -36,7 +36,6 @@ final class OEDBSystem: OEDBItem {
     /// Systems intentionally not exposed by this build. Their bundled assets
     /// remain in place so the Xcode project and installed cores stay intact.
     private static let hiddenSystemIdentifiers: Set<String> = [
-        "openemu.system.pokemini",
     ]
 
     class func isHiddenSystemIdentifier(_ identifier: String) -> Bool {
@@ -44,12 +43,7 @@ final class OEDBSystem: OEDBItem {
             return true
         }
 
-        // Old PokeMini cores used both `pokemini` and `pokemonmini` in their
-        // identifiers. Treat either spelling as hidden so an installed legacy
-        // bundle cannot restore it in Preferences → Cores.
-        let normalized = identifier.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-        return normalized.contains("pokemini") ||
-               normalized.contains("pokemonmini")
+        return false
     }
 
     private class func isHiddenSystem(_ system: OEDBSystem) -> Bool {
@@ -57,11 +51,7 @@ final class OEDBSystem: OEDBItem {
             return true
         }
 
-        // Older libraries can retain a legacy identifier for PokeMini. The
-        // localized name is the reliable fallback for those database entries.
-        let name = system.lastLocalizedName.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-        return name.contains("pokemon mini") ||
-               name.contains("poke mini")
+        return false
     }
     
     private static let ErrorDomain = "OEDBSystemErrorDomain"

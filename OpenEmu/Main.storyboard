@@ -234,7 +234,7 @@
                                         <menuItem isSeparatorItem="YES" id="1025">
                                             <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                         </menuItem>
-                                        <menuItem title="Quit OpenEmu" keyEquivalent="q" id="1020">
+                                        <menuItem title="Quit OpenEmuARM" keyEquivalent="q" id="1020">
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="localizeTitle" value="YES"/>
                                             </userDefinedRuntimeAttributes>
@@ -885,6 +885,15 @@ DQ
                                                 <action selector="showOEHelp:" target="-1" id="22h-bg-AzL"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="What's New" id="WnW-2j-3nQ">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="boolean" keyPath="localizeTitle" value="YES"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="showOEWhatsNew:" target="805" id="WnW-2j-3nR"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Release Notes" id="5YI-Il-P9H">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <userDefinedRuntimeAttributes>
@@ -894,7 +903,7 @@ DQ
                                                 <action selector="showOEReleaseNotes:" target="-1" id="ZcG-EE-YQ0"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="OpenEmu Web Site" id="ahk-gp-EN3">
+                                        <menuItem title="OpenEmuARM Web Site" id="ahk-gp-EN3">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="localizeTitle" value="YES"/>

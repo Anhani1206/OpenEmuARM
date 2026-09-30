@@ -54,7 +54,9 @@
     NSString *otherDataTrackString = [file readASCIIStringInRange:NSMakeRange(bytesFound ? 0x38 : 0x28, 6)];
     NSLog(@"%@", otherDataTrackString);
 
-    if (otherDataTrackString && [otherDataTrackString caseInsensitiveCompare:@"CD-ROM"] == NSOrderedSame)
+    if (otherDataTrackString &&
+        ([otherDataTrackString caseInsensitiveCompare:@"CD-ROM"] == NSOrderedSame ||
+         [otherDataTrackString caseInsensitiveCompare:@"CD_ROM"] == NSOrderedSame))
         return OEFileSupportYes;
 
     if([otherDataTrackString containsString:@"TECD"])

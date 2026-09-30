@@ -178,9 +178,7 @@ final class PrefBiosController: NSViewController {
         }
 
         let identity = "\(core.bundleIdentifier) \(core.displayName)".lowercased()
-        return identity.contains("pokemini") ||
-               identity.contains("pokemon mini") ||
-               identity.contains("commodore 64") ||
+        return identity.contains("commodore 64") ||
                identity.contains("vice c64")
     }
     

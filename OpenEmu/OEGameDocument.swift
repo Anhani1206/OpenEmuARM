@@ -620,12 +620,15 @@ final class OEGameDocument: NSDocument {
     }
     
     override func canClose(withDelegate delegate: Any, shouldClose shouldCloseSelector: Selector?, contextInfo: UnsafeMutableRawPointer?) {
+        NSLog("[QuitTrace] canClose entered. system=%@ status=%ld", systemIdentifier, emulationStatus.rawValue)
         if emulationStatus == .notSetup || emulationStatus == .terminating {
+            NSLog("[QuitTrace] canClose allowing close because status is notSetup/terminating")
             super.canClose(withDelegate: delegate, shouldClose: shouldCloseSelector, contextInfo: contextInfo)
             return
         }
         
         if !shouldTerminateEmulation {
+            NSLog("[QuitTrace] canClose cancelled by user")
             let shouldClose = {
                 guard let shouldCloseSelector = shouldCloseSelector else { return }
                 let Class: AnyClass = type(of: delegate as AnyObject)
@@ -641,11 +644,16 @@ final class OEGameDocument: NSDocument {
         }
         
         saveState(name: OEDBSaveState.autosaveName) { _ in
+            NSLog("[QuitTrace] autosave completed; stopping core. system=%@", self.systemIdentifier)
             self.emulationStatus = .terminating
             // TODO: #567 and #568 need to be fixed first
             //removeDeviceNotificationObservers()
-            
-            self.gameCoreManager?.stopEmulation() {
+
+            var closeWasCompleted = false
+            let completeClose: () -> Void = {
+                guard !closeWasCompleted else { return }
+                closeWasCompleted = true
+                NSLog("[QuitTrace] core stop completion received. system=%@", self.systemIdentifier)
                 SentryService.addBreadcrumb(message: "Emulation stopped", category: "emulation")
                 SentryService.clearGameContext()
                 OEBindingsController.default.systemBindings(for: self.systemPlugin.controller).remove(self)
@@ -680,6 +688,19 @@ final class OEGameDocument: NSDocument {
                 self.lastPlayStartDate = nil
                 
                 super.canClose(withDelegate: delegate, shouldClose: shouldCloseSelector, contextInfo: contextInfo)
+            }
+
+            self.gameCoreManager?.stopEmulation(completionHandler: completeClose)
+
+            // ARMSX2 can leave its helper-side stop completion pending while
+            // its renderer threads finish shutting down. Do not require a
+            // second Quit Game click to close the document in that case.
+            if self.systemIdentifier == "openemu.system.ps2" {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    guard !closeWasCompleted else { return }
+                    NSLog("[QuitTrace] ARMSX2 stop timeout; completing document close")
+                    completeClose()
+                }
             }
         }
     }
@@ -1292,6 +1313,7 @@ final class OEGameDocument: NSDocument {
     }
     
     @IBAction func stopEmulation(_ sender: Any?) {
+        NSLog("[QuitTrace] document stopEmulation action. system=%@ status=%ld", systemIdentifier, emulationStatus.rawValue)
         // we can't just close the document here because proper shutdown is implemented in
         // method canClose(withDelegate:shouldClose:contextInfo:)
         windowControllers.forEach { $0.window?.performClose(sender) }
@@ -1445,28 +1467,40 @@ final class OEGameDocument: NSDocument {
     }
     
     private var shouldTerminateEmulation: Bool {
+        NSLog("[QuitTrace] evaluating shouldTerminateEmulation. system=%@ status=%ld", systemIdentifier, emulationStatus.rawValue)
         if coreDidTerminateSuddenly {
+            NSLog("[QuitTrace] coreDidTerminateSuddenly=true")
             return true
         }
         
-        let didPauseEmulation = pauseEmulationIfNeeded()
+        // ARMSX2 owns an additional rendering/window lifecycle. Pausing it
+        // before the quit confirmation can consume the first Quit click and
+        // leave the PS2 session open until a second click. The stop path
+        // already suspends and tears down the core after confirmation.
+        let didPauseEmulation = systemIdentifier == "openemu.system.ps2"
+            ? false
+            : pauseEmulationIfNeeded()
         
         if OEAlert.stopEmulation().runModal() != .alertFirstButtonReturn {
+            NSLog("[QuitTrace] quit confirmation cancelled")
             if didPauseEmulation {
                 isEmulationPaused = false
             }
             return false
         }
         
+        NSLog("[QuitTrace] quit confirmation accepted")
         return true
     }
     
     @discardableResult
     private func pauseEmulationIfNeeded() -> Bool {
         let pauseNeeded = emulationStatus == .playing
+        NSLog("[QuitTrace] pauseEmulationIfNeeded. system=%@ pauseNeeded=%@ status=%ld", systemIdentifier, String(pauseNeeded), emulationStatus.rawValue)
         
         if pauseNeeded {
             isEmulationPaused = true
+            NSLog("[QuitTrace] pause requested. isPaused=%@ status=%ld", String(isEmulationPaused), emulationStatus.rawValue)
         }
         
         return pauseNeeded && isEmulationPaused

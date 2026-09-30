@@ -202,6 +202,7 @@ final class GameControlsBarView: NSView {
     // MARK: - Actions
     
     @objc private func stopEmulation(_ sender: Any?) {
+        NSLog("[QuitTrace] HUD Quit Game clicked. parentWindow=%@", String(describing: window?.parent))
         window?.parent?.performClose(self)
     }
     

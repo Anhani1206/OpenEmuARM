@@ -350,21 +350,28 @@ static void armsx2_openemu_did_execute(void *context)
 
 - (void)stopEmulation
 {
+    NSLog(@"[QuitTrace] ARMSX2 stopEmulation entered: loaded=%d initialized=%d", _gameLoaded, _coreInitialized);
     // Prevent a late GS callback from retaining this wrapper while the core is
     // shutting down. The core owns the other side of these callback pointers.
     if (_api.set_metal_callbacks != nullptr) {
         _api.set_metal_callbacks(nullptr, nullptr, nullptr, nullptr, nullptr);
     }
     if (_gameLoaded && _api.unload_game != nullptr) {
+        NSLog(@"[QuitTrace] ARMSX2 calling unload_game");
         _api.unload_game();
+        NSLog(@"[QuitTrace] ARMSX2 unload_game returned");
     }
     _gameLoaded = false;
     if (_coreInitialized && _api.deinit != nullptr) {
+        NSLog(@"[QuitTrace] ARMSX2 calling deinit");
         _api.deinit();
+        NSLog(@"[QuitTrace] ARMSX2 deinit returned");
     }
     _coreInitialized = false;
     if (_api.handle != nullptr) {
+        NSLog(@"[QuitTrace] ARMSX2 calling dlclose");
         dlclose(_api.handle);
+        NSLog(@"[QuitTrace] ARMSX2 dlclose returned");
     }
     _api = {};
     if (currentCore == self) {

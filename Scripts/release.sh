@@ -62,12 +62,12 @@ step "Preflight checks"
 
 # Check notarytool credentials
 # Credentials are stored in keychain under the profile name "OpenEmu" from a prior run of:
-#   xcrun notarytool store-credentials OpenEmu --apple-id <id> --team-id TNJWN4AX43 --password <app-specific-password>
+#   xcrun notarytool store-credentials OpenEmu --apple-id <id> --team-id AJC82Q6789 --password <app-specific-password>
 # App-specific passwords are generated at appleid.apple.com → Security → App-Specific Passwords.
 # If you see a 403 error here, a Developer Program agreement likely needs re-acceptance at
 # appstoreconnect.apple.com (look for a banner at the top of the page).
 xcrun notarytool history --keychain-profile "OpenEmu" &>/dev/null \
-  || die "No notarytool credentials found. Run: xcrun notarytool store-credentials OpenEmu --apple-id <id> --team-id TNJWN4AX43 --password <app-specific-password>"
+  || die "No notarytool credentials found. Run: xcrun notarytool store-credentials OpenEmu --apple-id <id> --team-id AJC82Q6789 --password <app-specific-password>"
 echo "OK: notarytool credentials"
 
 # Check gh CLI
@@ -143,7 +143,6 @@ xcodebuild archive \
   CURRENT_PROJECT_VERSION="$PLIST_BUILD_VERSION" \
   CODE_SIGN_IDENTITY="$IDENTITY" \
   CODE_SIGN_STYLE=Manual \
-  DEVELOPMENT_TEAM=TNJWN4AX43 \
   ENABLE_HARDENED_RUNTIME=YES \
   2>&1 | grep -E "^(Archive|error:|warning:|BUILD)" | tail -20
 

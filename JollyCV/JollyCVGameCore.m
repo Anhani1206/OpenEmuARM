@@ -36,6 +36,12 @@
 #import "OEColecoVisionSystemResponderClient.h"
 #import <OpenGL/gl.h>
 
+#define RC_CLIENT_SUPPORTS_HASH 1
+#include "../Vendor/rcheevos/include/rc_client.h"
+#include "../Vendor/rcheevos/include/rc_consoles.h"
+#import "../OpenEmuKit/Source/OERetroAchievementsTransport.h"
+#import "../OpenEmuKit/Source/OERetroAchievementsBridge.h"
+
 #define SAMPLERATE 48000
 #define FRAMERATE 60
 #define CHANNELS 1
@@ -46,12 +52,24 @@
     NSData *_romData;
     uint8_t _padData[NUMINPUTS][OEColecoVisionButtonCount];
     int16_t *_soundBuffer;
+    OERetroAchievementsBridge *_raBridge;
 }
 @end
 
 @implementation JollyCVGameCore
 
 static __weak JollyCVGameCore *_current;
+
+static uint32_t jollycv_rc_read_memory(uint32_t address, uint8_t *buffer,
+                                       uint32_t num_bytes, rc_client_t *client)
+{
+    for (uint32_t i = 0; i < num_bytes; i++) {
+        if (address + i > UINT16_MAX)
+            return i;
+        buffer[i] = jcv_mem_rd((uint16_t)(address + i));
+    }
+    return num_bytes;
+}
 
 - (id)init
 {
@@ -66,6 +84,8 @@ static __weak JollyCVGameCore *_current;
 
 - (void)dealloc
 {
+    [_raBridge shutdown];
+    _raBridge = nil;
     jcv_deinit();
     free(_soundBuffer);
 }
@@ -103,17 +123,54 @@ static __weak JollyCVGameCore *_current;
         return NO;
     }
 
+    _raBridge = [[OERetroAchievementsBridge alloc] initWithGameCore:self
+                                                       memoryReader:jollycv_rc_read_memory
+                                                          consoleID:RC_CONSOLE_COLECOVISION];
+    [_raBridge startWithROMPath:path];
+    [_raBridge markROMReady];
+
 	return YES;
 }
 
 - (void)executeFrame
 {
     jcv_exec();
+    [_raBridge doFrame];
 }
 
 - (void)resetEmulation
 {
     jcv_reset(0);
+    [_raBridge reset];
+}
+
+- (void)stopEmulation
+{
+    [_raBridge shutdown];
+    _raBridge = nil;
+    [super stopEmulation];
+}
+
+#pragma mark - RetroAchievements
+
+- (void)retroAchievementsIdle
+{
+    [_raBridge idle];
+}
+
+- (BOOL)canPauseRetroAchievementsHardcoreWithFramesRemaining:(uint32_t *)framesRemaining
+{
+    return _raBridge ? [_raBridge canPauseWithFramesRemaining:framesRemaining] : YES;
+}
+
+- (NSData *)retroAchievementsSerializedProgress
+{
+    return [_raBridge serializeProgress];
+}
+
+- (void)retroAchievementsDeserializeProgress:(NSData *)data
+{
+    [_raBridge deserializeProgress:data];
 }
 
 #pragma mark - Video

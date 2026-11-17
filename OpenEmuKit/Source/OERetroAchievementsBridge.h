@@ -23,7 +23,7 @@
 #ifndef RC_CLIENT_SUPPORTS_HASH
 #define RC_CLIENT_SUPPORTS_HASH 1
 #endif
-#include <rc_client.h>
+#include "../../Vendor/rcheevos/include/rc_client.h"
 
 @class OEGameCore;
 

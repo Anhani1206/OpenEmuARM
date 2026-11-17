@@ -141,7 +141,7 @@ cp "$LIBRETRO_DYLIB" "$RESOURCES/armsx2_libretro.dylib"
 
 # Bundle the Homebrew libraries used by the libretro build. A distributed
 # plugin must not depend on /opt/homebrew existing on the destination Mac.
-portable_names=(libwebp.7.dylib libsharpyuv.0.dylib libSDL3.0.dylib liblz4.1.dylib libjpeg.8.dylib libpng16.16.dylib libzstd.1.dylib libplutosvg.0.dylib libfreetype.6.dylib libplutovg.1.dylib)
+portable_names=(libwebp.7.dylib libsharpyuv.0.dylib libSDL3.0.dylib liblz4.1.dylib libjpeg.8.dylib libpng16.16.dylib libzstd.1.dylib libplutosvg.0.dylib libfreetype.6.dylib libplutovg.1.dylib libbrotlidec.1.dylib libbrotlicommon.1.dylib)
 portable_sources=(
     "$(brew --prefix webp)/lib/libwebp.7.dylib"
     "$(brew --prefix webp)/lib/libsharpyuv.0.dylib"
@@ -153,6 +153,8 @@ portable_sources=(
     "$(brew --prefix plutosvg)/lib/libplutosvg.0.dylib"
     "$(brew --prefix freetype)/lib/libfreetype.6.dylib"
     "$(brew --prefix plutovg)/lib/libplutovg.1.dylib"
+    "$(brew --prefix brotli)/lib/libbrotlidec.1.dylib"
+    "$(brew --prefix brotli)/lib/libbrotlicommon.1.dylib"
 )
 for index in "${!portable_names[@]}"; do
     library="${portable_names[$index]}"

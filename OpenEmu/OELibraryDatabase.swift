@@ -453,11 +453,28 @@ final class OELibraryDatabase: NSObject {
            let metadata = persistentStoreCoordinator?.metadata(for: persistentStore),
            let urlString = metadata[Self.libraryRomsFolderURLKey] as? String
         {
-            if !urlString.contains("file://") {
-                return URL(string: urlString, relativeTo: databaseFolderURL)
-            } else {
-                return URL(string: urlString)
+            let databaseFolder = databaseFolderURL.standardizedFileURL
+
+            // Paths inside the library are stored as "./roms/". Resolve them
+            // as file paths instead of URL strings so spaces and non-ASCII
+            // characters are not double-escaped or lost.
+            if urlString.hasPrefix("./") {
+                let relativePath = String(urlString.dropFirst(2))
+                return databaseFolder
+                    .appendingPathComponent(relativePath, isDirectory: true)
+                    .standardizedFileURL
             }
+
+            if let url = URL(string: urlString), url.isFileURL {
+                return url.standardizedFileURL
+            }
+
+            // Recover from older metadata that contains a plain absolute path.
+            if urlString.hasPrefix("/") {
+                return URL(fileURLWithPath: urlString, isDirectory: true).standardizedFileURL
+            }
+
+            return nil
         } else {
             let result = databaseFolderURL.appendingPathComponent("roms", isDirectory: true)
             try? FileManager.default.createDirectory(at: result, withIntermediateDirectories: true)
@@ -472,13 +489,16 @@ final class OELibraryDatabase: NSObject {
               var metadata = persistentStore.metadata
         else { return }
         
-        let databaseFolderURL = databaseFolderURL
+        let databaseFolderURL = databaseFolderURL.standardizedFileURL
+        let normalizedURL = url.standardizedFileURL
         
-        if url.isSubpath(of: databaseFolderURL) {
-            let urlString = (url.absoluteString as NSString).substring(from: (databaseFolderURL.absoluteString as NSString).length)
-            metadata[Self.libraryRomsFolderURLKey] = "./" + urlString
+        if normalizedURL.isSubpath(of: databaseFolderURL) {
+            let relativePath = normalizedURL.path
+                .dropFirst(databaseFolderURL.path.count)
+                .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            metadata[Self.libraryRomsFolderURLKey] = "./" + relativePath
         } else {
-            metadata[Self.libraryRomsFolderURLKey] = url.absoluteString
+            metadata[Self.libraryRomsFolderURLKey] = normalizedURL.absoluteString
         }
         
         // Using the instance method sets the metadata for the current store in memory, while

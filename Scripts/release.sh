@@ -132,7 +132,7 @@ ARCHIVE_PATH="$HOME/Library/Developer/Xcode/Archives/$(date +%Y-%m-%d)/OpenEmu-S
 mkdir -p "$(dirname "$ARCHIVE_PATH")"
 
 xcodebuild archive \
-  -workspace "$REPO_ROOT/OpenEmu-metal.xcworkspace" \
+  -workspace "$REPO_ROOT/OpenEmu.xcworkspace" \
   -scheme OpenEmu \
   -configuration Release \
   -destination generic/platform=macOS \
@@ -160,7 +160,7 @@ PS2_SYSTEM_PLUGIN="$APP_IN_ARCHIVE/Contents/PlugIns/Systems/PlayStation 2.oesyst
 # These core bundles are staged inside the app, then copied to Application
 # Support on first launch. This keeps a fresh installation independent of
 # appcasts and network access.
-BUNDLED_CORE_REFRESH_REVISION="${BUNDLED_CORE_REFRESH_REVISION:-20260901.1}"
+BUNDLED_CORE_REFRESH_REVISION="${BUNDLED_CORE_REFRESH_REVISION:-20261015.1}"
 
 stamp_bundled_core() {
   local core_path="$1"

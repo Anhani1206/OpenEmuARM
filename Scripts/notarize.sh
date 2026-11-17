@@ -51,6 +51,9 @@ WORK_DIR=$(mktemp -d)
 APP="$WORK_DIR/OpenEmu.app"
 echo "Copying app to temp dir..."
 ditto "$APP_SRC" "$APP" || die "Failed to copy app."
+# ZIP archives can preserve read-only permissions on bundled binaries. Make the
+# temporary copy writable before replacing ad-hoc signatures with Developer ID.
+chmod -R u+rwX "$APP" || die "Failed to make temporary app writable."
 
 # ── 3. Credential check ──────────────────────────────────────────────────────
 echo ""

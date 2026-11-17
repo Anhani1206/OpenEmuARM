@@ -65,12 +65,15 @@ final class LibretroCheatProvider: CheatDatabaseProvider {
     // OpenEmu system ID → Libretro directory/DAT name
     private let systemMap: [String: String] = [
         OESystemIdentifierAtari2600: "Atari - 2600",
+        "openemu.system.5200":    "Atari - 5200",
+        "openemu.system.7800":    "Atari - 7800",
         OESystemIdentifierSMS:       "Sega - Master System - Mark III",
         OESystemIdentifierNES:       "Nintendo - Nintendo Entertainment System",
         OESystemIdentifierFDS:       "Nintendo - Family Computer Disk System",
         OESystemIdentifierN64:       "Nintendo - Nintendo 64",
         OESystemIdentifierGenesis:   "Sega - Mega Drive - Genesis",
         OESystemIdentifierSegaCD:    "Sega - Mega-CD - Sega CD",
+        OESystemIdentifierSega32X:   "Sega - 32X",
         OESystemIdentifierGBA:       "Nintendo - Game Boy Advance",
         OESystemIdentifierSNES:      "Nintendo - Super Nintendo Entertainment System",
         OESystemIdentifierNDS:       "Nintendo - Nintendo DS",
@@ -78,7 +81,10 @@ final class LibretroCheatProvider: CheatDatabaseProvider {
         OESystemIdentifierSG1000:    "Sega - SG-1000",
         OESystemIdentifierGB:        "Nintendo - Game Boy",
         OESystemIdentifierColecoVision: "Coleco - ColecoVision",
+        "openemu.system.msx":       "Microsoft - MSX",
+        "openemu.system.odyssey2":  "Magnavox - Odyssey2",
         OESystemIdentifierPSX:       "Sony - PlayStation",
+        "openemu.system.psp":       "Sony - PlayStation Portable",
         OESystemIdentifierLynx:      "Atari - Lynx",
         OESystemIdentifierNGP:       "SNK - Neo Geo Pocket",
         OESystemIdentifierPCE:       "NEC - PC Engine - TurboGrafx 16",
@@ -87,6 +93,8 @@ final class LibretroCheatProvider: CheatDatabaseProvider {
         OESystemIdentifierVB:        "Nintendo - Virtual Boy",
         OESystemIdentifierWS:        "Bandai - WonderSwan",
         OESystemIdentifierPCFX:      "NEC - PC-FX",
+        "openemu.system.sv":        "Watara - SuperVision",
+        "openemu.system.vectrex":   "GCE - Vectrex",
     ]
 
     // Systems where a single system ID maps to multiple Libretro DAT/CHT directories

@@ -670,8 +670,11 @@ static void MupenSetAudioSpeed(int percent)
     };
 
     // Load Video
-    LoadPlugin(M64PLUGIN_GFX, @"mupen64plus-video-GLideN64.so");
-    //LoadPlugin(M64PLUGIN_GFX, @"mupen64plus-video-angrylion-rdp-plus.so");
+    const char *ROMname = (const char *)ROM_HEADER.Name;
+    BOOL isSF2ArcadeHomebrew = strstr(ROMname, "SF2 Arcade 2-Pack") != 0;
+    LoadPlugin(M64PLUGIN_GFX, isSF2ArcadeHomebrew
+               ? @"mupen64plus-video-angrylion-rdp-plus.so"
+               : @"mupen64plus-video-GLideN64.so");
 
     ptr_OE_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_OE_ForceUpdateWindowSize");
 
@@ -690,7 +693,6 @@ static void MupenSetAudioSpeed(int percent)
     // Load RSP
     //LoadPlugin(M64PLUGIN_RSP, @"mupen64plus-rsp-hle.so");
 
-    const char *ROMname = (const char *)ROM_HEADER.Name;
     const char *gfxPluginName;
     gfx.getVersion(NULL, NULL, NULL, &gfxPluginName, NULL);
 
@@ -711,6 +713,14 @@ static void MupenSetAudioSpeed(int percent)
     int usingHLE = 1;
     if(strstr(gfxPluginName, "angrylion's RDP Plus") != 0)
         usingHLE = 0; // LLE GPU plugin
+
+    // This libdragon homebrew uses a custom RSP graphics microcode.  HLE
+    // does not reliably recognize it, which can result in a black screen.
+    // Keep the normal HLE path for commercial ROMs and use the cxd4 LLE path
+    // only for this known homebrew title.
+    if(strstr(ROMname, "SF2 Arcade 2-Pack") != 0)
+        usingHLE = 0;
+
     ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
 
     LoadPlugin(M64PLUGIN_RSP, @"mupen64plus-rsp-cxd4.so");

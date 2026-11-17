@@ -39,8 +39,10 @@
 #import "DolphinGameCore.h"
 #include "DolHost.h"
 #include "AudioCommon/SoundStream.h"
+#include "Core/Core.h"
 #include "Core/State.h"
 #include "Core/System.h"
+#include "Core/HW/Memmap.h"
 #include "OpenEmuAudioStream.h"
 #include "UICommon/UICommon.h"
 #include <stdatomic.h>
@@ -49,6 +51,10 @@
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>
 
+#import "../OpenEmuKit/Source/OERetroAchievementsTransport.h"
+#import "../OpenEmuKit/Source/OERetroAchievementsBridge.h"
+#include "../Vendor/rcheevos/include/rc_consoles.h"
+
 #define OpenEmu 1
 
 @interface DolphinGameCore () <OEGCSystemResponderClient>
@@ -56,6 +62,28 @@
 @end
 
 DolphinGameCore *_current = 0;
+
+static uint32_t dolphin_rc_read_memory(uint32_t address, uint8_t *buffer,
+                                       uint32_t num_bytes, rc_client_t *client)
+{
+    auto &system = Core::System::GetInstance();
+    if (Core::GetState(system) != Core::State::Running)
+        return 0;
+
+    u32 realAddress;
+    if (address < 0x01800000u)
+        realAddress = 0x80000000u + address;
+    else if (address >= 0x10000000u && address < 0x14000000u)
+        realAddress = 0x90000000u + (address - 0x10000000u);
+    else
+        return 0;
+
+    const u8 *ptr = system.GetMemory().GetPointerForRange(realAddress, num_bytes);
+    if (ptr == nullptr)
+        return 0;
+    memcpy(buffer, ptr, num_bytes);
+    return num_bytes;
+}
 
 // g_sound_stream was removed in Dolphin 26.03; access via Core::System::GetInstance().GetSoundStream()
 
@@ -75,6 +103,7 @@ DolphinGameCore *_current = 0;
 
     id<MTLTexture> _dolMetalTexture;
     CAMetalLayer  *_dolMetalLayer;
+    OERetroAchievementsBridge *_raBridge;
 }
 
 - (instancetype)init
@@ -90,6 +119,8 @@ DolphinGameCore *_current = 0;
 
 - (void)dealloc
 {
+    [_raBridge shutdown];
+    _raBridge = nil;
     delete dol_host;
     free(_soundBuffer);
 }
@@ -116,6 +147,11 @@ DolphinGameCore *_current = 0;
 
     dol_host->Init([[self supportDirectoryPath] fileSystemRepresentation], [path fileSystemRepresentation] );
 
+    _raBridge = [[OERetroAchievementsBridge alloc] initWithGameCore:self
+                                                       memoryReader:dolphin_rc_read_memory
+                                                          consoleID:(uint32_t)(_isWii ? RC_CONSOLE_WII : RC_CONSOLE_GAMECUBE)];
+    [_raBridge startWithROMPath:path];
+
     usleep(5000);
     return YES;
 }
@@ -129,6 +165,8 @@ DolphinGameCore *_current = 0;
 
 - (void)stopEmulation
 {
+    [_raBridge shutdown];
+    _raBridge = nil;
     _isInitialized = false;
     
     dol_host->RequestStop();
@@ -158,6 +196,29 @@ DolphinGameCore *_current = 0;
 - (void)resetEmulation
 {
      dol_host->Reset();
+     [_raBridge reset];
+}
+
+#pragma mark - RetroAchievements
+
+- (void)retroAchievementsIdle
+{
+    [_raBridge idle];
+}
+
+- (BOOL)canPauseRetroAchievementsHardcoreWithFramesRemaining:(uint32_t *)framesRemaining
+{
+    return _raBridge ? [_raBridge canPauseWithFramesRemaining:framesRemaining] : YES;
+}
+
+- (NSData *)retroAchievementsSerializedProgress
+{
+    return [_raBridge serializeProgress];
+}
+
+- (void)retroAchievementsDeserializeProgress:(NSData *)data
+{
+    [_raBridge deserializeProgress:data];
 }
 
 - (void)executeFrame
@@ -168,7 +229,9 @@ DolphinGameCore *_current = 0;
         dol_host->Pause(false);
         }
     
-      dol_host->UpdateFrame();
+        dol_host->UpdateFrame();
+        [_raBridge markROMReady];
+        [_raBridge doFrame];
     }
 }
 

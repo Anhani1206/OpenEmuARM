@@ -114,6 +114,7 @@ static char *_contentDirCStr     = NULL;
 // callbacks are written assuming this is shared across threads.
 static __unsafe_unretained OELibretroCoreTranslator *_current = nil;
 
+
 // HW Callbacks
 typedef void (*glGetIntegerv_t)(uint32_t pname, int *params);
 
@@ -1628,6 +1629,7 @@ static void* bridge_dlsym(void *handle, const char *symbol) {
         }
         return NO;
     }
+
 
     // Restore the persisted battery-backed RAM after the core has created its
     // save buffer. Use the same filename convention as native OpenEmu cores.

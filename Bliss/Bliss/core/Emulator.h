@@ -73,6 +73,8 @@ class Emulator : public Peripheral
         void FlushAudio();
         void Render();
 
+        UINT16 PeekMemory(UINT16 location) { return memoryBus.peek(location); }
+
         virtual BOOL SaveStateBuffer(void* outBuffer, size_t bufferSize) = 0;
         virtual BOOL LoadStateBuffer(const void* inBuffer, size_t bufferSize) = 0;
 

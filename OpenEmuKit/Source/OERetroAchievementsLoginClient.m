@@ -25,7 +25,7 @@
 
 #import "OERetroAchievementsLoginClient.h"
 #import "OERetroAchievementsTransport.h"
-#include <rc_client.h>
+#include "../../Vendor/rcheevos/include/rc_client.h"
 
 static NSString *const OERetroAchievementsLoginErrorDomain = @"org.openemu.RetroAchievementsLogin";
 

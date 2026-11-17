@@ -47,6 +47,17 @@ class ImportFailureTests: XCTestCase, ROMImporterDelegate {
         let importer = try XCTUnwrap(OELibraryDatabase.default?.importer)
         importer.delegate = self
         
+        // Keep this test independent from the user's persisted system preferences.
+        let importContext = try XCTUnwrap(importer.context)
+        let systems = OEDBSystem.allSystems(in: importContext)
+        let previousSystemStates = systems.map { ($0, $0.isEnabled) }
+        systems.forEach { $0.isEnabled = $0.systemIdentifier == "openemu.system.nes" }
+        defer {
+            previousSystemStates.forEach { system, wasEnabled in
+                system.isEnabled = wasEnabled
+            }
+        }
+
         let testFiles = [
             "compression_verboten.zip",
             "contains_no_data.zip",

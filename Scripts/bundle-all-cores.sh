@@ -26,8 +26,8 @@ ARCADE_RETROARCH_SOURCE_APP="${ARCADE_RETROARCH_SOURCE_APP:-/tmp/openemu-release
 # when the previous release app is unavailable but the tested cores already
 # exist in Application Support.
 ARCADE_RETROARCH_CORES_DIR="${ARCADE_RETROARCH_CORES_DIR:-}"
-# Optional directory containing release bundles for the seven cores updated
-# for OpenEmuARM 2.1. When set, only these named bundles are replaced in the
+# Optional directory containing release bundles for the cores updated for
+# OpenEmuARM 2.2.0. When set, only these named bundles are replaced in the
 # assembled app; every other core continues to come from the local build.
 UPDATED_CORE_BUNDLE_DIR="${UPDATED_CORE_BUNDLE_DIR:-}"
 
@@ -113,7 +113,7 @@ stage_updated_core() {
 stamp_core() {
     local plist="$1/Contents/Info.plist"
     /usr/libexec/PlistBuddy -c "Delete :OEBundledCoreRefreshRevision" "$plist" 2>/dev/null || true
-    /usr/libexec/PlistBuddy -c "Add :OEBundledCoreRefreshRevision string 20260901.1" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :OEBundledCoreRefreshRevision string 20261015.1" "$plist"
 }
 
 OPENEMU_SDK_DERIVED_DATA="${OPENEMU_SDK_DERIVED_DATA:-$DERIVED_ROOT/OpenEmu-SDK}"
@@ -151,6 +151,16 @@ stage_xcode_core() {
     elif [ "$bundle" = "VecXGL" ]; then
         build_args+=("HEADER_SEARCH_PATHS=$REPO_ROOT/OpenEmu-SDK $REPO_ROOT/OpenEmuKit/Source")
     fi
+    # Some core projects reference the shared RetroAchievements bridge from
+    # source without listing its implementation in their target.  The release
+    # packager can supply a force-loaded bridge archive without editing those
+    # projects or their generated project files.
+    if [ -n "${CORE_OTHER_LDFLAGS:-}" ] && [[ "$bundle" =~ ^(Dolphin|Flycast|Bliss|JollyCV|VirtualJaguar)$ ]]; then
+        # The caller supplies the target's existing system libraries together
+        # with the force-load flag; this keeps the injection compatible with
+        # projects that define their own OTHER_LDFLAGS.
+        build_args+=("OTHER_LDFLAGS=${CORE_OTHER_LDFLAGS}")
+    fi
     xcodebuild -project "$project_path" -scheme "$scheme" -configuration Release \
         -derivedDataPath "$dd" -destination 'platform=macOS,arch=arm64' \
         ARCHS=arm64 ONLY_ACTIVE_ARCH=YES \
@@ -165,6 +175,18 @@ stage_pokemini_system_plugin() {
     local executable="$bundle/Contents/MacOS/Pokemon mini"
     local plist="$bundle/Contents/Info.plist"
     local asset_plist="$DERIVED_ROOT/PokemonMini-assets.plist"
+    local prebuilt="$ARCADE_RETROARCH_SOURCE_APP/Contents/PlugIns/Systems/Pokemon mini.oesystemplugin"
+
+    # Reuse the known-good complete system plugin when available. This avoids
+    # making the final distribution depend on actool's host-only module cache.
+    if [ -d "$prebuilt" ]; then
+        rm -rf "$bundle"
+        ditto "$prebuilt" "$bundle"
+        codesign --force --deep --sign - "$bundle"
+        codesign --verify --deep --strict "$bundle" || die "codesign failed: Pokemon mini system plugin"
+        echo "staged system plugin: Pokemon mini (prebuilt)"
+        return
+    fi
 
     [ -d "$source" ] || die "PokeMini system plugin source was not found: $source"
     rm -rf "$bundle"
@@ -181,7 +203,9 @@ stage_pokemini_system_plugin() {
     cp "$source/Keyboard-Mappings.plist" "$resources/"
     cp "$source/Controller-Mappings.plist" "$resources/"
     cp "$source/Controller-Preferences.plist" "$resources/"
-    xcrun actool "$source/Images.xcassets" --compile "$resources" \
+    local actool_cache="$DERIVED_ROOT/PokeMini-actool-module-cache"
+    mkdir -p "$actool_cache"
+    CLANG_MODULE_CACHE_PATH="$actool_cache" xcrun actool "$source/Images.xcassets" --compile "$resources" \
         --platform macosx --minimum-deployment-target 11.0 \
         --output-partial-info-plist "$asset_plist" >/dev/null
 
@@ -259,8 +283,8 @@ echo "staging: Arcade RetroArch cores"
 stage_arcade_retroarch_cores
 
 if [ -n "$UPDATED_CORE_BUNDLE_DIR" ]; then
-    echo "staging: OpenEmuARM 2.1 updated core bundles"
-    for updated_core in Dolphin DeSmuME GenesisPlus mGBA Mednafen PPSSPP Nestopia; do
+    echo "staging: OpenEmuARM 2.2.0 updated core bundles"
+    for updated_core in Atari800 blueMSX CrabEmu GenesisPlus JollyCV O2EM Picodrive Potator ProSystem PPSSPP VecXGL; do
         stage_updated_core "$updated_core"
     done
 fi

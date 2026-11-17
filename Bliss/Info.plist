@@ -34,6 +34,8 @@
 			<integer>0</integer>
 			<key>OEGameCoreSupportsRewinding</key>
 			<true/>
+			<key>OEGameCoreSupportsRetroAchievements</key>
+			<true/>
 			<key>OERequiredFiles</key>
 			<array>
 				<dict>

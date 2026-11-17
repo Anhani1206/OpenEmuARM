@@ -328,7 +328,7 @@ This setup will install the system cores you need to start playing. Cores are mo
                             <subviews>
                                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="400">
                                     <rect key="frame" x="17" y="220" width="62" height="16"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="What’s New in OpenEmuARM 2.1.4" id="401">
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="What’s New in OpenEmuARM 2.2.0" id="401">
                                         <font key="font" metaFont="systemBold"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -340,11 +340,12 @@ This setup will install the system cores you need to start playing. Cores are mo
                                     <rect key="frame" x="17" y="156" width="383" height="56"/>
                                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" state="on" id="402">
                                         <font key="font" metaFont="smallSystem"/>
-                                        <string key="title">OpenEmuARM 2.1.4
+                                        <string key="title">OpenEmuARM 2.2.0
 
-• Improved PlayStation 1 disc detection for valid fan-made and patched MODE1/MODE2 images whose license signature differs from retail discs, including compatible .cue/.bin releases.
-• Added Show Information… to the game context menu, displaying ROM metadata and the preferred and available cores for the detected system.
-• PlayStation 1 games with a valid ISO9660 filesystem and SYSTEM.CNF are now recognized even when the optional retail license text is missing or modified.</string>
+• 11 emulator cores updated for better compatibility and performance.
+• RetroAchievements support expanded to Jaguar, ColecoVision, Dreamcast, Intellivision, GameCube and Wii.
+• Improved controller mappings, including Nintendo Switch/N64 Bluetooth support.
+• Updated macOS 26 packaging and release metadata.</string>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
@@ -353,7 +354,7 @@ This setup will install the system cores you need to start playing. Cores are mo
                                 </textField>
                                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="398">
                                     <rect key="frame" x="17" y="132" width="280" height="16"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Click Go to open your library." id="403">
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="" id="403">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

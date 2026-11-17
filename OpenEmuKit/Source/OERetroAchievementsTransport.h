@@ -26,7 +26,7 @@
 #ifndef OERetroAchievementsTransport_h
 #define OERetroAchievementsTransport_h
 
-#include <rc_client.h>
+#include "../../Vendor/rcheevos/include/rc_client.h"
 
 /// NSNotificationCenter name posted by OpenEmuHelperApp when the RA token changes.
 /// userInfo keys: `OERetroAchievementsTokenKey` (NSString token) and

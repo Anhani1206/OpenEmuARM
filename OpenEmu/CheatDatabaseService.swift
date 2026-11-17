@@ -77,7 +77,9 @@ final class CheatDatabaseService: @unchecked Sendable {
 
     private let allowedCoreIdentifiers: [String: Set<String>] = [
         OESystemIdentifierAtari2600: ["org.openemu.Stella"],
-        OESystemIdentifierColecoVision: ["org.openemu.CrabEmu"],
+        "openemu.system.5200": ["org.openemu.Atari800"],
+        "openemu.system.7800": ["org.openemu.ProSystem"],
+        OESystemIdentifierColecoVision: ["org.openemu.CrabEmu", "org.openemu.JollyCV", "org.openemu.blueMSX"],
         OESystemIdentifierFDS: ["org.openemu.Nestopia"],
         OESystemIdentifierGB: ["org.openemu.Gambatte"],
         OESystemIdentifierGBA: ["org.openemu.mGBA"],
@@ -89,6 +91,7 @@ final class CheatDatabaseService: @unchecked Sendable {
         OESystemIdentifierNDS: ["org.openemu.DeSmuME"],
         OESystemIdentifierPSX: ["org.openemu.Mednafen"],
         OESystemIdentifierSegaCD: ["org.openemu.GenesisPlus"],
+        OESystemIdentifierSega32X: ["org.openemu.Picodrive"],
         OESystemIdentifierSG1000: ["org.openemu.GenesisPlus"],
         OESystemIdentifierSNES: ["org.openemu.BSNES", "org.openemu.SNES9x"],
         OESystemIdentifierLynx: ["org.openemu.Mednafen"],
@@ -98,7 +101,12 @@ final class CheatDatabaseService: @unchecked Sendable {
         OESystemIdentifierPCFX: ["org.openemu.Mednafen"],
         OESystemIdentifierSaturn: ["org.openemu.Mednafen"],
         OESystemIdentifierVB: ["org.openemu.Mednafen"],
-        OESystemIdentifierWS: ["org.openemu.Mednafen"]
+        OESystemIdentifierWS: ["org.openemu.Mednafen"],
+        "openemu.system.msx": ["org.openemu.blueMSX"],
+        "openemu.system.odyssey2": ["org.openemu.O2EM"],
+        "openemu.system.psp": ["org.openemu.PPSSPP"],
+        "openemu.system.sv": ["org.openemu.Potator"],
+        "openemu.system.vectrex": ["org.openemu.VecXGL"]
     ]
 
     /// Fetches cheats from all providers that support the system, merges, deduplicates, and filters invalid formats.
